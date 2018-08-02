@@ -1,0 +1,11 @@
+{
+  "id": "stockpile",
+  "name": "Stockpile",
+  "authors": [
+    "notjoe_"
+  ],
+  "listeners": [
+    "notjoe.stockpile.adder.StockpileBlockAdder",
+    "notjoe.stockpile.adder.StockpileTileAdder"
+  ]
+}

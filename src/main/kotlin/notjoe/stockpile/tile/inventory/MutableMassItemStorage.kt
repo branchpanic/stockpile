@@ -18,7 +18,7 @@ const val INPUT_SLOT_INDEX = 1
  * This implementation allows for the stack type to be mutated in-place.
  */
 class MutableMassItemStorage(private var _stackType: ItemStack,
-                             val maxStacks: Int,
+                             private var maxStacks: Int,
                              var amount: Int = 0) :
         AbstractSidedInventory("mass_item_storage"), SerializableInPlace {
 
@@ -106,7 +106,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
         return !typeIsUndefined && stack != null && !stack.isEmpty &&
-                slotIndex == INPUT_SLOT_INDEX && stackType.isItemEqual(stack)
+                slotIndex == INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
     }
 
     override fun setInventorySlotContents(slotIndex: Int, stack: ItemStack?) {
@@ -121,12 +121,25 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
     override fun saveToCompound(): NBTTagCompound {
         val compound = NBTTagCompound()
         compound.setTag("StackType", stackType.writeToNBT(NBTTagCompound()))
+        compound.setInteger("MaxStacks", maxStacks)
         compound.setInteger("Amount", amount)
         return compound
     }
 
     override fun loadFromCompound(compound: NBTTagCompound) {
         stackType = ItemStack.func_199557_a(compound.getCompoundTag("StackType"))
+        maxStacks = compound.getInteger("MaxStacks")
         amount = compound.getInteger("Amount")
+    }
+}
+
+// An adaptation of ItemStack::areItemStacksEqual which doesn't factor in quantity.
+fun ItemStack.isStackableWith(other: ItemStack): Boolean {
+    return if (item !== other.item) {
+        false
+    } else if (tagCompound == null && other.tagCompound != null) {
+        false
+    } else {
+        tagCompound == null || this.tagCompound == other.tagCompound
     }
 }

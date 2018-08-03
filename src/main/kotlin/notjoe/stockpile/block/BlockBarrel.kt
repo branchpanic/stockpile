@@ -7,7 +7,6 @@ import net.minecraft.block.material.Material
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.init.SoundEvents
 import net.minecraft.item.BlockItemUseContext
 import net.minecraft.state.StateContainer
 import net.minecraft.tileentity.TileEntity
@@ -20,9 +19,8 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.IBlockReader
 import net.minecraft.world.World
 import notjoe.stockpile.tile.TileBarrel
-import notjoe.stockpile.tile.inventory.OUTPUT_SLOT_INDEX
 
-class BlockBarrel :
+class BlockBarrel(private val maxStacks: Int = 32) :
         BlockDirectional(Block.Builder.create(Material.WOOD).hardnessAndResistance(3f, 14f)), ITileEntityProvider {
 
     init {
@@ -34,7 +32,7 @@ class BlockBarrel :
     }
 
     override fun hasTileEntity(): Boolean = true
-    override fun getTileEntity(p0: IBlockReader?): TileEntity? = TileBarrel()
+    override fun getTileEntity(p0: IBlockReader?): TileEntity? = TileBarrel(maxStacks)
 
     override fun onLeftClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?) {
         if (world == null || player == null || state == null) {
@@ -49,14 +47,7 @@ class BlockBarrel :
         }
 
         val tile = world.getTileEntity(pos) as TileBarrel
-        val amountToExtract = if (player.isSneaking) tile.inventoryStackLimit else 1
-        val extractedStack = tile.decrStackSize(OUTPUT_SLOT_INDEX, amountToExtract)
-
-        if (!extractedStack.isEmpty) {
-            player.addItemStackToInventory(extractedStack)
-            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.5f, 0.5f)
-            tile.markDirty()
-        }
+        tile.handleLeftClick(player)
     }
 
     override fun onRightClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,

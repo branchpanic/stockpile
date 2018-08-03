@@ -20,3 +20,4 @@ hs_err_pid*
 /out/
 /run/
 
+*.kra       # Just so we don't commit a bunch of unnecessary Krita projects

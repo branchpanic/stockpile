@@ -10,7 +10,7 @@ import org.dimdev.rift.listener.ItemAdder
 
 // This registration system is temporary! It will eventually be dynamic and not hard-coded.
 @Suppress("unused")
-class StockpileBlockAdder : BlockAdder, ItemAdder {
+class StockpileBlocks : BlockAdder, ItemAdder {
     private val standardBarrel = BlockBarrel()
 
     override fun registerBlocks() {

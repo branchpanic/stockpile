@@ -24,6 +24,7 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
         IInventory by barrelInventory {
 
     companion object {
+        @JvmStatic
         lateinit var TYPE: TileEntityType<TileBarrel>
     }
 
@@ -33,15 +34,6 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
     val amountStored get() = barrelInventory.amount
 
     var rightClickCache = emptyMap<UUID, Long>()
-
-    override fun receiveClientEvent(eventID: Int, eventValue: Int): Boolean {
-        return if (eventID == 1) {
-            markDirty()
-            true
-        } else {
-            super.receiveClientEvent(eventID, eventValue)
-        }
-    }
 
     /**
      * Determines whether or not a player double-clicked this barrel.
@@ -133,7 +125,8 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
     }
 
     override fun markDirty() {
-        world.notifyBlockUpdate(pos, blockState, blockState, 3)
+        world.notifyBlockUpdate(pos, blockState, blockState, 2)
+        barrelInventory.markDirty()
         super.markDirty()
     }
 

@@ -5,7 +5,7 @@
     "notjoe_"
   ],
   "listeners": [
-    "notjoe.stockpile.adder.StockpileBlockAdder",
-    "notjoe.stockpile.adder.StockpileTileAdder"
+    "notjoe.stockpile.adder.StockpileBlocks",
+    "notjoe.stockpile.adder.StockpileTileEntities"
   ]
 }

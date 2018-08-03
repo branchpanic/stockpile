@@ -41,22 +41,27 @@ class BlockBarrel :
             return
         }
 
+        // TODO: Find out where the reach value is stored instead of hardcoding it.
+        val rayTraceResult = player.rayTraceFromEyes(4.0)
+
+        if (rayTraceResult == null || rayTraceResult.sideHit != getFacing(state)) {
+            return
+        }
+
         val tile = world.getTileEntity(pos) as TileBarrel
         val amountToExtract = if (player.isSneaking) tile.inventoryStackLimit else 1
         val extractedStack = tile.decrStackSize(OUTPUT_SLOT_INDEX, amountToExtract)
 
-        // TODO: Find out where the reach value is stored instead of hardcoding it.
-        val rayTraceResult = player.rayTraceFromEyes(4.0)
-
-        if (rayTraceResult != null && rayTraceResult.sideHit == getFacing(state) && !extractedStack.isEmpty) {
+        if (!extractedStack.isEmpty) {
             player.addItemStackToInventory(extractedStack)
-            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, 1f, 1f)
+            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.5f, 0.5f)
+            tile.markDirty()
         }
     }
 
     override fun onRightClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
                               hand: EnumHand?, face: EnumFacing?, x: Float, y: Float, z: Float): Boolean {
-        if (world == null || player == null || world.isRemote) {
+        if (world == null || player == null) {
             return true
         }
 

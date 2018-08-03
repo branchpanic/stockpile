@@ -10,7 +10,7 @@ import net.minecraft.util.text.TextComponentString
 /**
  * A partial implementation of ISidedInventory that implements some of the methods we don't really need.
  */
-abstract class AbstractSidedInventory(val name: String) : ISidedInventory {
+abstract class AbstractSidedInventory(private val name: String) : ISidedInventory {
     // For the sake of having one abstract IInventory, ISidedInventory methods are implemented with placeholders that
     // make it behave like a normal IInventory.
     override fun getSlotsForFace(p0: EnumFacing?): IntArray = (0 until sizeInventory).toList().toIntArray()

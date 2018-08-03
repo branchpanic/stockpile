@@ -3,8 +3,8 @@ package notjoe.stockpile.adder
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
+import notjoe.stockpile.renderer.BarrelRenderer
 import notjoe.stockpile.tile.TileBarrel
-import notjoe.stockpile.tile.renderer.BarrelRenderer
 import org.dimdev.rift.listener.TileEntityTypeAdder
 import org.dimdev.rift.listener.client.TileEntityRendererAdder
 

@@ -1,6 +1,8 @@
 package notjoe.stockpile.tile.inventory
 
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
+import notjoe.stockpile.tile.SerializableInPlace
 import kotlin.math.min
 
 const val OUTPUT_SLOT_INDEX = 0
@@ -18,7 +20,7 @@ const val INPUT_SLOT_INDEX = 1
 class MutableMassItemStorage(private var _stackType: ItemStack,
                              val maxStacks: Int,
                              var amount: Int = 0) :
-        AbstractSidedInventory("mass_item_storage") {
+        AbstractSidedInventory("mass_item_storage"), SerializableInPlace {
 
     var stackType: ItemStack
         get() = _stackType
@@ -114,5 +116,17 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
 
         amount += min(availableSpace, stack.count)
         markDirty()
+    }
+
+    override fun saveToCompound(): NBTTagCompound {
+        val compound = NBTTagCompound()
+        compound.setTag("StackType", stackType.writeToNBT(NBTTagCompound()))
+        compound.setInteger("Amount", amount)
+        return compound
+    }
+
+    override fun loadFromCompound(compound: NBTTagCompound) {
+        stackType = ItemStack.func_199557_a(compound.getCompoundTag("StackType"))
+        amount = compound.getInteger("Amount")
     }
 }

@@ -40,8 +40,3 @@ abstract class AbstractSidedInventory(private val name: String) : ISidedInventor
     override fun markDirty() {}
 }
 
-fun ItemStack.withCount(newCount: Int): ItemStack {
-    val copiedStack = copy()
-    copiedStack.count = newCount
-    return copiedStack
-}

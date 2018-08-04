@@ -1,4 +1,4 @@
-package notjoe.stockpile.tile
+package notjoe.stockpile.tile.nbt
 
 import net.minecraft.nbt.NBTTagCompound
 
@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound
  * It would be nice to eliminate as much mutability as possible, but sometimes it's not practical in the context of this
  * mod. Suggestions for improvement are welcome!
  */
-interface SerializableInPlace {
+interface NBTSerializableInPlace {
     fun saveToCompound(): NBTTagCompound
     fun loadFromCompound(compound: NBTTagCompound)
 }

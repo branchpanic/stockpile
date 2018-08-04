@@ -2,7 +2,9 @@ package notjoe.stockpile.tile.inventory
 
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
-import notjoe.stockpile.tile.SerializableInPlace
+import notjoe.stockpile.tile.nbt.NBTSerializableInPlace
+import notjoe.stockpile.util.isStackableWith
+import notjoe.stockpile.util.withCount
 import kotlin.math.min
 
 const val OUTPUT_SLOT_INDEX = 0
@@ -21,7 +23,7 @@ const val INPUT_SLOT_INDEX = 1
 class MutableMassItemStorage(private var _stackType: ItemStack,
                              private var maxStacks: Int,
                              var amount: Int = 0) :
-        AbstractSidedInventory("mass_item_storage"), SerializableInPlace {
+        AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
 
     var stackType: ItemStack
         get() = _stackType
@@ -135,13 +137,3 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
     }
 }
 
-// An adaptation of ItemStack::areItemStacksEqual which doesn't factor in quantity.
-fun ItemStack.isStackableWith(other: ItemStack): Boolean {
-    return if (item !== other.item) {
-        false
-    } else if (tagCompound == null && other.tagCompound != null) {
-        false
-    } else {
-        tagCompound == null || this.tagCompound == other.tagCompound
-    }
-}

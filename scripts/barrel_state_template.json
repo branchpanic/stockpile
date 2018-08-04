@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "stockpile:block/$BARREL_NAME$",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "stockpile:block/$BARREL_NAME$",
+      "x": 270
+    },
+    "facing=north": {
+      "model": "stockpile:block/$BARREL_NAME$"
+    },
+    "facing=south": {
+      "model": "stockpile:block/$BARREL_NAME$",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stockpile:block/$BARREL_NAME$",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "stockpile:block/$BARREL_NAME$",
+      "y": 90
+    }
+  }
+}

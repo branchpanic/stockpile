@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "stockpile:block/gold_barrel",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "stockpile:block/gold_barrel",
+      "x": 270
+    },
+    "facing=north": {
+      "model": "stockpile:block/gold_barrel"
+    },
+    "facing=south": {
+      "model": "stockpile:block/gold_barrel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stockpile:block/gold_barrel",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "stockpile:block/gold_barrel",
+      "y": 90
+    }
+  }
+}

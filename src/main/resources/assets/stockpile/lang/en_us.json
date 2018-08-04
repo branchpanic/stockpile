@@ -2,5 +2,7 @@
   "stockpile.press_crouch": "Crouch for more info...",
   "stockpile.barrel.contents_stack": "Contains %sx %s (%s full stacks)",
   "stockpile.barrel.size_stack": "Holds up to %s stacks",
-  "block.stockpile.barrel": "Barrel"
+  "stockpile.trash_can.desc": "Destroys items. When open, items can be thrown at it to delete them.",
+  "block.stockpile.barrel": "Barrel",
+  "block.stockpile.trash_can": "Trash Can"
 }

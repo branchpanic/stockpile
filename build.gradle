@@ -26,10 +26,6 @@ repositories {
 
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-
-    kapt 'net.java.sezpoz:sezpoz:1.13'
-    compile 'net.java.sezpoz:sezpoz:1.13'
-
     implementation 'org.dimdev:rift:1.0.2-12:dev'
 }
 

@@ -29,7 +29,6 @@ import notjoe.stockpile.tile.TileBarrel
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.util.rayTraceFromEyes
 
-
 class BlockBarrel(private val maxStacks: Int = 32) :
         BlockDirectional(Block.Builder
                 .create(Material.WOOD)
@@ -39,6 +38,7 @@ class BlockBarrel(private val maxStacks: Int = 32) :
     init {
         defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
     }
+
 
     override fun addPropertiesToBuilder(stateBuilder: StateContainer.Builder<Block, IBlockState>?) {
         stateBuilder?.addProperties(FACING)

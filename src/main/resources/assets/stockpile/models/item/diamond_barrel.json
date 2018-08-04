@@ -1,10 +1,10 @@
 {
   "credit": "Made with Blockbench",
   "textures": {
-    "0": "stockpile:block/barrel_rings",
+    "0": "stockpile:block/diamond_barrel_rings",
     "1": "stockpile:block/barrel_wood",
     "2": "stockpile:block/barrel_label_only",
-    "particle": "stockpile:block/barrel_rings"
+    "particle": "stockpile:block/diamond_barrel_rings"
   },
   "elements": [
     {

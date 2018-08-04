@@ -5,13 +5,14 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
 import notjoe.stockpile.tile.nbt.NBTSerializableInPlace
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
  * A base tile entity for Stockpile, which
  */
 abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(type) {
-    private var persistentValues = emptyList<NBTDelegate<*>>()
+    private var persistentValues = emptyList<NBTProperty<*>>()
 
     // In our case, markDirty basically just means "sync now." This will probably change in the future.
     override fun markDirty() {
@@ -22,8 +23,8 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
     /**
      * Allows for an NBTSerializableInPlace value to persist (via writeToNBT and readFromNBT) automatically.
      */
-    fun <T : NBTSerializableInPlace> persistent(name: String, initialValue: T): NBTDelegate<T> {
-        val delegate = NBTDelegate(name, initialValue)
+    fun <T : NBTSerializableInPlace> persistent(name: String, initialValue: T): NBTProperty<T> {
+        val delegate = NBTProperty(name, initialValue)
         persistentValues += delegate
         return delegate
     }
@@ -36,7 +37,7 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
 
     fun writePersistentValuesToNBT(compound: NBTTagCompound): NBTTagCompound {
         persistentValues.forEach { delegate ->
-            compound.setTag(delegate.name, delegate.serializable.saveToCompound())
+            compound.setTag(delegate.name, delegate.loadedValue.saveToCompound())
         }
 
         return compound
@@ -54,7 +55,7 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
     fun readPersistentValuesFromNBT(compound: NBTTagCompound) {
         persistentValues
                 .filter { delegate -> compound.hasKey(delegate.name) }
-                .forEach { delegate -> delegate.serializable.loadFromCompound(compound.getCompoundTag(delegate.name)) }
+                .forEach { delegate -> delegate.loadedValue.loadFromCompound(compound.getCompoundTag(delegate.name)) }
     }
 
     override fun getUpdatePacket(): SPacketUpdateTileEntity? {
@@ -64,11 +65,13 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
     override fun getUpdateTag(): NBTTagCompound {
         return writeToNBT(NBTTagCompound())
     }
-}
 
-/**
- * A very simple wrapper for delegating a value to an NBT tag, ad-hoc to AbstractBaseTileEntity.
- */
-class NBTDelegate<T : NBTSerializableInPlace>(val name: String, var serializable: T) {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = serializable
+    class NBTProperty<T : NBTSerializableInPlace>(val name: String,
+                                                  internal var loadedValue: T) : ReadWriteProperty<TileEntity, T> {
+        override operator fun getValue(thisRef: TileEntity, property: KProperty<*>): T = loadedValue
+        override fun setValue(thisRef: TileEntity, property: KProperty<*>, value: T) {
+            loadedValue = value
+            thisRef.markDirty()
+        }
+    }
 }

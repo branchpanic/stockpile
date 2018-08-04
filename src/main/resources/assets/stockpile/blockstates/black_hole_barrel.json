@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "stockpile:block/black_hole_barrel",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "stockpile:block/black_hole_barrel",
+      "x": 270
+    },
+    "facing=north": {
+      "model": "stockpile:block/black_hole_barrel"
+    },
+    "facing=south": {
+      "model": "stockpile:block/black_hole_barrel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stockpile:block/black_hole_barrel",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "stockpile:block/black_hole_barrel",
+      "y": 90
+    }
+  }
+}

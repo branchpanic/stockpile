@@ -35,11 +35,10 @@ class BlockBarrel(private val maxStacks: Int = 32) :
     override fun getTileEntity(p0: IBlockReader?): TileEntity? = TileBarrel(maxStacks)
 
     override fun onLeftClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?) {
-        if (world == null || player == null || state == null) {
+        if (world == null || player == null || state == null || world.isRemote) {
             return
         }
 
-        // TODO: Find out where the reach value is stored instead of hardcoding it.
         val rayTraceResult = player.rayTraceFromEyes(4.0)
 
         if (rayTraceResult == null || rayTraceResult.sideHit != getFacing(state)) {
@@ -52,7 +51,7 @@ class BlockBarrel(private val maxStacks: Int = 32) :
 
     override fun onRightClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
                               hand: EnumHand?, face: EnumFacing?, x: Float, y: Float, z: Float): Boolean {
-        if (world == null || player == null) {
+        if (world == null || player == null || world.isRemote) {
             return true
         }
 

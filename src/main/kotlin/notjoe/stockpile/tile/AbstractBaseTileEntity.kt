@@ -19,6 +19,9 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
         world.notifyBlockUpdate(pos, blockState, blockState, 3)
     }
 
+    /**
+     * Allows for an NBTSerializableInPlace value to persist (via writeToNBT and readFromNBT) automatically.
+     */
     fun <T : NBTSerializableInPlace> persistent(name: String, initialValue: T): NBTDelegate<T> {
         val delegate = NBTDelegate(name, initialValue)
         persistentValues += delegate
@@ -28,12 +31,15 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
 
     override fun writeToNBT(compound: NBTTagCompound?): NBTTagCompound {
         val workingCompound = super.writeToNBT(compound) ?: NBTTagCompound()
+        return writePersistentValuesToNBT(workingCompound)
+    }
 
+    fun writePersistentValuesToNBT(compound: NBTTagCompound): NBTTagCompound {
         persistentValues.forEach { delegate ->
-            workingCompound.setTag(delegate.name, delegate.serializable.saveToCompound())
+            compound.setTag(delegate.name, delegate.serializable.saveToCompound())
         }
 
-        return workingCompound
+        return compound
     }
 
     override fun readFromNBT(compound: NBTTagCompound?) {
@@ -42,6 +48,10 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
         }
 
         super.readFromNBT(compound)
+        readPersistentValuesFromNBT(compound)
+    }
+
+    fun readPersistentValuesFromNBT(compound: NBTTagCompound) {
         persistentValues
                 .filter { delegate -> compound.hasKey(delegate.name) }
                 .forEach { delegate -> delegate.serializable.loadFromCompound(compound.getCompoundTag(delegate.name)) }
@@ -57,10 +67,8 @@ abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(typ
 }
 
 /**
- * A very simple wrapper for delegating a value to an NBT tag, ad-hoc to AbstractBaseTileEntity..
+ * A very simple wrapper for delegating a value to an NBT tag, ad-hoc to AbstractBaseTileEntity.
  */
 class NBTDelegate<T : NBTSerializableInPlace>(val name: String, var serializable: T) {
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return serializable
-    }
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = serializable
 }

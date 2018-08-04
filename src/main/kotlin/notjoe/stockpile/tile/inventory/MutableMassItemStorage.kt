@@ -25,6 +25,12 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
                              var amount: Int = 0) :
         AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
 
+    companion object TagNames {
+        const val STACK_TYPE_KEY = "StackType"
+        const val MAX_STACKS_KEY = "MaxStacks"
+        const val AMOUNT_KEY = "Amount"
+    }
+
     var stackType: ItemStack
         get() = _stackType
         set(value) {
@@ -124,16 +130,16 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
 
     override fun saveToCompound(): NBTTagCompound {
         val compound = NBTTagCompound()
-        compound.setTag("StackType", stackType.writeToNBT(NBTTagCompound()))
-        compound.setInteger("MaxStacks", maxStacks)
-        compound.setInteger("Amount", amount)
+        compound.setTag(STACK_TYPE_KEY, stackType.writeToNBT(NBTTagCompound()))
+        compound.setInteger(MAX_STACKS_KEY, maxStacks)
+        compound.setInteger(AMOUNT_KEY, amount)
         return compound
     }
 
     override fun loadFromCompound(compound: NBTTagCompound) {
-        stackType = ItemStack.func_199557_a(compound.getCompoundTag("StackType"))
-        maxStacks = compound.getInteger("MaxStacks")
-        amount = compound.getInteger("Amount")
+        stackType = ItemStack.func_199557_a(compound.getCompoundTag(STACK_TYPE_KEY))
+        maxStacks = compound.getInteger(MAX_STACKS_KEY)
+        amount = compound.getInteger(AMOUNT_KEY)
     }
 }
 

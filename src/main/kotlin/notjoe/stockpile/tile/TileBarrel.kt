@@ -60,6 +60,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
 
         if (barrelInventory.typeIsUndefined && !heldItem.isEmpty) {
             barrelInventory.stackType = heldItem.withCount(1)
+            markDirty()
         } else {
             val changesMade = if (playerDoubleRightClicked(player)) {
                 insertAllPossibleStacks(player)

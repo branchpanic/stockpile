@@ -1,0 +1,6 @@
+{
+  "stockpile.press_crouch": "Crouch for more info...",
+  "stockpile.barrel.contents_stack": "Contains %sx %s (%s full stacks)",
+  "stockpile.barrel.size_stack": "Holds up to %s stacks",
+  "block.stockpile.barrel": "Barrel"
+}

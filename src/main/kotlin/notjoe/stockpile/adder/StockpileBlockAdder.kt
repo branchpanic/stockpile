@@ -13,13 +13,7 @@ import kotlin.math.pow
 @Suppress("unused")
 class StockpileBlockAdder : BlockAdder, ItemAdder {
     private val blocks = mapOf<String, Block>(
-            "barrel" to BlockBarrel(),
-            "gold_barrel" to BlockBarrel(64),
-            "nether_barrel" to BlockBarrel(256),
-            "diamond_barrel" to BlockBarrel(512),
-            "emerald_barrel" to BlockBarrel(2048),
-            "obsidian_barrel" to BlockBarrel(4096),
-            "end_stone_barrel" to BlockBarrel(8192),
+            "barrel" to BlockBarrel(64),
             "black_hole_barrel" to BlockBarrel(2.0.pow(24).toInt()),
             "trash_can" to BlockTrashCan()
     )

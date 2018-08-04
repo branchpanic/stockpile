@@ -9,6 +9,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
+import net.minecraft.util.SoundCategory
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.tile.inventory.OUTPUT_SLOT_INDEX
 import notjoe.stockpile.tile.inventory.withCount
@@ -22,7 +23,6 @@ const val BARREL_DOUBLE_CLICK_TIME_MS = 500
 class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMassItemStorage(ItemStack.EMPTY, 32)) :
         TileEntity(TileBarrel.TYPE),
         IInventory by barrelInventory {
-
     companion object {
         @JvmStatic
         lateinit var TYPE: TileEntityType<TileBarrel>
@@ -61,18 +61,17 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
         if (barrelInventory.typeIsUndefined && !heldItem.isEmpty) {
             barrelInventory.stackType = heldItem.withCount(1)
         } else {
-            val shouldPlaySound = if (playerDoubleRightClicked(player)) {
+            val changesMade = if (playerDoubleRightClicked(player)) {
                 insertAllPossibleStacks(player)
             } else {
                 insertStackFromHand(player, EnumHand.MAIN_HAND)
             }
 
-            if (shouldPlaySound) {
-                player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.5f, 0.5f)
+            if (changesMade) {
+                world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.1f, 0.9f)
+                markDirty()
             }
         }
-
-        markDirty()
     }
 
     /**
@@ -119,32 +118,38 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
 
         if (!extractedStack.isEmpty) {
             player.addItemStackToInventory(extractedStack)
-            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.5f, 0.5f)
-            markDirty()
+            world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.1f, 0.7f)
         }
+
+        markDirty()
     }
 
     override fun markDirty() {
-        world.notifyBlockUpdate(pos, blockState, blockState, 2)
-        barrelInventory.markDirty()
+        println("TileBarrel: Marked dirty")
         super.markDirty()
+        println("TileBarrel: Notifying block update")
+        world.notifyBlockUpdate(pos, blockState, blockState, 3)
     }
 
     override fun getUpdatePacket(): SPacketUpdateTileEntity? {
-        return SPacketUpdateTileEntity(pos, 3, updateTag)
+        println("TileBarrel: Synchronizing")
+        return SPacketUpdateTileEntity(pos, 1, updateTag)
     }
 
     override fun getUpdateTag(): NBTTagCompound {
+        println("TileBarrel: Getting update tag")
         return writeToNBT(NBTTagCompound())
     }
 
     override fun writeToNBT(compound: NBTTagCompound?): NBTTagCompound {
+        println("TileBarrel: Writing")
         val workingCompound = super.writeToNBT(compound)
         workingCompound.setTag("Inventory", barrelInventory.saveToCompound())
         return workingCompound
     }
 
     override fun readFromNBT(compound: NBTTagCompound?) {
+        println("TileBarrel: Reading")
         super.readFromNBT(compound)
         if (compound != null && compound.hasKey("Inventory")) {
             barrelInventory.loadFromCompound(compound.getCompoundTag("Inventory"))

@@ -15,7 +15,8 @@ const val INPUT_SLOT_INDEX = 1
  * output slot always supplies as much of the contained item as possible. The input slot is empty until the amount
  * reaches (maxStacks - 1) * stackLimit, in which it then contains the remaining stack.
  *
- * This implementation allows for the stack type to be mutated in-place.
+ * This implementation allows for the stack type to be mutated in-place. The method markDirty() is called whenever
+ * changes are made.
  */
 class MutableMassItemStorage(private var _stackType: ItemStack,
                              private var maxStacks: Int,
@@ -29,8 +30,8 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
             amount = 0
         }
 
-    val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
     val typeIsUndefined: Boolean get() = stackType.isEmpty
+    private val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
 
     /**
      * Inserts an ItemStack into this MutableMassItemStorage and returns the remainder.
@@ -76,8 +77,8 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
         }
 
         amount -= workingStack.count
-        markDirty()
 
+        markDirty()
         return workingStack
     }
 
@@ -95,8 +96,8 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
 
         val decrementedAmount = min(workingStack.count, decrementAmount)
         amount -= decrementedAmount
-        markDirty()
 
+        markDirty()
         return workingStack.withCount(decrementedAmount)
     }
 
@@ -115,6 +116,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
         }
 
         amount += min(availableSpace, stack.count)
+
         markDirty()
     }
 

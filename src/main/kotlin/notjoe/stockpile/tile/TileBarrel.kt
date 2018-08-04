@@ -4,15 +4,12 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.SoundEvents
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.network.play.server.SPacketUpdateTileEntity
-import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.tile.inventory.OUTPUT_SLOT_INDEX
-import notjoe.stockpile.tile.inventory.withCount
+import notjoe.stockpile.util.withCount
 import java.util.*
 
 const val BARREL_DOUBLE_CLICK_TIME_MS = 500
@@ -20,15 +17,18 @@ const val BARREL_DOUBLE_CLICK_TIME_MS = 500
 /**
  * A (JABBA|YABBA|Storage Drawers|etc.)-inspired container which allows for storing a large amount of a single item.
  */
-class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMassItemStorage(ItemStack.EMPTY, 32)) :
-        TileEntity(TileBarrel.TYPE),
+class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorage(ItemStack.EMPTY, 32)) :
+        AbstractBaseTileEntity(TileBarrel.TYPE),
         IInventory by barrelInventory {
+
     companion object {
         @JvmStatic
         lateinit var TYPE: TileEntityType<TileBarrel>
     }
 
     constructor(maxStacks: Int) : this(MutableMassItemStorage(ItemStack.EMPTY, maxStacks))
+
+    private val barrelInventory by persistent("Inventory", barrelInventory)
 
     val stackType get() = barrelInventory.stackType
     val amountStored get() = barrelInventory.amount
@@ -52,7 +52,7 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
      * Handles a right-click (single or double) by a player.
      *
      * - A single right-click attempts to insert the held item into this barrel.
-     * - A double right-click attempts to insert as many stacks as possible from the player's inventory into this
+     * - A double right-click attempts to insert as many stacks as possible from the player's barrelInventory into this
      *   barrel.
      */
     fun handleRightClick(player: EntityPlayer) {
@@ -88,7 +88,7 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
     }
 
     /**
-     * Attempts to insert every single stack from the player's inventory into this barrel. Updates the inventory as
+     * Attempts to insert every single stack from the player's barrelInventory into this barrel. Updates the barrelInventory as
      * appropriate.
      * @return Whether or not any changes were made.
      */
@@ -124,35 +124,12 @@ class TileBarrel(private val barrelInventory: MutableMassItemStorage = MutableMa
         markDirty()
     }
 
+    /**
+     * In order to prevent the diamond problem, we need to explicitly specify that we want AbstractBaseTileEntity's
+     * version of markDirty.
+     */
+    @Suppress("redundant")
     override fun markDirty() {
-        println("TileBarrel: Marked dirty")
         super.markDirty()
-        println("TileBarrel: Notifying block update")
-        world.notifyBlockUpdate(pos, blockState, blockState, 3)
-    }
-
-    override fun getUpdatePacket(): SPacketUpdateTileEntity? {
-        println("TileBarrel: Synchronizing")
-        return SPacketUpdateTileEntity(pos, 1, updateTag)
-    }
-
-    override fun getUpdateTag(): NBTTagCompound {
-        println("TileBarrel: Getting update tag")
-        return writeToNBT(NBTTagCompound())
-    }
-
-    override fun writeToNBT(compound: NBTTagCompound?): NBTTagCompound {
-        println("TileBarrel: Writing")
-        val workingCompound = super.writeToNBT(compound)
-        workingCompound.setTag("Inventory", barrelInventory.saveToCompound())
-        return workingCompound
-    }
-
-    override fun readFromNBT(compound: NBTTagCompound?) {
-        println("TileBarrel: Reading")
-        super.readFromNBT(compound)
-        if (compound != null && compound.hasKey("Inventory")) {
-            barrelInventory.loadFromCompound(compound.getCompoundTag("Inventory"))
-        }
     }
 }

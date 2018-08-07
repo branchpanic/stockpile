@@ -40,7 +40,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         val barrelFrontDirection = tile.blockState.getValue(BlockDirectional.FACING)
 
         GlStateManager.pushMatrix()
-        renderFlatItemAndAmount(containedItem, tile.amountStored, tile.pos, barrelFrontDirection, xPos, yPos, zPos)
+        renderDisplay(containedItem, tile.amountStored, tile.availableSpace, tile.pos, barrelFrontDirection, xPos, yPos, zPos)
         GlStateManager.popMatrix()
     }
 
@@ -72,9 +72,44 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         }
     }
 
+    private fun renderFlatText(text: String, xCenter: Float, yCenter: Float, color: Int) {
+        GlStateManager.translate(0.0, 0.0, 0.315 * 1 / RENDER_OFFSET)
+        GlStateManager.scale(0.5, 0.5, 1.0)
+
+        val textWidth = fontRenderer.getStringWidth(text)
+        val textHeight = fontRenderer.FONT_HEIGHT
+        val textCenterX = xCenter * 2 - (textWidth / 2)
+        val textCenterY = yCenter * 2 - (textHeight / 2)
+
+        // The following (from disableTexture2D to enableTexture2D) is adapted from EntityRenderer::drawNameplate
+        GlStateManager.disableTexture2D()
+
+        val tessellator = Tessellator.getInstance()
+        val buffer = tessellator.buffer
+
+        buffer.begin(7, DefaultVertexFormats.POSITION_COLOR)
+        buffer.pos((textCenterX + textWidth * 1.25), (textCenterY + textHeight).toDouble(), 0.0)
+                .color(0.0f, 0.0f, 0.0f, 0.4f)
+                .endVertex()
+        buffer.pos((textCenterX + textWidth * 1.25), (textCenterY - textHeight / 4).toDouble(), 0.0)
+                .color(0.0f, 0.0f, 0.0f, 0.4f)
+                .endVertex()
+        buffer.pos((textCenterX - textWidth / 3.75), (textCenterY - textHeight / 4).toDouble(), 0.0)
+                .color(0.0f, 0.0f, 0.0f, 0.4f)
+                .endVertex()
+        buffer.pos((textCenterX - textWidth / 3.75), (textCenterY + textHeight).toDouble(), 0.0)
+                .color(0.0f, 0.0f, 0.0f, 0.4f)
+                .endVertex()
+        tessellator.draw()
+        GlStateManager.enableTexture2D()
+
+        GlStateManager.translate(0.0, 0.0, 0.02)
+        fontRenderer.func_211126_b(text, textCenterX, textCenterY, color)
+    }
+
     // Adapted from https://github.com/CoFH/CoFHCore/blob/f53327609aa6fc6fd3dedbd50a9b763d764bd450/src/main/java/cofh/core/render/RenderUtils.java#L43
-    // This method is thoroughly documented
-    private fun renderFlatItemAndAmount(stack: ItemStack, amount: Int, tilePos: BlockPos, side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
+    private fun renderDisplay(stack: ItemStack, amount: Int, availableSpace: Int, tilePos: BlockPos,
+                              side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
         if (stack.isEmpty) {
             return
         }
@@ -97,41 +132,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         renderItem.renderItemAndEffectIntoGUI(stack, 0, 0)
 
         if (amount > 0) {
-            GlStateManager.translate(0.0, 0.0, 0.315 * 1 / RENDER_OFFSET)
-            GlStateManager.scale(0.5, 0.5, 1.0)
-
-            val displayString = amount.toShorthand()
-            val textWidth = fontRenderer.getStringWidth(displayString)
-            val textHeight = fontRenderer.FONT_HEIGHT
-            val textCenterX = 16f - (textWidth / 2)
-            val textCenterY = 16f - (textHeight / 2)
-
-            // The following from disableTexture2D to enableTexture2D is copied from EntityRenderer::drawNameplate
-            GlStateManager.disableTexture2D()
-
-            val tessellator = Tessellator.getInstance()
-            val buffer = tessellator.buffer
-
-            buffer.begin(7, DefaultVertexFormats.POSITION_COLOR)
-            buffer.pos((textCenterX + textWidth * 1.25), (textCenterY + textHeight).toDouble(), 0.0)
-                    .color(0.0f, 0.0f, 0.0f, 0.4f)
-                    .endVertex()
-            buffer.pos((textCenterX + textWidth * 1.25), (textCenterY - textHeight / 4).toDouble(), 0.0)
-                    .color(0.0f, 0.0f, 0.0f, 0.4f)
-                    .endVertex()
-            buffer.pos((textCenterX - textWidth / 3.75), (textCenterY - textHeight / 4).toDouble(), 0.0)
-                    .color(0.0f, 0.0f, 0.0f, 0.4f)
-                    .endVertex()
-            buffer.pos((textCenterX - textWidth / 3.75), (textCenterY + textHeight).toDouble(), 0.0)
-                    .color(0.0f, 0.0f, 0.0f, 0.4f)
-                    .endVertex()
-            tessellator.draw()
-            GlStateManager.enableTexture2D()
-
-            GlStateManager.translate(0.0, 0.0, 0.02)
-
-            // We need to double our values since we halved the scale to compensate.
-            fontRenderer.func_211126_b(displayString, textCenterX, textCenterY, 0xFFFFFF)
+            renderFlatText(amount.toShorthand(), 8f, 16f, if (availableSpace <= 0) 0xFFFF22 else 0xFFFFFF)
         }
 
         GlStateManager.enableAlpha()
@@ -141,7 +142,6 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         GlStateManager.popMatrix()
 
         RenderHelper.enableStandardItemLighting()
-
     }
 }
 

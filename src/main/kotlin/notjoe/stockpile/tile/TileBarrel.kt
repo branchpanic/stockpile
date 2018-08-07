@@ -4,6 +4,8 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.SoundEvents
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
@@ -13,6 +15,7 @@ import notjoe.stockpile.util.withCount
 import java.util.*
 
 const val BARREL_DOUBLE_CLICK_TIME_MS = 500
+const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a capacity of 2^30 items
 
 /**
  * A (JABBA|YABBA|Storage Drawers|etc.)-inspired container which allows for storing a large amount of a single item.
@@ -26,12 +29,14 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
         lateinit var TYPE: TileEntityType<TileBarrel>
     }
 
-    constructor(maxStacks: Int) : this(MutableMassItemStorage(ItemStack.EMPTY, maxStacks))
+    constructor(baseStackLimit: Int) : this(MutableMassItemStorage(ItemStack.EMPTY, baseStackLimit))
 
-    private val barrelInventory by persistent("Inventory", barrelInventory)
+    private var barrelInventory by nbtBacked("Inventory", barrelInventory)
 
     val stackType get() = barrelInventory.stackType
     val amountStored get() = barrelInventory.amount
+    val availableSpace get() = barrelInventory.availableSpace
+    val maxStacks get() = barrelInventory.maxStacks
 
     var rightClickCache = emptyMap<UUID, Long>()
 
@@ -52,14 +57,14 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
      * Handles a right-click (single or double) by a player.
      *
      * - A single right-click attempts to insert the held item into this barrel.
-     * - A double right-click attempts to insert as many stacks as possible from the player's barrelInventory into this
+     * - A double right-click attempts to insert as many stacks as possible from the player's inventory into this
      *   barrel.
      */
     fun handleRightClick(player: EntityPlayer) {
-        val heldItem = player.heldItemMainhand
+        val heldStack = player.heldItemMainhand
 
-        if (barrelInventory.typeIsUndefined && !heldItem.isEmpty) {
-            barrelInventory.stackType = heldItem.withCount(1)
+        if (barrelInventory.typeIsUndefined && !heldStack.isEmpty) {
+            barrelInventory.stackType = heldStack.withCount(1)
             markDirty()
         } else {
             val changesMade = if (playerDoubleRightClicked(player)) {
@@ -126,11 +131,20 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     }
 
     /**
-     * In order to prevent the diamond problem, we need to explicitly specify that we want AbstractBaseTileEntity's
+     * In order to address the diamond problem, we need to explicitly specify that we want AbstractBaseTileEntity's
      * version of markDirty.
      */
     @Suppress("redundant")
     override fun markDirty() {
+        barrelInventory.markDirty()
         super.markDirty()
+    }
+
+    override fun getUpdatePacket(): SPacketUpdateTileEntity? {
+        return SPacketUpdateTileEntity(pos, 1, updateTag)
+    }
+
+    override fun getUpdateTag(): NBTTagCompound {
+        return writeToNBT(NBTTagCompound())
     }
 }

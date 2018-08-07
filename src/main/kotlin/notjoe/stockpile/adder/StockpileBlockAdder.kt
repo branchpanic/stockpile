@@ -8,13 +8,11 @@ import notjoe.stockpile.block.BlockBarrel
 import notjoe.stockpile.block.BlockTrashCan
 import org.dimdev.rift.listener.BlockAdder
 import org.dimdev.rift.listener.ItemAdder
-import kotlin.math.pow
 
 @Suppress("unused")
 class StockpileBlockAdder : BlockAdder, ItemAdder {
     private val blocks = mapOf<String, Block>(
-            "barrel" to BlockBarrel(64),
-            "black_hole_barrel" to BlockBarrel(2.0.pow(24).toInt()),
+            "barrel" to BlockBarrel(32),
             "trash_can" to BlockTrashCan()
     )
 

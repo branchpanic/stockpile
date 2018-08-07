@@ -29,7 +29,7 @@ import notjoe.stockpile.tile.TileBarrel
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.util.rayTraceFromEyes
 
-class BlockBarrel(private val maxStacks: Int = 32) :
+class BlockBarrel(private val maxStacks: Int) :
         BlockDirectional(Block.Builder
                 .create(Material.WOOD)
                 .soundType(SoundType.WOOD)
@@ -39,13 +39,22 @@ class BlockBarrel(private val maxStacks: Int = 32) :
         defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
     }
 
-
     override fun addPropertiesToBuilder(stateBuilder: StateContainer.Builder<Block, IBlockState>?) {
         stateBuilder?.addProperties(FACING)
     }
 
     override fun hasTileEntity(): Boolean = true
-    override fun getTileEntity(p0: IBlockReader?): TileEntity? = TileBarrel(maxStacks)
+    override fun getTileEntity(world: IBlockReader?): TileEntity? = TileBarrel(maxStacks)
+
+    override fun hasComparatorInputOverride(state: IBlockState?): Boolean = true
+    override fun getComparatorInputOverride(state: IBlockState?, world: World?, pos: BlockPos?): Int {
+        if (world == null || pos == null) {
+            return 0
+        }
+
+        val tile = world.getTileEntity(pos) as TileBarrel
+        return (15 * (tile.amountStored.toDouble() / tile.maxStacks)).toInt()
+    }
 
     override fun onLeftClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?) {
         if (world == null || player == null || state == null || world.isRemote) {
@@ -83,7 +92,8 @@ class BlockBarrel(private val maxStacks: Int = 32) :
         return defaultState.withProperty(FACING, context.func_196010_d().opposite)
     }
 
-    override fun beforeReplacingBlock(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?, unknown: Boolean) {
+    override fun beforeReplacingBlock(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
+                                      unknown: Boolean) {
         if (world == null || pos == null || oldState == newState || world.isRemote) {
             return
         }
@@ -99,6 +109,8 @@ class BlockBarrel(private val maxStacks: Int = 32) :
         workingStack.setTagInfo("BarrelTileData", tileDataCompound)
 
         Block.spawnAsEntity(world, pos, workingStack)
+
+        super.beforeReplacingBlock(oldState, world, pos, newState, unknown)
     }
 
     override fun spawnItems(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {

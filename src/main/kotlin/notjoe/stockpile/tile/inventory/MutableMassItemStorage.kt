@@ -21,7 +21,7 @@ const val INPUT_SLOT_INDEX = 1
  * changes are made.
  */
 class MutableMassItemStorage(private var _stackType: ItemStack,
-                             private var maxStacks: Int,
+                             var maxStacks: Int,
                              var amount: Int = 0) :
         AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
 
@@ -39,7 +39,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
         }
 
     val typeIsUndefined: Boolean get() = stackType.isEmpty
-    private val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
+    val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
 
     /**
      * Inserts an ItemStack into this MutableMassItemStorage and returns the remainder.

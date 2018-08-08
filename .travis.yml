@@ -1,0 +1,14 @@
+language: java
+install:
+- gradle setupCiWorkspace
+build:
+- gradle reobfJar
+deploy:
+  provider: releases
+  api_key:
+    secure: Vs+c7NAml5BHPccvtyW5xVGATcpdDzcUZBU0SC78yNjki2xbLuMg3LMHFPtbhsrc+HEZ2xYHgFZ8oDI0Wn9S3lWbO1P3qSb0+UinDoTkaTF7awPs0PGRToypDY1ACYsKb5woGHmFQmFxLfG9CVh1M1G3qOlUMbMGu2blHvyADX2fDvk6WQ1WpssCdKeZi10kY+3I1WzvJnBlN27Wu4FFCrWNfZkxAgqOylvX9iD7LOYihOgNxMw0wKEWRx4zZKPbSNPIK83bDlV9z2qwn21JZcSCjN/M2tcEgTTmv8A7Pl5ti/xOgfrxSkJP8y5HFAb8F8ydeQz48yqVJIhBkrMx4U+A2FCO9trG264V2bUoCnWcCWA7TAV549KX6VLZ/z5Y50hyIHqKtk5npK2jH8usdN0DxBItdWDi2tJKAOTVpD6igurbhRYLNQLm0a2sLjniEmFsPZkVUtfbtQQAKEU0JIXOS+m0XDTqkDCqVAB3Eb5pDMSsliQRdsXkphUGRwcRkGoButaf47DbTiPO/TPLfw5NGABcMpxbeuP1Oi2gLbvMpYPZdUTcLJWKbO4KDCSNBC7x+f7ha5po0phXZbqSaM3pBgTvjXcKpvNGCGL8iYLPAW9znN6wNFQy8M/h1VW/rS8vwFWpccpG7FYy4kzZGC7OrdJNSYU/dnWS5lhBj/I=
+  file_glob: true
+  file: build/libs/*.jar
+  skip_cleanup: true
+  on:
+    tags: true

@@ -41,6 +41,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         GlStateManager.popMatrix()
     }
 
+    // This method is adapted from CoFH Core's RenderUtils!
     private fun transformToFace(side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
         when (side) {
             NORTH -> {
@@ -78,7 +79,6 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         val textCenterX = xCenter * 2 - (textWidth / 2)
         val textCenterY = yCenter * 2 - (textHeight / 2)
 
-        // The following (from disableTexture2D to enableTexture2D) is adapted from EntityRenderer::drawNameplate
         GlStateManager.disableTexture2D()
 
         val tessellator = Tessellator.getInstance()
@@ -98,6 +98,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
                 .color(0.0f, 0.0f, 0.0f, 0.4f)
                 .endVertex()
         tessellator.draw()
+
         GlStateManager.enableTexture2D()
 
         GlStateManager.translate(0.0, 0.0, 0.02)

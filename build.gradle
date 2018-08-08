@@ -20,7 +20,7 @@ apply plugin: 'org.spongepowered.mixin'
 
 archivesBaseName = 'stockpile'
 group 'notjoe.stockpile'
-version '0.0.0'
+version '0.1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

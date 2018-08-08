@@ -2,20 +2,21 @@ buildscript {
     repositories {
         jcenter()
         maven { url 'https://www.dimdev.org/maven/' }
+        maven { url 'http://repo.spongepowered.org/maven' }
     }
 
     dependencies {
         classpath 'org.dimdev:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '2.0.4'
     id 'org.jetbrains.kotlin.jvm' version '1.2.51'
 }
 
 apply plugin: 'net.minecraftforge.gradle.tweaker-client'
+apply plugin: 'org.spongepowered.mixin'
 
 archivesBaseName = 'stockpile'
 group 'notjoe.stockpile'
@@ -26,9 +27,19 @@ repositories {
     maven { url 'https://www.dimdev.org/maven/' }
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 dependencies {
-    shadow 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    shade 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'org.dimdev:rift:1.0.2-33:dev'
+}
+
+mixin {
+    defaultObfuscationEnv notch
+    add sourceSets.main, 'mixins.stockpile.refmap.json'
 }
 
 minecraft {
@@ -36,12 +47,17 @@ minecraft {
     mappings = 'snapshot_5'
     runDir = 'run'
     tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderTweaker'
+
 }
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+jar {
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
 }

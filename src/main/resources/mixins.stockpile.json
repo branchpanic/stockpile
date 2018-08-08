@@ -2,11 +2,11 @@
   "required": true,
   "minVersion": "0.7.7",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "mixins.stockpile.refmap.json",
+  "target": "@env(DEFAULT)",
   "package": "notjoe.stockpile.mixin",
+  "refmap": "mixins.stockpile.refmap.json",
   "mixins": [
     "ContainerRepairMixin"
   ],
-  "client": [],
-  "server": []
+  "client": []
 }

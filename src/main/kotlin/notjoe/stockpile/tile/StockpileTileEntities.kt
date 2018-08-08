@@ -8,7 +8,7 @@ import org.dimdev.rift.listener.TileEntityTypeAdder
 import org.dimdev.rift.listener.client.TileEntityRendererAdder
 
 @Suppress("unused")
-class StockpileTileEntityAdder : TileEntityTypeAdder, TileEntityRendererAdder {
+class StockpileTileEntities : TileEntityTypeAdder, TileEntityRendererAdder {
     override fun registerTileEntityTypes() {
         TileBarrel.TYPE = TileEntityType.registerTileEntityType("stockpile:barrel", TileEntityType.Builder.create { TileBarrel() })
         TileTrashCan.TYPE = TileEntityType.registerTileEntityType("stockpile:trash_can", TileEntityType.Builder.create { TileTrashCan() })

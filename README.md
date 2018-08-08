@@ -1,5 +1,7 @@
 # stockpile
 
+[![Build Status](https://travis-ci.org/notjoe7F/stockpile.svg?branch=master)](https://travis-ci.org/notjoe7F/stockpile)
+
 > A Minecraft mod all about storage.
 
 Stockpile is powered by the [Rift](https://github.com/DimensionalDevelopment/Rift)

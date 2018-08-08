@@ -1,6 +1,7 @@
 {
   "id": "stockpile",
   "name": "Stockpile",
+  "version": "0.1.0",
   "authors": [
     "notjoe_"
   ],

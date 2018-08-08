@@ -8,13 +8,14 @@ import kotlin.math.pow
 
 val SHORTHAND_SUFFIXES = arrayOf("k", "M", "B", "T")
 fun Int.shorthand(): String {
-    val orderOfMagnitude = log10(abs(toDouble())).toInt() - 1
-    if (orderOfMagnitude < 3) {
-        return toString()
+    val orderOfMagnitude = log10(abs(toDouble())).toInt()
+    if (orderOfMagnitude < 4) {
+        return "%,d".format(this)
     }
 
-    val suffix = SHORTHAND_SUFFIXES[min(orderOfMagnitude % 3, SHORTHAND_SUFFIXES.size)]
-    val displayNumber = "%.2f".format(this / 10.0.pow(orderOfMagnitude))
+    val displayMagnitude = orderOfMagnitude / 3
+    val suffix = SHORTHAND_SUFFIXES[min(displayMagnitude - 1, SHORTHAND_SUFFIXES.size)]
+    val displayNumber = "%.1f".format(this / 10.0.pow(3 * displayMagnitude))
 
     return displayNumber + suffix
 }

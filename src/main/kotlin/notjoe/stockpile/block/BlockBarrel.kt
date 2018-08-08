@@ -24,12 +24,10 @@ import net.minecraft.util.text.TextComponentTranslation
 import net.minecraft.util.text.TextFormatting
 import net.minecraft.world.IBlockReader
 import net.minecraft.world.World
-import notjoe.stockpile.tile.AbstractBaseTileEntity
 import notjoe.stockpile.tile.TileBarrel
-import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.util.rayTraceFromEyes
 
-class BlockBarrel(private val maxStacks: Int) :
+class BlockBarrel :
         BlockDirectional(Block.Builder
                 .create(Material.WOOD)
                 .soundType(SoundType.WOOD)
@@ -44,7 +42,7 @@ class BlockBarrel(private val maxStacks: Int) :
     }
 
     override fun hasTileEntity(): Boolean = true
-    override fun getTileEntity(world: IBlockReader?): TileEntity? = TileBarrel(maxStacks)
+    override fun getTileEntity(world: IBlockReader?): TileEntity? = TileBarrel()
 
     override fun hasComparatorInputOverride(state: IBlockState?): Boolean = true
     override fun getComparatorInputOverride(state: IBlockState?, world: World?, pos: BlockPos?): Int {
@@ -53,7 +51,7 @@ class BlockBarrel(private val maxStacks: Int) :
         }
 
         val tile = world.getTileEntity(pos) as TileBarrel
-        return (15 * (tile.amountStored.toDouble() / tile.maxStacks)).toInt()
+        return (15 * (tile.amountStored.toDouble() / (tile.maxStacks * tile.stackType.maxStackSize))).toInt()
     }
 
     override fun onLeftClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?) {
@@ -99,12 +97,13 @@ class BlockBarrel(private val maxStacks: Int) :
         }
 
         val tile = world.getTileEntity(pos) as TileBarrel
+        val workingStack = ItemStack(item)
 
         if (tile.isEmpty) {
-            return
+            tile.clearStackType()
+            tile.markDirty()
         }
 
-        val workingStack = ItemStack(item)
         val tileDataCompound = tile.writePersistentValuesToNBT(NBTTagCompound())
         workingStack.setTagInfo("BarrelTileData", tileDataCompound)
 
@@ -113,17 +112,7 @@ class BlockBarrel(private val maxStacks: Int) :
         super.beforeReplacingBlock(oldState, world, pos, newState, unknown)
     }
 
-    override fun spawnItems(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {
-        if (world == null || pos == null || world.isRemote) {
-            return
-        }
-
-        val tile = world.getTileEntity(pos) as TileBarrel
-
-        if (tile.isEmpty) {
-            Block.spawnAsEntity(world, pos, ItemStack(item))
-        }
-    }
+    override fun spawnItems(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {}
 
     override fun onBlockPlacedBy(world: World?, pos: BlockPos?, state: IBlockState?, placer: EntityLivingBase?,
                                  placeStack: ItemStack?) {
@@ -133,39 +122,40 @@ class BlockBarrel(private val maxStacks: Int) :
 
         val stackCompound = placeStack.func_196082_o()
         if (stackCompound.hasKey("BarrelTileData")) {
-            val tile = world.getTileEntity(pos) as AbstractBaseTileEntity
+            val tile = world.getTileEntity(pos) as TileBarrel
             tile.readPersistentValuesFromNBT(stackCompound.getCompoundTag("BarrelTileData"))
         }
     }
 
-    override fun addInformation(stack: ItemStack?, world: IBlockReader?, textComponents: MutableList<ITextComponent>?, tooltipFlag: ITooltipFlag?) {
-        if (stack == null || textComponents == null) {
+    override fun addInformation(stack: ItemStack?, world: IBlockReader?, lore: MutableList<ITextComponent>?, tooltipFlag: ITooltipFlag?) {
+        if (stack == null || lore == null) {
             return
         }
 
-        val stackCompound = stack.func_196082_o()
-        if (stackCompound.hasKey("BarrelTileData")) {
-            val inventoryCompound = stackCompound.getCompoundTag("BarrelTileData").getCompoundTag("Inventory")
+        val storedTile = try {
+            TileBarrel()
+        } catch (e: Exception) {
+            return
+        }
+        storedTile.readPersistentValuesFromNBT(stack.func_196082_o().getCompoundTag("BarrelTileData"))
 
-            val stackType = ItemStack.func_199557_a(inventoryCompound.getCompoundTag(
-                    MutableMassItemStorage.STACK_TYPE_KEY))
-            val amount = inventoryCompound.getInteger(MutableMassItemStorage.AMOUNT_KEY)
-
-            val contentsComponent = TextComponentTranslation("stockpile.barrel.contents_stack",
-                    String.format("%,d", amount), stackType.item.getDisplayName(stackType),
-                    String.format("%,d", amount / stackType.maxStackSize))
-            contentsComponent.style.apply {
-                color = TextFormatting.YELLOW
-            }
-
-            textComponents.add(contentsComponent)
+        if (storedTile.isEmpty) {
+            val emptyComponent = TextComponentTranslation("stockpile.barrel.empty")
+            emptyComponent.style.color = TextFormatting.GRAY
+            lore.add(emptyComponent)
+        } else {
+            val containedItem = storedTile.stackType
+            val containedItemName = containedItem.item.name.unformattedComponentText
+            val containedAmount = storedTile.amountStored
+            val containedStacks = containedAmount / containedItem.maxStackSize
+            val stacksContainedComponent = TextComponentTranslation("stockpile.barrel.contents_stack",
+                    containedItemName, "%,d".format(containedAmount), "%,d".format(containedStacks))
+            stacksContainedComponent.style.color = TextFormatting.GRAY
+            lore.add(stacksContainedComponent)
         }
 
-        val sizeComponent = TextComponentTranslation("stockpile.barrel.size_stack", maxStacks)
-        sizeComponent.style.apply {
-            color = TextFormatting.DARK_GRAY
-        }
-
-        textComponents.add(sizeComponent)
+        val stackSizeComponent = TextComponentTranslation("stockpile.barrel.size_stack", storedTile.maxStacks)
+        stackSizeComponent.style.color = TextFormatting.DARK_GRAY
+        lore.add(stackSizeComponent)
     }
 }

@@ -13,3 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     - Double-right-click to insert as many stacks as possible from inventory
     - Left-click to extract a single item
     - Crouch-left-click to extract an entire stack
+  - Trash Can: deletes items
+    - Right-clicking opens/closes the lid
+    - When open, items thrown on top are deleted
+    - Items hoppered in are always deleted

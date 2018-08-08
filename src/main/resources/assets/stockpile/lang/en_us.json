@@ -1,9 +1,8 @@
 {
-  "stockpile.press_crouch": "Crouch for more info...",
-  "stockpile.barrel.contents_stack": "Contains %sx %s (%s full stacks)",
+  "stockpile.barrel.empty": "Empty",
+  "stockpile.barrel.contents_stack": "%s x%s (%s full stacks)",
+  "stockpile.barrel.contents_world": "Contents: %s/%s %s (%s/%s stacks)",
   "stockpile.barrel.size_stack": "Holds up to %s stacks",
-  "stockpile.barrel.upgrade_too_large": "This barrel would become too large with that upgrade.",
-  "stockpile.trash_can.desc": "Destroys items. When open, items can be thrown at it to delete them.",
   "block.stockpile.barrel": "Barrel",
   "block.stockpile.trash_can": "Trash Can"
 }

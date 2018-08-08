@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import notjoe.stockpile.block.StockpileBlocks;
 import notjoe.stockpile.tile.TileBarrel;
+import notjoe.stockpile.tile.TileBarrelKt;
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * A mixin for ContainerRepair (Anvil container) that allows for Barrels to be upgraded with Chests.
- * <p>
  * This class is written in Java and not Kotlin to prevent more weirdness than is necessary...
  */
 @Mixin(ContainerRepair.class)
@@ -43,10 +43,21 @@ abstract public class ContainerRepairMixin extends Container {
 
         if (currentModifier.getItem() == Blocks.CHEST.getItem()) {
             int availableChests = currentModifier.getCount();
+            int addedStacks = CHEST_UPGRADE_STACKS * availableChests;
+
+            if (getBarrelMaxStacks(currentInput) + addedStacks > TileBarrelKt.BARREL_MAX_STACK_CAPACITY) {
+                return;
+            }
+
             outputSlot.setInventorySlotContents(0, getUpgradedBarrelStack(currentInput, CHEST_UPGRADE_STACKS * availableChests));
             maximumCost = (int) (0.6 * availableChests + 1);
             detectAndSendChanges();
         }
+    }
+
+    private int getBarrelMaxStacks(ItemStack barrelStack) {
+        NBTTagCompound inventoryCompound = getOrInitBarrelCompound(barrelStack).getCompoundTag("Inventory");
+        return inventoryCompound.getInteger(MutableMassItemStorage.MAX_STACKS_KEY);
     }
 
     private ItemStack getUpgradedBarrelStack(ItemStack barrelStack, int addedStacks) {

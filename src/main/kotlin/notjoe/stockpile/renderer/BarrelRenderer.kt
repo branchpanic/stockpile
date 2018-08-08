@@ -8,19 +8,16 @@ import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
+import net.minecraft.client.resources.I18n
 import net.minecraft.item.ItemStack
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.EnumFacing.*
 import net.minecraft.util.math.BlockPos
 import notjoe.stockpile.tile.TileBarrel
+import notjoe.stockpile.util.shorthand
 import org.lwjgl.opengl.GL11
-import kotlin.math.abs
-import kotlin.math.log10
-import kotlin.math.min
-import kotlin.math.pow
 
-// A magical constant from CoFH Core's rendering utils
-const val RENDER_OFFSET = 1.0 / 512.0
+const val BARREL_TRANSFORM_OFFSET = 1.0 / 512.0
 
 class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     private val renderItem = Minecraft.getMinecraft().renderItem
@@ -47,33 +44,33 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     private fun transformToFace(side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
         when (side) {
             NORTH -> {
-                GlStateManager.translate(xPos + 0.75, yPos + 0.75, zPos + RENDER_OFFSET * 145)
+                GlStateManager.translate(xPos + 0.75, yPos + 0.75, zPos + BARREL_TRANSFORM_OFFSET * 145)
             }
             SOUTH -> {
-                GlStateManager.translate(xPos + 0.25, yPos + 0.75, zPos + 1 - RENDER_OFFSET * 145)
+                GlStateManager.translate(xPos + 0.25, yPos + 0.75, zPos + 1 - BARREL_TRANSFORM_OFFSET * 145)
                 GlStateManager.rotate(180f, 0f, 1f, 0f)
             }
             WEST -> {
-                GlStateManager.translate(xPos + RENDER_OFFSET * 145, yPos + 0.75, zPos + 0.25)
+                GlStateManager.translate(xPos + BARREL_TRANSFORM_OFFSET * 145, yPos + 0.75, zPos + 0.25)
                 GlStateManager.rotate(90f, 0f, 1f, 0f)
             }
             EAST -> {
-                GlStateManager.translate(xPos + 1 - RENDER_OFFSET * 145, yPos + 0.75, zPos + 0.75)
+                GlStateManager.translate(xPos + 1 - BARREL_TRANSFORM_OFFSET * 145, yPos + 0.75, zPos + 0.75)
                 GlStateManager.rotate(-90f, 0f, 1f, 0f)
             }
             UP -> {
-                GlStateManager.translate(xPos + 0.75, yPos + 1 - RENDER_OFFSET * 145, zPos + 0.75)
+                GlStateManager.translate(xPos + 0.75, yPos + 1 - BARREL_TRANSFORM_OFFSET * 145, zPos + 0.75)
                 GlStateManager.rotate(90f, 1f, 0f, 0f)
             }
             DOWN -> {
-                GlStateManager.translate(xPos + 0.75, yPos + RENDER_OFFSET * 145, zPos + 0.25)
+                GlStateManager.translate(xPos + 0.75, yPos + BARREL_TRANSFORM_OFFSET * 145, zPos + 0.25)
                 GlStateManager.rotate(-90f, 1f, 0f, 0f)
             }
         }
     }
 
-    private fun renderFlatText(text: String, xCenter: Float, yCenter: Float, color: Int) {
-        GlStateManager.translate(0.0, 0.0, 0.315 * 1 / RENDER_OFFSET)
+    private fun renderDisplayText(text: String, xCenter: Float, yCenter: Float, color: Int) {
+        GlStateManager.translate(0.0, 0.0, 0.315 * 1 / BARREL_TRANSFORM_OFFSET)
         GlStateManager.scale(0.5, 0.5, 1.0)
 
         val textWidth = fontRenderer.getStringWidth(text)
@@ -107,7 +104,6 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         fontRenderer.func_211126_b(text, textCenterX, textCenterY, color)
     }
 
-    // Adapted from https://github.com/CoFH/CoFHCore/blob/f53327609aa6fc6fd3dedbd50a9b763d764bd450/src/main/java/cofh/core/render/RenderUtils.java#L43
     private fun renderDisplay(stack: ItemStack, amount: Int, availableSpace: Int, tilePos: BlockPos,
                               side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
         if (stack.isEmpty) {
@@ -118,7 +114,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         transformToFace(side, xPos, yPos, zPos)
 
-        GlStateManager.scale(0.03125, 0.03125, -RENDER_OFFSET)
+        GlStateManager.scale(0.03125, 0.03125, -BARREL_TRANSFORM_OFFSET)
         GlStateManager.rotate(180f, 0f, 0f, 1f)
 
         val renderSide = tilePos.offset(side)
@@ -129,11 +125,10 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightmapU.toFloat(), lightmapV.toFloat())
         }
 
-        renderItem.renderItemAndEffectIntoGUI(stack, 0, 0)
+        renderItem.renderItemAndEffectIntoGUI(stack, 0, -3)
 
-        if (amount > 0) {
-            renderFlatText(amount.toShorthand(), 8f, 16f, if (availableSpace <= 0) 0xFFFF22 else 0xFFFFFF)
-        }
+        renderDisplayText(if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
+                8f, 16f, if (availableSpace <= 0) 0xFFFF22 else 0xFFFFFF)
 
         GlStateManager.enableAlpha()
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f)
@@ -143,17 +138,4 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         RenderHelper.enableStandardItemLighting()
     }
-}
-
-val SHORTHAND_SUFFIXES = arrayOf("k", "M", "B", "T")
-fun Int.toShorthand(): String {
-    val orderOfMagnitude = log10(abs(toDouble())).toInt() - 1
-    if (orderOfMagnitude < 3) {
-        return toString()
-    }
-
-    val suffix = SHORTHAND_SUFFIXES[min(orderOfMagnitude % 3, SHORTHAND_SUFFIXES.size)]
-    val displayNumber = "%.2f".format(this / 10.0.pow(orderOfMagnitude))
-
-    return displayNumber + suffix
 }

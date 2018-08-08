@@ -1,0 +1,8 @@
+{
+  "package": "notjoe.stockpile.mixin",
+  "mixins": [
+    "ContainerRepairMixin"
+  ],
+  "client": [],
+  "server": []
+}

@@ -9,6 +9,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
+import net.minecraft.util.text.TextComponentTranslation
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.tile.inventory.OUTPUT_SLOT_INDEX
 import notjoe.stockpile.util.withCount
@@ -25,11 +26,8 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
         IInventory by barrelInventory {
 
     companion object {
-        @JvmStatic
         lateinit var TYPE: TileEntityType<TileBarrel>
     }
-
-    constructor(baseStackLimit: Int) : this(MutableMassItemStorage(ItemStack.EMPTY, baseStackLimit))
 
     private var barrelInventory by nbtBacked("Inventory", barrelInventory)
 
@@ -39,6 +37,10 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     val maxStacks get() = barrelInventory.maxStacks
 
     var rightClickCache = emptyMap<UUID, Long>()
+
+    fun clearStackType() {
+        barrelInventory.stackType = ItemStack.EMPTY
+    }
 
     /**
      * Determines whether or not a player double-clicked this barrel.
@@ -78,6 +80,36 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
                 markDirty()
             }
         }
+
+        displayBarrelContents(player)
+    }
+
+    /**
+     * Handles a left-click by a player.
+     *
+     * - Normal left-clicking will attempt to extract a single item from this barrel.
+     * - Crouch-left-clicking will attempt to remove an entire stack from this barrel.
+     */
+    fun handleLeftClick(player: EntityPlayer) {
+        val amountToExtract = if (player.isSneaking) inventoryStackLimit else 1
+        val extractedStack = decrStackSize(OUTPUT_SLOT_INDEX, amountToExtract)
+
+        if (!extractedStack.isEmpty) {
+            player.addItemStackToInventory(extractedStack)
+            world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.1f, 0.7f)
+        }
+
+        displayBarrelContents(player)
+        markDirty()
+    }
+
+    private fun displayBarrelContents(player: EntityPlayer) {
+        player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.contents_world",
+                "%,d".format(amountStored),
+                "%,d".format(maxStacks * inventoryStackLimit),
+                stackType.item.name.unformattedComponentText,
+                "%,d".format(amountStored / inventoryStackLimit),
+                "%,d".format(maxStacks)), true)
     }
 
     /**
@@ -113,31 +145,12 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     }
 
     /**
-     * Handles a left-click by a player.
-     *
-     * - Normal left-clicking will attempt to extract a single item from this barrel.
-     * - Crouch-left-clicking will attempt to remove an entire stack from this barrel.
-     */
-    fun handleLeftClick(player: EntityPlayer) {
-        val amountToExtract = if (player.isSneaking) inventoryStackLimit else 1
-        val extractedStack = decrStackSize(OUTPUT_SLOT_INDEX, amountToExtract)
-
-        if (!extractedStack.isEmpty) {
-            player.addItemStackToInventory(extractedStack)
-            world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.1f, 0.7f)
-        }
-
-        markDirty()
-    }
-
-    /**
      * In order to address the diamond problem, we need to explicitly specify that we want AbstractBaseTileEntity's
      * version of markDirty.
      */
-    @Suppress("redundant")
     override fun markDirty() {
-        barrelInventory.markDirty()
         super.markDirty()
+        world.notifyNeighborsOfStateChange(pos, blockState.block)
     }
 
     override fun getUpdatePacket(): SPacketUpdateTileEntity? {

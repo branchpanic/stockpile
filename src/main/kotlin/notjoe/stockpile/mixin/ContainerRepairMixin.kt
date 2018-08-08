@@ -31,12 +31,7 @@ abstract class ContainerRepairMixin : Container() {
     @Shadow
     private var maximumCost = 0
 
-    private fun upgradeBarrelStack(barrelStack: ItemStack, addedStacks: Int): ItemStack {
-        val upgradedStack = barrelStack.copy()
-        upgradedStack.barrelMaxStacks += addedStacks
-        return upgradedStack
-    }
-
+    @Suppress("unused")
     @Inject(method = ["updateRepairOutput"], at = [At("RETURN")])
     fun updateRepairOutput(ci: CallbackInfo) {
         val currentInput = inputSlots.getStackInSlot(0)
@@ -51,6 +46,12 @@ abstract class ContainerRepairMixin : Container() {
             maximumCost = (0.6 * chestCount + 1).toInt()
             detectAndSendChanges()
         }
+    }
+
+    private fun upgradeBarrelStack(barrelStack: ItemStack, addedStacks: Int): ItemStack {
+        val upgradedStack = barrelStack.copy()
+        upgradedStack.barrelMaxStacks += addedStacks
+        return upgradedStack
     }
 
     private var ItemStack.barrelMaxStacks

@@ -1,4 +1,4 @@
-@file:Suppress("OverridingDeprecatedMember")
+@file:Suppress("OverridingDeprecatedMember", "DEPRECATION")
 
 package notjoe.stockpile.block
 
@@ -69,7 +69,6 @@ class BlockBarrel :
         tile.handleLeftClick(player)
     }
 
-    @Suppress("deprecated")
     override fun onRightClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
                               hand: EnumHand?, face: EnumFacing?, x: Float, y: Float, z: Float): Boolean {
         if (world == null || player == null || world.isRemote) {

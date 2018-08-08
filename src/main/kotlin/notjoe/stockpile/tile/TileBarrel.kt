@@ -30,13 +30,12 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     }
 
     private var barrelInventory by nbtBacked("Inventory", barrelInventory)
+    private var rightClickCache = emptyMap<UUID, Long>()
 
     val stackType get() = barrelInventory.stackType
     val amountStored get() = barrelInventory.amount
     val availableSpace get() = barrelInventory.availableSpace
     val maxStacks get() = barrelInventory.maxStacks
-
-    var rightClickCache = emptyMap<UUID, Long>()
 
     fun clearStackType() {
         barrelInventory.stackType = ItemStack.EMPTY

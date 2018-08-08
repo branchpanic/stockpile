@@ -6,10 +6,12 @@ buildscript {
 
     dependencies {
         classpath 'org.dimdev:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
     }
 }
 
 plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
     id 'org.jetbrains.kotlin.jvm' version '1.2.51'
 }
 
@@ -25,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    shadow 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'org.dimdev:rift:1.0.2-33:dev'
 }
 

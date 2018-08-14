@@ -12,6 +12,7 @@ buildscript {
 }
 
 plugins {
+    id 'org.ajoberstar.reckon' version '0.8.0'
     id 'org.jetbrains.kotlin.jvm' version '1.2.51'
 }
 
@@ -20,7 +21,6 @@ apply plugin: 'org.spongepowered.mixin'
 
 archivesBaseName = 'stockpile'
 group 'notjoe.stockpile'
-version '0.1.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -37,7 +37,7 @@ configurations {
 
 dependencies {
     shade 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'org.dimdev:rift:1.0.2-33:dev'
+    implementation 'org.dimdev:rift:1.0.3-45:dev'
 }
 
 mixin {
@@ -49,7 +49,12 @@ minecraft {
     version = '1.13'
     mappings = 'snapshot_5'
     runDir = 'run'
-    tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderTweaker'
+    tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderClientTweaker'
+}
+
+reckon {
+    scopeFromProp()
+    stageFromProp('beta', 'rc', 'final')
 }
 
 compileKotlin {
@@ -62,4 +67,8 @@ jar {
             exclude 'META-INF', 'META-INF/**'
         }
     }
+}
+
+processResources {
+    expand project.properties
 }

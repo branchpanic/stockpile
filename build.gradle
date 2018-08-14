@@ -88,5 +88,7 @@ artifacts {
 }
 
 processResources {
-    expand project.properties
+    filesMatching('riftmod.json') {
+        expand 'version': project.version
+    }
 }

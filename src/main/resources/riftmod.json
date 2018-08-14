@@ -1,7 +1,7 @@
 {
   "id": "stockpile",
   "name": "Stockpile",
-  "version": "${version}",
+  "version": "$version",
   "authors": [
     "notjoe_"
   ],

@@ -67,6 +67,24 @@ jar {
             exclude 'META-INF', 'META-INF/**'
         }
     }
+
+    finalizedBy reobfJar
+}
+
+task devJar(type: Jar, dependsOn: classes) {
+    classifier 'dev'
+    from sourceSets.main.output
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar
+    archives devJar
+    archives sourcesJar
 }
 
 processResources {

@@ -18,5 +18,5 @@ the project can be imported into your IDE of choice.
 
 ### Building
 
-A distributable jar (containing packed dependencies) can be built with the `reobfJar` task.
+A default Gradle build will produce a distributable (dependencies shaded), development, and source jar.
 

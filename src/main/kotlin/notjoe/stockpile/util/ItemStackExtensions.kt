@@ -2,13 +2,18 @@ package notjoe.stockpile.util
 
 import net.minecraft.item.ItemStack
 
+/**
+ * Creates a copy of an ItemStack with a given count.
+ */
 fun ItemStack.withCount(newCount: Int): ItemStack {
     val copiedStack = copy()
     copiedStack.count = newCount
     return copiedStack
 }
 
-// An adaptation of ItemStack::areItemStacksEqual which doesn't factor in quantity.
+/**
+ * Checks if this ItemStack is stackable with another given ItemStack (same item and NBT data).
+ */
 fun ItemStack.isStackableWith(other: ItemStack): Boolean {
     return if (item !== other.item) {
         false

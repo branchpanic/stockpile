@@ -12,16 +12,16 @@ import org.dimdev.rift.listener.ItemAdder
 class StockpileBlocks : BlockAdder, ItemAdder {
     companion object Definitions {
         val barrel = BlockBarrel()
-        val trash_can = BlockTrashCan()
+        val trashCan = BlockTrashCan()
     }
 
     override fun registerBlocks() {
         Block.registerBlock(ResourceLocation("stockpile", "barrel"), barrel)
-        Block.registerBlock(ResourceLocation("stockpile", "trash_can"), trash_can)
+        Block.registerBlock(ResourceLocation("stockpile", "trashCan"), trashCan)
     }
 
     override fun registerItems() {
         Item.registerItemBlock(ItemBlock(barrel, Item.Builder().maxStackSize(1).group(ItemGroup.DECORATIONS)))
-        Item.registerItemBlock(trash_can, ItemGroup.DECORATIONS)
+        Item.registerItemBlock(trashCan, ItemGroup.DECORATIONS)
     }
 }

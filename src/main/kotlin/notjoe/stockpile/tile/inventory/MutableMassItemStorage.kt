@@ -7,15 +7,15 @@ import notjoe.stockpile.util.isStackableWith
 import notjoe.stockpile.util.withCount
 import kotlin.math.min
 
-const val OUTPUT_SLOT_INDEX = 0
-const val INPUT_SLOT_INDEX = 1
+const val BARREL_OUTPUT_SLOT_INDEX = 0
+const val BARREL_INPUT_SLOT_INDEX = 1
 
 /**
  * Inventory implementation for storing a large amount of a single ItemStack.
  *
- * Contains two slots: one for output, and one for input (see constants INPUT_SLOT_INDEX and OUTPUT_SLOT_INDEX). The
- * output slot always supplies as much of the contained item as possible. The input slot is empty until the amount
- * reaches (maxStacks - 1) * stackLimit, in which it then contains the remaining stack.
+ * Contains two slots: one for output, and one for input (see constants BARREL_INPUT_SLOT_INDEX and
+ * BARREL_OUTPUT_SLOT_INDEX). The output slot always supplies as much of the contained item as possible. The input slot
+ * is empty until the amount reaches (maxStacks - 1) * stackLimit, in which it then contains the remaining stack.
  *
  * This implementation allows for the stack type to be mutated in-place. The method markDirty() is called whenever
  * changes are made.
@@ -45,13 +45,13 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
      * Inserts an ItemStack into this MutableMassItemStorage and returns the remainder.
      */
     fun insertStack(stack: ItemStack): ItemStack {
-        if (!isItemValidForSlot(INPUT_SLOT_INDEX, stack)) {
+        if (!isItemValidForSlot(BARREL_INPUT_SLOT_INDEX, stack)) {
             return stack
         }
 
         val insertableAmount = min(stack.count, availableSpace)
         val remainderAmount = stack.count - insertableAmount
-        setInventorySlotContents(INPUT_SLOT_INDEX, stack)
+        setInventorySlotContents(BARREL_INPUT_SLOT_INDEX, stack)
 
         return if (remainderAmount > 0) {
             stack.withCount(remainderAmount)
@@ -61,14 +61,14 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
     }
 
     override fun getStackInSlot(slotIndex: Int): ItemStack {
-        if (slotIndex == INPUT_SLOT_INDEX) {
+        if (slotIndex == BARREL_INPUT_SLOT_INDEX) {
             val lastStackAmount = amount - ((maxStacks - 1) * inventoryStackLimit)
             if (lastStackAmount > 0) {
                 return stackType.withCount(lastStackAmount)
             }
         }
 
-        if (slotIndex == OUTPUT_SLOT_INDEX) {
+        if (slotIndex == BARREL_OUTPUT_SLOT_INDEX) {
             val availableStackAmount = min(amount, inventoryStackLimit)
             if (availableStackAmount > 0) {
                 return stackType.withCount(availableStackAmount)
@@ -115,11 +115,11 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
         return !typeIsUndefined && stack != null && !stack.isEmpty &&
-                slotIndex == INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
+                slotIndex == BARREL_INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
     }
 
     override fun setInventorySlotContents(slotIndex: Int, stack: ItemStack?) {
-        if (slotIndex != INPUT_SLOT_INDEX || stack == null || stack.isEmpty) {
+        if (slotIndex != BARREL_INPUT_SLOT_INDEX || stack == null || stack.isEmpty) {
             return
         }
 

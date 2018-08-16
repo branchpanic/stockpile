@@ -91,7 +91,7 @@ class BlockBarrel :
 
     override fun beforeReplacingBlock(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
                                       unknown: Boolean) {
-        if (world == null || pos == null || oldState == newState || world.isRemote) {
+        if (world == null || pos == null || oldState?.block == newState?.block || world.isRemote) {
             return
         }
 
@@ -108,6 +108,7 @@ class BlockBarrel :
 
         Block.spawnAsEntity(world, pos, workingStack)
 
+        world.removeTileEntity(pos)
         super.beforeReplacingBlock(oldState, world, pos, newState, unknown)
     }
 

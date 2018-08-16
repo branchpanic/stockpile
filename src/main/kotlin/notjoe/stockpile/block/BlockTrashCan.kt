@@ -1,6 +1,9 @@
+@file:Suppress("OverridingDeprecatedMember", "DEPRECATION")
+
 package notjoe.stockpile.block
 
 import net.minecraft.block.Block
+import net.minecraft.block.BlockContainer
 import net.minecraft.block.ITileEntityProvider
 import net.minecraft.block.material.Material
 import net.minecraft.block.state.IBlockState
@@ -39,6 +42,15 @@ class BlockTrashCan :
 
     override fun addPropertiesToBuilder(builder: StateContainer.Builder<Block, IBlockState>?) {
         builder?.addProperties(LID_OPEN, BlockStateProperties.WATERLOGGED)
+    }
+
+    override fun beforeReplacingBlock(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
+                                      unknown: Boolean) {
+        super.beforeReplacingBlock(oldState, world, pos, newState, unknown)
+
+        if (oldState?.block != newState?.block && pos != null) {
+            world?.removeTileEntity(pos)
+        }
     }
 
     override fun isFullCube(state: IBlockState?): Boolean = false

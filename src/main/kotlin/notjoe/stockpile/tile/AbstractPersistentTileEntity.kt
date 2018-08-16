@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty
 /**
  * A base tile entity for Stockpile, which
  */
-abstract class AbstractBaseTileEntity(type: TileEntityType<*>?) : TileEntity(type) {
+abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEntity(type) {
     private var persistentValues = emptyList<ReadWriteNBTProperty<*>>()
 
     // In our case, markDirty basically just means "sync now." This will probably change in the future.

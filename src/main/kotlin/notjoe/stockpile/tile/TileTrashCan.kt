@@ -2,6 +2,7 @@ package notjoe.stockpile.tile
 
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.inventory.ISidedInventory
+import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.ITickable
 import net.minecraft.util.math.AxisAlignedBB
@@ -11,7 +12,7 @@ import notjoe.stockpile.tile.inventory.VoidInventory
 /**
  * A TileEntity which destroys items inserted into it.
  */
-class TileTrashCan : AbstractBaseTileEntity(TYPE), ISidedInventory by VoidInventory(), ITickable {
+class TileTrashCan : TileEntity(TYPE), ISidedInventory by VoidInventory(), ITickable {
     companion object Type {
         lateinit var TYPE: TileEntityType<TileTrashCan>
     }

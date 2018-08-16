@@ -22,10 +22,10 @@ const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a ca
  * A (JABBA|YABBA|Storage Drawers|etc.)-inspired container which allows for storing a large amount of a single item.
  */
 class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorage(ItemStack.EMPTY, 32)) :
-        AbstractBaseTileEntity(TileBarrel.TYPE),
+        AbstractPersistentTileEntity(TileBarrel.TYPE),
         IInventory by barrelInventory {
 
-    companion object {
+    companion object Type {
         lateinit var TYPE: TileEntityType<TileBarrel>
     }
 

@@ -28,6 +28,7 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://www.dimdev.org/maven/' }
+    maven { url 'https://jitpack.io' }
 }
 
 configurations {
@@ -37,6 +38,7 @@ configurations {
 
 dependencies {
     shade 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
     implementation 'org.dimdev:rift:1.0.3-45:dev'
 }
 

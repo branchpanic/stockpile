@@ -11,7 +11,7 @@ import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.text.TextComponentTranslation
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage
-import notjoe.stockpile.tile.inventory.OUTPUT_SLOT_INDEX
+import notjoe.stockpile.tile.inventory.BARREL_OUTPUT_SLOT_INDEX
 import notjoe.stockpile.util.withCount
 import java.util.*
 
@@ -91,7 +91,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
      */
     fun handleLeftClick(player: EntityPlayer) {
         val amountToExtract = if (player.isSneaking) inventoryStackLimit else 1
-        val extractedStack = decrStackSize(OUTPUT_SLOT_INDEX, amountToExtract)
+        val extractedStack = decrStackSize(BARREL_OUTPUT_SLOT_INDEX, amountToExtract)
 
         if (!extractedStack.isEmpty) {
             player.addItemStackToInventory(extractedStack)

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
+## [Unreleased]
+### Added
+ - Indicator bar showing how full a barrel is
+
+### Fixed
+ - Issue where tile entities weren't removed after blocks were
+ - Empty barrels showing their item as Air when right-clicked
+
 ## [0.1.1] - 2018-14-08
 
 ### Changed

@@ -2,10 +2,7 @@ package notjoe.stockpile.renderer
 
 import net.minecraft.block.BlockDirectional
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.client.renderer.OpenGlHelper
-import net.minecraft.client.renderer.RenderHelper
-import net.minecraft.client.renderer.Tessellator
+import net.minecraft.client.renderer.*
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.client.resources.I18n
@@ -16,8 +13,11 @@ import net.minecraft.util.math.BlockPos
 import notjoe.stockpile.tile.TileBarrel
 import notjoe.stockpile.util.shorthand
 import org.lwjgl.opengl.GL11
+import java.awt.Color
+import kotlin.math.min
 
 const val BARREL_TRANSFORM_OFFSET = 1.0 / 512.0
+const val BARREL_BAR_WIDTH = 18.0
 
 class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     private val renderItem = Minecraft.getMinecraft().renderItem
@@ -37,7 +37,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         val barrelFrontDirection = tile.blockState.getValue(BlockDirectional.FACING)
 
         GlStateManager.pushMatrix()
-        renderDisplay(containedItem, tile.amountStored, tile.availableSpace, tile.pos, barrelFrontDirection, xPos, yPos, zPos)
+        renderDisplay(containedItem, tile.amountStored, tile.maxStacks * tile.inventoryStackLimit, tile.pos, barrelFrontDirection, xPos, yPos, zPos)
         GlStateManager.popMatrix()
     }
 
@@ -70,7 +70,35 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         }
     }
 
-    private fun renderDisplayText(text: String, xCenter: Float, yCenter: Float, color: Int) {
+    /**
+     * Draws a rectangle using the Tessellator at z = 0.
+     * @param x1 X-coordinate of the bottom-left corner of the rectangle.
+     * @param y1 Y-coordinate of the bottom-left corner of the rectangle.
+     * @param x2 X-coordinate of the top-left corner.
+     * @param y2 Y-coordinate of the top-left corner.
+     */
+    private fun drawFlatRectangle(x1: Double, y1: Double, x2: Double, y2: Double, color: Color) {
+        val tessellator = Tessellator.getInstance()
+        val buffer = tessellator.buffer
+
+        buffer.begin(7, DefaultVertexFormats.POSITION_COLOR)
+        buffer.pos(x2, y1, 0.0)
+                .color(color)
+                .endVertex()
+        buffer.pos(x2, y2, 0.0)
+                .color(color)
+                .endVertex()
+        buffer.pos(x1, y2, 0.0)
+                .color(color)
+                .endVertex()
+        buffer.pos(x1, y1, 0.0)
+                .color(color)
+                .endVertex()
+
+        tessellator.draw()
+    }
+
+    private fun renderProgressBar(text: String, filledAmount: Double, xCenter: Float, yCenter: Float, textColor: Int) {
         GlStateManager.translate(0.0, 0.0, 0.315 * 1 / BARREL_TRANSFORM_OFFSET)
         GlStateManager.scale(0.5, 0.5, 1.0)
 
@@ -81,31 +109,24 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         GlStateManager.disableTexture2D()
 
-        val tessellator = Tessellator.getInstance()
-        val buffer = tessellator.buffer
+        val filledBarWidth = 2 * min(filledAmount, 1.0) * BARREL_BAR_WIDTH
+        val unfilledBarWidth = 2 * BARREL_BAR_WIDTH - filledBarWidth
 
-        buffer.begin(7, DefaultVertexFormats.POSITION_COLOR)
-        buffer.pos((textCenterX + textWidth * 1.25), (textCenterY + textHeight).toDouble(), 0.0)
-                .color(0.0f, 0.0f, 0.0f, 0.4f)
-                .endVertex()
-        buffer.pos((textCenterX + textWidth * 1.25), (textCenterY - textHeight / 4).toDouble(), 0.0)
-                .color(0.0f, 0.0f, 0.0f, 0.4f)
-                .endVertex()
-        buffer.pos((textCenterX - textWidth / 3.75), (textCenterY - textHeight / 4).toDouble(), 0.0)
-                .color(0.0f, 0.0f, 0.0f, 0.4f)
-                .endVertex()
-        buffer.pos((textCenterX - textWidth / 3.75), (textCenterY + textHeight).toDouble(), 0.0)
-                .color(0.0f, 0.0f, 0.0f, 0.4f)
-                .endVertex()
-        tessellator.draw()
+        if (filledBarWidth > 0) {
+            drawFlatRectangle(-0.25 * BARREL_BAR_WIDTH, textCenterY + textHeight.toDouble(), filledBarWidth - 0.25 * BARREL_BAR_WIDTH, textCenterY - 0.25 * textHeight, Color(0f, 0f, 1f, 0.7f))
+        }
+
+        if (unfilledBarWidth > 0) {
+            drawFlatRectangle(filledBarWidth - 0.25 * BARREL_BAR_WIDTH, textCenterY + textHeight.toDouble(), filledBarWidth + unfilledBarWidth, textCenterY - 0.25 * textHeight, Color(0f, 0f, 0f, 0.7f))
+        }
 
         GlStateManager.enableTexture2D()
 
         GlStateManager.translate(0.0, 0.0, 0.02)
-        fontRenderer.func_211126_b(text, textCenterX, textCenterY, color)
+        fontRenderer.func_211126_b(text, textCenterX, textCenterY, textColor)
     }
 
-    private fun renderDisplay(stack: ItemStack, amount: Int, availableSpace: Int, tilePos: BlockPos,
+    private fun renderDisplay(stack: ItemStack, amount: Int, maxItems: Int, tilePos: BlockPos,
                               side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
         if (stack.isEmpty) {
             return
@@ -128,8 +149,8 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         renderItem.renderItemAndEffectIntoGUI(stack, 0, -3)
 
-        renderDisplayText(if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
-                8f, 16f, if (availableSpace <= 0) 0xFFFF22 else 0xFFFFFF)
+        renderProgressBar(if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
+                amount.toDouble() / maxItems, 8f, 16f, if (maxItems - amount <= 0) 0xFFFF22 else 0xFFFFFF)
 
         GlStateManager.enableAlpha()
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f)
@@ -139,4 +160,8 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         RenderHelper.enableStandardItemLighting()
     }
+}
+
+private fun BufferBuilder.color(javaColor: Color): BufferBuilder {
+    return color(javaColor.red / 255f, javaColor.green / 255f, javaColor.blue / 255f, javaColor.alpha / 255f)
 }

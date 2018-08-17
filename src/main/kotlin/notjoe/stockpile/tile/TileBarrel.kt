@@ -103,12 +103,14 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     }
 
     private fun displayBarrelContents(player: EntityPlayer) {
-        player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.contents_world",
-                "%,d".format(amountStored),
-                "%,d".format(maxStacks * inventoryStackLimit),
-                stackType.item.name.unformattedComponentText,
-                "%,d".format(amountStored / inventoryStackLimit),
-                "%,d".format(maxStacks)), true)
+        if (!isEmpty) {
+            player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.contents_world",
+                    "%,d".format(amountStored),
+                    "%,d".format(maxStacks * inventoryStackLimit),
+                    stackType.item.name.unformattedComponentText,
+                    "%,d".format(amountStored / inventoryStackLimit),
+                    "%,d".format(maxStacks)), true)
+        }
     }
 
     /**

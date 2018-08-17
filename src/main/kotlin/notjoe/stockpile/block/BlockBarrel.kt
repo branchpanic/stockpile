@@ -59,7 +59,7 @@ class BlockBarrel :
             return
         }
 
-        val rayTraceResult = player.rayTraceFromEyes(4.0)
+        val rayTraceResult = player.rayTraceFromEyes(5.0)
 
         if (rayTraceResult == null || rayTraceResult.sideHit != state.getValue(FACING)) {
             return
@@ -112,7 +112,10 @@ class BlockBarrel :
         super.beforeReplacingBlock(oldState, world, pos, newState, unknown)
     }
 
-    override fun spawnItems(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {}
+    override fun spawnItems(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {
+        // NO-OP: Instead of spawning an item here, a version containing the TileEntity data is spawned in
+        //        beforeReplacingBlock.
+    }
 
     override fun onBlockPlacedBy(world: World?, pos: BlockPos?, state: IBlockState?, placer: EntityLivingBase?,
                                  placeStack: ItemStack?) {

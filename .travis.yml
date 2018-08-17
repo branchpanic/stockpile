@@ -1,8 +1,8 @@
 language: java
-install:
-- "./gradlew setupCiWorkspace"
-build:
-- "./gradlew reobfJar"
+
+install: gradle setupCiWorkspace
+script: gradle build
+
 deploy:
   provider: releases
   api_key:

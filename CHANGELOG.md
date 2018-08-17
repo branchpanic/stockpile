@@ -5,15 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
-## [Unreleased]
+## [0.2.0] - 2018-08-16
+
 ### Added
  - Indicator bar showing how full a barrel is
 
 ### Fixed
  - Issue where tile entities weren't removed after blocks were
  - Empty barrels showing their item as Air when right-clicked
+ - Date on version 0.1.1 in the changelog (oops)
 
-## [0.1.1] - 2018-14-08
+## [0.1.1] - 2018-08-14
 
 ### Changed
  - Rift version from 1.0.2-33 to 1.0.3-45

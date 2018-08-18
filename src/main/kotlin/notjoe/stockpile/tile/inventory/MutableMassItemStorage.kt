@@ -2,9 +2,9 @@ package notjoe.stockpile.tile.inventory
 
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
-import notjoe.stockpile.util.nbt.NBTSerializableInPlace
 import notjoe.stockpile.util.ext.isStackableWith
 import notjoe.stockpile.util.ext.withCount
+import notjoe.stockpile.util.nbt.NBTSerializableInPlace
 import kotlin.math.min
 
 const val BARREL_OUTPUT_SLOT_INDEX = 0
@@ -20,10 +20,12 @@ const val BARREL_INPUT_SLOT_INDEX = 1
  * This implementation allows for the stack type to be mutated in-place. The method markDirty() is called whenever
  * changes are made.
  */
-class MutableMassItemStorage(private var _stackType: ItemStack,
-                             var maxStacks: Int,
-                             var amount: Int = 0) :
-        AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
+class MutableMassItemStorage(
+    private var _stackType: ItemStack,
+    var maxStacks: Int,
+    var amount: Int = 0
+) :
+    AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
 
     companion object TagNames {
         const val STACK_TYPE_KEY = "StackType"
@@ -115,7 +117,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
         return typeIsDefined && stack != null && !stack.isEmpty &&
-                slotIndex == BARREL_INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
+            slotIndex == BARREL_INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
     }
 
     override fun setInventorySlotContents(slotIndex: Int, stack: ItemStack?) {
@@ -142,4 +144,3 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
         amount = compound.getInteger(AMOUNT_KEY)
     }
 }
-

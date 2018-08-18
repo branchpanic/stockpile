@@ -39,4 +39,3 @@ abstract class AbstractSidedInventory(private val name: String) : ISidedInventor
     // Default to a NO-OP, since markDirty is generally handled by the associated TileEntity.
     override fun markDirty() {}
 }
-

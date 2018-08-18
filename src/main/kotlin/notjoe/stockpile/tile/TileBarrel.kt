@@ -11,10 +11,10 @@ import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.text.TextComponentTranslation
-import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.tile.inventory.BARREL_OUTPUT_SLOT_INDEX
+import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.util.ext.withCount
-import java.util.*
+import java.util.UUID
 
 const val BARREL_DOUBLE_CLICK_TIME_MS = 500
 const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a capacity of 2^30 items
@@ -23,8 +23,8 @@ const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a ca
  * A (JABBA|YABBA|Storage Drawers|etc.)-inspired container which allows for storing a large amount of a single item.
  */
 class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorage(ItemStack.EMPTY, 32)) :
-        AbstractPersistentTileEntity(TileBarrel.TYPE),
-        IInventory by barrelInventory {
+    AbstractPersistentTileEntity(TileBarrel.TYPE),
+    IInventory by barrelInventory {
 
     companion object Type {
         lateinit var TYPE: TileEntityType<TileBarrel>
@@ -109,12 +109,16 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
 
     private fun displayBarrelContents(player: EntityPlayer) {
         if (!isEmpty) {
-            player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.contents_world",
+            player.sendStatusMessage(
+                TextComponentTranslation(
+                    "stockpile.barrel.contents_world",
                     "%,d".format(amountStored),
                     "%,d".format(maxStacks * inventoryStackLimit),
                     stackType.item.name.unformattedComponentText,
                     "%,d".format(amountStored / inventoryStackLimit),
-                    "%,d".format(maxStacks)), true)
+                    "%,d".format(maxStacks)
+                ), true
+            )
         }
     }
 

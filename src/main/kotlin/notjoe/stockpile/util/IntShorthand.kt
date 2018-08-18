@@ -5,7 +5,6 @@ import kotlin.math.log10
 import kotlin.math.min
 import kotlin.math.pow
 
-
 val INT_ABBREVIATION_SUFFIXES = arrayOf("k", "M", "B", "T")
 
 /**

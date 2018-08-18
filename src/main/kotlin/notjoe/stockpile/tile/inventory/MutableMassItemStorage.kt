@@ -38,8 +38,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
             amount = 0
         }
 
-    val typeIsUndefined: Boolean get() = stackType.isEmpty
-    val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
+    private val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
 
     /**
      * Inserts an ItemStack into this MutableMassItemStorage and returns the remainder.
@@ -114,7 +113,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
     override fun isEmpty(): Boolean = amount == 0
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
-        return !typeIsUndefined && stack != null && !stack.isEmpty &&
+        return !isEmpty && stack != null && !stack.isEmpty &&
                 slotIndex == BARREL_INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
     }
 

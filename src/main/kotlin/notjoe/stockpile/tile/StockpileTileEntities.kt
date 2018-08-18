@@ -15,6 +15,8 @@ class StockpileTileEntities : TileEntityTypeAdder, TileEntityRendererAdder {
     }
 
     override fun addTileEntityRenderers(renderers: MutableMap<Class<out TileEntity>, TileEntityRenderer<out TileEntity>>?) {
+        TileBarrel.TYPE = TileEntityType.registerTileEntityType("stockpile:barrel", TileEntityType.Builder.create { TileBarrel() })
+        TileTrashCan.TYPE = TileEntityType.registerTileEntityType("stockpile:trash_can", TileEntityType.Builder.create { TileTrashCan() })
         renderers?.put(TileBarrel::class.java, BarrelRenderer())
     }
 }

@@ -1,5 +1,6 @@
 package notjoe.stockpile.tile
 
+import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.SoundEvents
 import net.minecraft.inventory.IInventory
@@ -63,7 +64,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     fun handleRightClick(player: EntityPlayer) {
         val heldStack = player.heldItemMainhand
 
-        if (barrelInventory.isEmpty && !heldStack.isEmpty) {
+        if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
             barrelInventory.stackType = heldStack.withCount(1)
             markDirty()
         } else {
@@ -93,7 +94,12 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
         val extractedStack = decrStackSize(BARREL_OUTPUT_SLOT_INDEX, amountToExtract)
 
         if (!extractedStack.isEmpty) {
-            player.addItemStackToInventory(extractedStack)
+            val allItemsGiven = player.addItemStackToInventory(extractedStack)
+            if (!allItemsGiven) {
+                world.spawnEntity(EntityItem(world, player.posX, player.posY, player.posZ, extractedStack))
+            }
+
+            player.inventory.markDirty()
             world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.1f, 0.7f)
         }
 
@@ -132,6 +138,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
      */
     private fun insertAllPossibleStacks(player: EntityPlayer): Boolean {
         var somethingWasRemoved = false
+
         for (i in 0 until player.inventory.sizeInventory) {
             val currentStack = player.inventory.getStackInSlot(i)
             val resultingStack = barrelInventory.insertStack(currentStack)

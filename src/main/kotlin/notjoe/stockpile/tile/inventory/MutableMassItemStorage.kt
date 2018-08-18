@@ -1,5 +1,6 @@
 package notjoe.stockpile.tile.inventory
 
+import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import notjoe.stockpile.tile.nbt.NBTSerializableInPlace
@@ -39,6 +40,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
         }
 
     private val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
+    val typeIsDefined: Boolean get() = !stackType.isEmpty
 
     /**
      * Inserts an ItemStack into this MutableMassItemStorage and returns the remainder.
@@ -113,7 +115,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
     override fun isEmpty(): Boolean = amount == 0
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
-        return !isEmpty && stack != null && !stack.isEmpty &&
+        return typeIsDefined && stack != null && !stack.isEmpty &&
                 slotIndex == BARREL_INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
     }
 

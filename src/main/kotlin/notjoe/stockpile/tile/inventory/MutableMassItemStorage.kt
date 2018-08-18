@@ -1,11 +1,10 @@
 package notjoe.stockpile.tile.inventory
 
-import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
-import notjoe.stockpile.tile.nbt.NBTSerializableInPlace
-import notjoe.stockpile.util.isStackableWith
-import notjoe.stockpile.util.withCount
+import notjoe.stockpile.util.nbt.NBTSerializableInPlace
+import notjoe.stockpile.util.ext.isStackableWith
+import notjoe.stockpile.util.ext.withCount
 import kotlin.math.min
 
 const val BARREL_OUTPUT_SLOT_INDEX = 0

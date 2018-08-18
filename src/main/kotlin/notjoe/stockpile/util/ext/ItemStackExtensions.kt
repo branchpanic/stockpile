@@ -1,4 +1,4 @@
-package notjoe.stockpile.util
+package notjoe.stockpile.util.ext
 
 import net.minecraft.item.ItemStack
 

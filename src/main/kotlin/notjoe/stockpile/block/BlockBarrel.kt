@@ -25,7 +25,7 @@ import net.minecraft.util.text.TextFormatting
 import net.minecraft.world.IBlockReader
 import net.minecraft.world.World
 import notjoe.stockpile.tile.TileBarrel
-import notjoe.stockpile.util.rayTraceFromEyes
+import notjoe.stockpile.util.ext.rayTraceFromEyes
 
 class BlockBarrel :
         BlockDirectional(Block.Builder
@@ -112,7 +112,8 @@ class BlockBarrel :
         super.onReplaced(oldState, world, pos, newState, unknown)
     }
 
-    override fun dropBlockAsItemWithChance(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {
+    override fun dropBlockAsItemWithChance(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float,
+                                           p_spawnItems_5_: Int) {
         // NO-OP: Instead of spawning an item here, a version containing the TileEntity data is spawned in
         //        beforeReplacingBlock.
     }

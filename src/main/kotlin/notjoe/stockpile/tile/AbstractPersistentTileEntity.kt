@@ -3,7 +3,7 @@ package notjoe.stockpile.tile
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
-import notjoe.stockpile.tile.nbt.NBTSerializableInPlace
+import notjoe.stockpile.util.nbt.NBTSerializableInPlace
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

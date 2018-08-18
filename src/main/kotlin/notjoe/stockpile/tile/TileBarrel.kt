@@ -13,7 +13,7 @@ import net.minecraft.util.SoundCategory
 import net.minecraft.util.text.TextComponentTranslation
 import notjoe.stockpile.tile.inventory.MutableMassItemStorage
 import notjoe.stockpile.tile.inventory.BARREL_OUTPUT_SLOT_INDEX
-import notjoe.stockpile.util.withCount
+import notjoe.stockpile.util.ext.withCount
 import java.util.*
 
 const val BARREL_DOUBLE_CLICK_TIME_MS = 500

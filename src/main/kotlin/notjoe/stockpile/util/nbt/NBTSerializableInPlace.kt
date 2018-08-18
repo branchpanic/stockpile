@@ -1,4 +1,4 @@
-package notjoe.stockpile.tile.nbt
+package notjoe.stockpile.util.nbt
 
 import net.minecraft.nbt.NBTTagCompound
 

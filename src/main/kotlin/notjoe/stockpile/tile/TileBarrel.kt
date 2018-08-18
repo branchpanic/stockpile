@@ -34,7 +34,6 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
 
     val stackType get() = barrelInventory.stackType
     val amountStored get() = barrelInventory.amount
-    val availableSpace get() = barrelInventory.availableSpace
     val maxStacks get() = barrelInventory.maxStacks
 
     fun clearStackType() {
@@ -64,7 +63,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     fun handleRightClick(player: EntityPlayer) {
         val heldStack = player.heldItemMainhand
 
-        if (barrelInventory.typeIsUndefined && !heldStack.isEmpty) {
+        if (barrelInventory.isEmpty && !heldStack.isEmpty) {
             barrelInventory.stackType = heldStack.withCount(1)
             markDirty()
         } else {

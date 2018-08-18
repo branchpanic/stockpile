@@ -13,8 +13,10 @@ import net.minecraft.util.math.Vec3d
  * @param fluidMode Mode for handling fluids, i.e. specifying whether they should be ignored or not.
  * @return A RayTraceResult providing access to what was hit.
  */
-fun EntityLivingBase.rayTraceFromEyes(distance: Double,
-                                      fluidMode: RayTraceFluidMode = RayTraceFluidMode.NEVER): RayTraceResult? {
+fun EntityLivingBase.rayTraceFromEyes(
+    distance: Double,
+    fluidMode: RayTraceFluidMode = RayTraceFluidMode.NEVER
+): RayTraceResult? {
     val startPos = Vec3d(posX, posY + eyeHeight, posZ)
     val endPos = startPos.add(lookVec.scale(distance))
     return world.rayTraceBlocks(startPos, endPos, fluidMode)

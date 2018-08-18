@@ -7,7 +7,6 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.util.ResourceLocation
 import org.dimdev.rift.listener.BlockAdder
 import org.dimdev.rift.listener.ItemAdder
-import kotlin.properties.Delegates
 
 @Suppress("unused")
 class StockpileBlocks : BlockAdder, ItemAdder {

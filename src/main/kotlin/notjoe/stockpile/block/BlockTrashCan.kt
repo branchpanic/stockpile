@@ -3,7 +3,6 @@
 package notjoe.stockpile.block
 
 import net.minecraft.block.Block
-import net.minecraft.block.BlockContainer
 import net.minecraft.block.ITileEntityProvider
 import net.minecraft.block.material.Material
 import net.minecraft.block.state.IBlockState
@@ -23,9 +22,11 @@ import net.minecraft.world.World
 import notjoe.stockpile.tile.TileTrashCan
 
 class BlockTrashCan :
-        Block(Block.Builder
-                .create(Material.ROCK)
-                .hardnessAndResistance(3f, 12f)), ITileEntityProvider {
+    Block(
+        Block.Builder
+            .create(Material.ROCK)
+            .hardnessAndResistance(3f, 12f)
+    ), ITileEntityProvider {
 
     companion object Properties {
         val LID_OPEN = BooleanProperty.create("lid_open")!!
@@ -33,8 +34,8 @@ class BlockTrashCan :
 
     init {
         defaultState = blockState.baseState
-                .withProperty(LID_OPEN, false)
-                .withProperty(BlockStateProperties.WATERLOGGED, false)
+            .withProperty(LID_OPEN, false)
+            .withProperty(BlockStateProperties.WATERLOGGED, false)
     }
 
     override fun hasTileEntity(): Boolean = true
@@ -44,8 +45,13 @@ class BlockTrashCan :
         builder?.add(LID_OPEN, BlockStateProperties.WATERLOGGED)
     }
 
-    override fun onReplaced(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
-                                      unknown: Boolean) {
+    override fun onReplaced(
+        oldState: IBlockState?,
+        world: World?,
+        pos: BlockPos?,
+        newState: IBlockState?,
+        unknown: Boolean
+    ) {
         super.onReplaced(oldState, world, pos, newState, unknown)
 
         if (oldState?.block != newState?.block && pos != null) {
@@ -58,8 +64,17 @@ class BlockTrashCan :
         return Block.makeCuboidShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
     }
 
-    override fun onBlockActivated(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
-                              hand: EnumHand?, face: EnumFacing?, hitX: Float, hitY: Float, hitZ: Float): Boolean {
+    override fun onBlockActivated(
+        state: IBlockState?,
+        world: World?,
+        pos: BlockPos?,
+        player: EntityPlayer?,
+        hand: EnumHand?,
+        face: EnumFacing?,
+        hitX: Float,
+        hitY: Float,
+        hitZ: Float
+    ): Boolean {
         if (state == null || world == null || pos == null || player == null || world.isRemote) {
             return true
         }

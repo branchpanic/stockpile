@@ -2,13 +2,16 @@ package notjoe.stockpile.renderer
 
 import net.minecraft.block.BlockDirectional
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.*
+import net.minecraft.client.renderer.BufferBuilder
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.OpenGlHelper
+import net.minecraft.client.renderer.RenderHelper
+import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.client.resources.I18n
 import net.minecraft.item.ItemStack
 import net.minecraft.util.EnumFacing
-import net.minecraft.util.EnumFacing.*
 import net.minecraft.util.math.BlockPos
 import notjoe.stockpile.tile.TileBarrel
 import notjoe.stockpile.util.shorthand
@@ -23,8 +26,14 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     private val renderItem = Minecraft.getMinecraft().renderItem
 
     @Suppress("FunctionName")
-    override fun render(tile: TileBarrel?, xPos: Double, yPos: Double, zPos: Double, partialTicks: Float,
-                        destroyStage: Int) {
+    override fun render(
+        tile: TileBarrel?,
+        xPos: Double,
+        yPos: Double,
+        zPos: Double,
+        partialTicks: Float,
+        destroyStage: Int
+    ) {
         if (tile == null) {
             return
         }
@@ -37,33 +46,42 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         val barrelFrontDirection = tile.blockState.getValue(BlockDirectional.FACING)
 
         GlStateManager.pushMatrix()
-        renderDisplay(containedItem, tile.amountStored, tile.maxStacks * tile.inventoryStackLimit, tile.pos, barrelFrontDirection, xPos, yPos, zPos)
+        renderDisplay(
+            containedItem,
+            tile.amountStored,
+            tile.maxStacks * tile.inventoryStackLimit,
+            tile.pos,
+            barrelFrontDirection,
+            xPos,
+            yPos,
+            zPos
+        )
         GlStateManager.popMatrix()
     }
 
     // This method is adapted from CoFH Core's RenderUtils!
     private fun transformToFace(side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
         when (side) {
-            NORTH -> {
+            EnumFacing.NORTH -> {
                 GlStateManager.translate(xPos + 0.75, yPos + 0.75, zPos + BARREL_TRANSFORM_OFFSET * 145)
             }
-            SOUTH -> {
+            EnumFacing.SOUTH -> {
                 GlStateManager.translate(xPos + 0.25, yPos + 0.75, zPos + 1 - BARREL_TRANSFORM_OFFSET * 145)
                 GlStateManager.rotate(180f, 0f, 1f, 0f)
             }
-            WEST -> {
+            EnumFacing.WEST -> {
                 GlStateManager.translate(xPos + BARREL_TRANSFORM_OFFSET * 145, yPos + 0.75, zPos + 0.25)
                 GlStateManager.rotate(90f, 0f, 1f, 0f)
             }
-            EAST -> {
+            EnumFacing.EAST -> {
                 GlStateManager.translate(xPos + 1 - BARREL_TRANSFORM_OFFSET * 145, yPos + 0.75, zPos + 0.75)
                 GlStateManager.rotate(-90f, 0f, 1f, 0f)
             }
-            UP -> {
+            EnumFacing.UP -> {
                 GlStateManager.translate(xPos + 0.75, yPos + 1 - BARREL_TRANSFORM_OFFSET * 145, zPos + 0.75)
                 GlStateManager.rotate(90f, 1f, 0f, 0f)
             }
-            DOWN -> {
+            EnumFacing.DOWN -> {
                 GlStateManager.translate(xPos + 0.75, yPos + BARREL_TRANSFORM_OFFSET * 145, zPos + 0.25)
                 GlStateManager.rotate(-90f, 1f, 0f, 0f)
             }
@@ -83,17 +101,17 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         buffer.begin(7, DefaultVertexFormats.POSITION_COLOR)
         buffer.pos(x2, y1, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
         buffer.pos(x2, y2, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
         buffer.pos(x1, y2, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
         buffer.pos(x1, y1, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
 
         tessellator.draw()
     }
@@ -113,11 +131,23 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         val unfilledBarWidth = 2 * BARREL_BAR_WIDTH - filledBarWidth
 
         if (filledBarWidth > 0) {
-            drawFlatRectangle(-0.25 * BARREL_BAR_WIDTH, textCenterY + textHeight.toDouble(), filledBarWidth - 0.25 * BARREL_BAR_WIDTH, textCenterY - 0.25 * textHeight, Color(0f, 0f, 1f, 0.7f))
+            drawFlatRectangle(
+                -0.25 * BARREL_BAR_WIDTH,
+                textCenterY + textHeight.toDouble(),
+                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
+                textCenterY - 0.25 * textHeight,
+                Color(0f, 0f, 1f, 0.7f)
+            )
         }
 
         if (unfilledBarWidth > 0) {
-            drawFlatRectangle(filledBarWidth - 0.25 * BARREL_BAR_WIDTH, textCenterY + textHeight.toDouble(), filledBarWidth + unfilledBarWidth, textCenterY - 0.25 * textHeight, Color(0f, 0f, 0f, 0.7f))
+            drawFlatRectangle(
+                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
+                textCenterY + textHeight.toDouble(),
+                filledBarWidth + unfilledBarWidth,
+                textCenterY - 0.25 * textHeight,
+                Color(0f, 0f, 0f, 0.7f)
+            )
         }
 
         GlStateManager.enableTexture2D()
@@ -126,8 +156,16 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         fontRenderer.drawString(text, textCenterX, textCenterY, textColor)
     }
 
-    private fun renderDisplay(stack: ItemStack, amount: Int, maxItems: Int, tilePos: BlockPos,
-                              side: EnumFacing, xPos: Double, yPos: Double, zPos: Double) {
+    private fun renderDisplay(
+        stack: ItemStack,
+        amount: Int,
+        maxItems: Int,
+        tilePos: BlockPos,
+        side: EnumFacing,
+        xPos: Double,
+        yPos: Double,
+        zPos: Double
+    ) {
         if (stack.isEmpty) {
             return
         }
@@ -144,13 +182,19 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
             val lightmapCombined = world.getCombinedLight(renderSide, 3)
             val lightmapU = lightmapCombined % 65536
             val lightmapV = lightmapCombined / 65536
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lightmapU.toFloat(), lightmapV.toFloat())
+            OpenGlHelper.setLightmapTextureCoords(
+                OpenGlHelper.lightmapTexUnit,
+                lightmapU.toFloat(),
+                lightmapV.toFloat()
+            )
         }
 
         renderItem.renderItemAndEffectIntoGUI(stack, 0, -3)
 
-        renderProgressBar(if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
-                amount.toDouble() / maxItems, 8f, 16f, if (maxItems - amount <= 0) 0xFFFF22 else 0xFFFFFF)
+        renderProgressBar(
+            if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
+            amount.toDouble() / maxItems, 8f, 16f, if (maxItems - amount <= 0) 0xFFFF22 else 0xFFFFFF
+        )
 
         GlStateManager.enableAlpha()
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f)

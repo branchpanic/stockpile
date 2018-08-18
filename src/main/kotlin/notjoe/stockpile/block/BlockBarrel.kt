@@ -28,10 +28,12 @@ import notjoe.stockpile.tile.TileBarrel
 import notjoe.stockpile.util.ext.rayTraceFromEyes
 
 class BlockBarrel :
-        BlockDirectional(Block.Builder
-                .create(Material.WOOD)
-                .sound(SoundType.WOOD)
-                .hardnessAndResistance(3f, 14f)), ITileEntityProvider {
+    BlockDirectional(
+        Block.Builder
+            .create(Material.WOOD)
+            .sound(SoundType.WOOD)
+            .hardnessAndResistance(3f, 14f)
+    ), ITileEntityProvider {
 
     init {
         defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
@@ -69,8 +71,17 @@ class BlockBarrel :
         tile.handleLeftClick(player)
     }
 
-    override fun onBlockActivated(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
-                              hand: EnumHand?, face: EnumFacing?, x: Float, y: Float, z: Float): Boolean {
+    override fun onBlockActivated(
+        state: IBlockState?,
+        world: World?,
+        pos: BlockPos?,
+        player: EntityPlayer?,
+        hand: EnumHand?,
+        face: EnumFacing?,
+        x: Float,
+        y: Float,
+        z: Float
+    ): Boolean {
         if (world == null || player == null || world.isRemote) {
             return true
         }
@@ -89,8 +100,13 @@ class BlockBarrel :
         return defaultState.withProperty(FACING, context.func_196010_d().opposite)
     }
 
-    override fun onReplaced(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
-                                      unknown: Boolean) {
+    override fun onReplaced(
+        oldState: IBlockState?,
+        world: World?,
+        pos: BlockPos?,
+        newState: IBlockState?,
+        unknown: Boolean
+    ) {
         if (world == null || pos == null || oldState?.block == newState?.block || world.isRemote) {
             return
         }
@@ -112,14 +128,24 @@ class BlockBarrel :
         super.onReplaced(oldState, world, pos, newState, unknown)
     }
 
-    override fun dropBlockAsItemWithChance(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float,
-                                           p_spawnItems_5_: Int) {
+    override fun dropBlockAsItemWithChance(
+        state: IBlockState?,
+        world: World?,
+        pos: BlockPos?,
+        p_spawnItems_4_: Float,
+        p_spawnItems_5_: Int
+    ) {
         // NO-OP: Instead of spawning an item here, a version containing the TileEntity data is spawned in
         //        beforeReplacingBlock.
     }
 
-    override fun onBlockPlacedBy(world: World?, pos: BlockPos?, state: IBlockState?, placer: EntityLivingBase?,
-                                 placeStack: ItemStack?) {
+    override fun onBlockPlacedBy(
+        world: World?,
+        pos: BlockPos?,
+        state: IBlockState?,
+        placer: EntityLivingBase?,
+        placeStack: ItemStack?
+    ) {
         if (world == null || pos == null || placeStack == null || world.isRemote) {
             return
         }
@@ -131,7 +157,12 @@ class BlockBarrel :
         }
     }
 
-    override fun addInformation(stack: ItemStack?, world: IBlockReader?, lore: MutableList<ITextComponent>?, tooltipFlag: ITooltipFlag?) {
+    override fun addInformation(
+        stack: ItemStack?,
+        world: IBlockReader?,
+        lore: MutableList<ITextComponent>?,
+        tooltipFlag: ITooltipFlag?
+    ) {
         if (stack == null || lore == null) {
             return
         }
@@ -152,8 +183,10 @@ class BlockBarrel :
             val containedItemName = containedItem.item.name.unformattedComponentText
             val containedAmount = storedTile.amountStored
             val containedStacks = containedAmount / containedItem.maxStackSize
-            val stacksContainedComponent = TextComponentTranslation("stockpile.barrel.contents_stack",
-                    containedItemName, "%,d".format(containedAmount), "%,d".format(containedStacks))
+            val stacksContainedComponent = TextComponentTranslation(
+                "stockpile.barrel.contents_stack",
+                containedItemName, "%,d".format(containedAmount), "%,d".format(containedStacks)
+            )
             stacksContainedComponent.style.color = TextFormatting.GRAY
             lore.add(stacksContainedComponent)
         }

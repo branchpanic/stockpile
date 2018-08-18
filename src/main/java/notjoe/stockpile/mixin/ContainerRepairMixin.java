@@ -37,11 +37,11 @@ abstract public class ContainerRepairMixin extends Container {
     private void onRepairOutputUpdated(CallbackInfo ci) {
         ItemStack currentInput = inputSlots.getStackInSlot(0);
         ItemStack currentModifier = inputSlots.getStackInSlot(1);
-        if (currentInput.getItem() != StockpileBlocks.Definitions.getBarrel().getItem()) {
+        if (currentInput.getItem() != StockpileBlocks.Definitions.getBarrel().asItem()) {
             return;
         }
 
-        if (currentModifier.getItem() == Blocks.CHEST.getItem()) {
+        if (currentModifier.getItem() == Blocks.CHEST.asItem()) {
             int availableChests = currentModifier.getCount();
             int addedStacks = CHEST_UPGRADE_STACKS * availableChests;
 
@@ -56,20 +56,20 @@ abstract public class ContainerRepairMixin extends Container {
     }
 
     private int getBarrelMaxStacks(ItemStack barrelStack) {
-        NBTTagCompound inventoryCompound = getOrInitBarrelCompound(barrelStack).getCompoundTag("Inventory");
+        NBTTagCompound inventoryCompound = getBarrelCompound(barrelStack).getCompoundTag("Inventory");
         return inventoryCompound.getInteger(MutableMassItemStorage.MAX_STACKS_KEY);
     }
 
     private ItemStack getUpgradedBarrelStack(ItemStack barrelStack, int addedStacks) {
         ItemStack upgradedStack = barrelStack.copy();
-        NBTTagCompound inventoryCompound = getOrInitBarrelCompound(upgradedStack).getCompoundTag("Inventory");
+        NBTTagCompound inventoryCompound = getBarrelCompound(upgradedStack).getCompoundTag("Inventory");
         int existingMax = inventoryCompound.getInteger(MutableMassItemStorage.MAX_STACKS_KEY);
         inventoryCompound.setInteger(MutableMassItemStorage.MAX_STACKS_KEY, existingMax + addedStacks);
         return upgradedStack;
     }
 
-    private NBTTagCompound getOrInitBarrelCompound(ItemStack barrelStack) {
-        NBTTagCompound stackCompound = barrelStack.func_196082_o();
+    private NBTTagCompound getBarrelCompound(ItemStack barrelStack) {
+        NBTTagCompound stackCompound = barrelStack.getOrCreateTagCompound();
 
         if (!stackCompound.hasKey("BarrelTileData")) {
             NBTTagCompound defaultBarrelNBT = new TileBarrel().writePersistentValuesToNBT(new NBTTagCompound());

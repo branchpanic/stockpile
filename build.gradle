@@ -28,6 +28,7 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url 'https://www.dimdev.org/maven/' }
+    maven { url = "https://minecraft.curseforge.com/api/maven/" }
 }
 
 configurations {
@@ -36,8 +37,8 @@ configurations {
 }
 
 dependencies {
-    shade 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'org.dimdev:rift:1.0.3-45:dev'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.dimdev:rift:1.0.4-51:dev'
 }
 
 mixin {
@@ -47,7 +48,7 @@ mixin {
 
 minecraft {
     version = '1.13'
-    mappings = 'snapshot_5'
+    mappings = 'snapshot_20180817'
     runDir = 'run'
     tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderClientTweaker'
 }

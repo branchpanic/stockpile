@@ -30,7 +30,7 @@ import notjoe.stockpile.util.rayTraceFromEyes
 class BlockBarrel :
         BlockDirectional(Block.Builder
                 .create(Material.WOOD)
-                .soundType(SoundType.WOOD)
+                .sound(SoundType.WOOD)
                 .hardnessAndResistance(3f, 14f)), ITileEntityProvider {
 
     init {
@@ -38,11 +38,11 @@ class BlockBarrel :
     }
 
     override fun addPropertiesToBuilder(stateBuilder: StateContainer.Builder<Block, IBlockState>?) {
-        stateBuilder?.addProperties(FACING)
+        stateBuilder?.add(FACING)
     }
 
     override fun hasTileEntity(): Boolean = true
-    override fun getTileEntity(world: IBlockReader?): TileEntity? = TileBarrel()
+    override fun createNewTileEntity(world: IBlockReader?): TileEntity? = TileBarrel()
 
     override fun hasComparatorInputOverride(state: IBlockState?): Boolean = true
     override fun getComparatorInputOverride(state: IBlockState?, world: World?, pos: BlockPos?): Int {
@@ -54,7 +54,7 @@ class BlockBarrel :
         return (15 * (tile.amountStored.toDouble() / (tile.maxStacks * tile.stackType.maxStackSize))).toInt()
     }
 
-    override fun onLeftClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?) {
+    override fun onBlockClicked(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?) {
         if (world == null || player == null || state == null || world.isRemote) {
             return
         }
@@ -69,7 +69,7 @@ class BlockBarrel :
         tile.handleLeftClick(player)
     }
 
-    override fun onRightClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
+    override fun onBlockActivated(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
                               hand: EnumHand?, face: EnumFacing?, x: Float, y: Float, z: Float): Boolean {
         if (world == null || player == null || world.isRemote) {
             return true
@@ -81,7 +81,7 @@ class BlockBarrel :
         return true
     }
 
-    override fun getBlockToPlaceOnUse(context: BlockItemUseContext?): IBlockState? {
+    override fun getStateForPlacement(context: BlockItemUseContext?): IBlockState? {
         if (context == null) {
             return null
         }
@@ -89,14 +89,14 @@ class BlockBarrel :
         return defaultState.withProperty(FACING, context.func_196010_d().opposite)
     }
 
-    override fun beforeReplacingBlock(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
+    override fun onReplaced(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
                                       unknown: Boolean) {
         if (world == null || pos == null || oldState?.block == newState?.block || world.isRemote) {
             return
         }
 
         val tile = world.getTileEntity(pos) as TileBarrel
-        val workingStack = ItemStack(item)
+        val workingStack = ItemStack(asItem())
 
         if (tile.isEmpty) {
             tile.clearStackType()
@@ -109,10 +109,10 @@ class BlockBarrel :
         Block.spawnAsEntity(world, pos, workingStack)
 
         world.removeTileEntity(pos)
-        super.beforeReplacingBlock(oldState, world, pos, newState, unknown)
+        super.onReplaced(oldState, world, pos, newState, unknown)
     }
 
-    override fun spawnItems(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {
+    override fun dropBlockAsItemWithChance(state: IBlockState?, world: World?, pos: BlockPos?, p_spawnItems_4_: Float, p_spawnItems_5_: Int) {
         // NO-OP: Instead of spawning an item here, a version containing the TileEntity data is spawned in
         //        beforeReplacingBlock.
     }
@@ -123,7 +123,7 @@ class BlockBarrel :
             return
         }
 
-        val stackCompound = placeStack.func_196082_o()
+        val stackCompound = placeStack.orCreateTagCompound
         if (stackCompound.hasKey("BarrelTileData")) {
             val tile = world.getTileEntity(pos) as TileBarrel
             tile.readPersistentValuesFromNBT(stackCompound.getCompoundTag("BarrelTileData"))
@@ -140,7 +140,7 @@ class BlockBarrel :
         } catch (e: Exception) {
             return
         }
-        storedTile.readPersistentValuesFromNBT(stack.func_196082_o().getCompoundTag("BarrelTileData"))
+        storedTile.readPersistentValuesFromNBT(stack.orCreateTagCompound.getCompoundTag("BarrelTileData"))
 
         if (storedTile.isEmpty) {
             val emptyComponent = TextComponentTranslation("stockpile.barrel.empty")

@@ -38,15 +38,15 @@ class BlockTrashCan :
     }
 
     override fun hasTileEntity(): Boolean = true
-    override fun getTileEntity(p0: IBlockReader?): TileEntity? = TileTrashCan()
+    override fun createNewTileEntity(p0: IBlockReader?): TileEntity? = TileTrashCan()
 
     override fun addPropertiesToBuilder(builder: StateContainer.Builder<Block, IBlockState>?) {
-        builder?.addProperties(LID_OPEN, BlockStateProperties.WATERLOGGED)
+        builder?.add(LID_OPEN, BlockStateProperties.WATERLOGGED)
     }
 
-    override fun beforeReplacingBlock(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
+    override fun onReplaced(oldState: IBlockState?, world: World?, pos: BlockPos?, newState: IBlockState?,
                                       unknown: Boolean) {
-        super.beforeReplacingBlock(oldState, world, pos, newState, unknown)
+        super.onReplaced(oldState, world, pos, newState, unknown)
 
         if (oldState?.block != newState?.block && pos != null) {
             world?.removeTileEntity(pos)
@@ -58,7 +58,7 @@ class BlockTrashCan :
         return Block.makeCuboidShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
     }
 
-    override fun onRightClick(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
+    override fun onBlockActivated(state: IBlockState?, world: World?, pos: BlockPos?, player: EntityPlayer?,
                               hand: EnumHand?, face: EnumFacing?, hitX: Float, hitY: Float, hitZ: Float): Boolean {
         if (state == null || world == null || pos == null || player == null || world.isRemote) {
             return true

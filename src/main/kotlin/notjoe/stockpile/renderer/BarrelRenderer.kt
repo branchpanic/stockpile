@@ -23,8 +23,8 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     private val renderItem = Minecraft.getMinecraft().renderItem
 
     @Suppress("FunctionName")
-    override fun func_199341_a(tile: TileBarrel?, xPos: Double, yPos: Double, zPos: Double, partialTicks: Float,
-                               destroyStage: Int) {
+    override fun render(tile: TileBarrel?, xPos: Double, yPos: Double, zPos: Double, partialTicks: Float,
+                        destroyStage: Int) {
         if (tile == null) {
             return
         }
@@ -123,7 +123,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         GlStateManager.enableTexture2D()
 
         GlStateManager.translate(0.0, 0.0, 0.02)
-        fontRenderer.func_211126_b(text, textCenterX, textCenterY, textColor)
+        fontRenderer.drawString(text, textCenterX, textCenterY, textColor)
     }
 
     private fun renderDisplay(stack: ItemStack, amount: Int, maxItems: Int, tilePos: BlockPos,

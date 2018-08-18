@@ -137,7 +137,7 @@ class MutableMassItemStorage(private var _stackType: ItemStack,
     }
 
     override fun loadFromCompound(compound: NBTTagCompound) {
-        stackType = ItemStack.func_199557_a(compound.getCompoundTag(STACK_TYPE_KEY))
+        stackType = ItemStack.loadFromNBT(compound.getCompoundTag(STACK_TYPE_KEY))
         maxStacks = compound.getInteger(MAX_STACKS_KEY)
         amount = compound.getInteger(AMOUNT_KEY)
     }

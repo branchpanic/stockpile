@@ -192,7 +192,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
         renderItem.renderItemAndEffectIntoGUI(stack, 0, -3)
 
         renderProgressBar(
-            if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
+            if (amount > 0) amount.shorthand() else I18n.format("stockpile.BARREL.empty"),
             amount.toDouble() / maxItems, 8f, 16f, if (maxItems - amount <= 0) 0xFFFF22 else 0xFFFFFF
         )
 

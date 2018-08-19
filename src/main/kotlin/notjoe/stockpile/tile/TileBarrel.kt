@@ -42,7 +42,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     }
 
     /**
-     * Determines whether or not a player double-clicked this barrel.
+     * Determines whether or not a player double-clicked this BARREL.
      */
     private fun playerDoubleRightClicked(player: EntityPlayer): Boolean {
         val currentTime = System.currentTimeMillis()
@@ -57,9 +57,9 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     /**
      * Handles a right-click (single or double) by a player.
      *
-     * - A single right-click attempts to insert the held item into this barrel.
+     * - A single right-click attempts to insert the held item into this BARREL.
      * - A double right-click attempts to insert as many stacks as possible from the player's inventory into this
-     *   barrel.
+     *   BARREL.
      */
     fun handleRightClick(player: EntityPlayer) {
         val heldStack = player.heldItemMainhand
@@ -86,8 +86,8 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     /**
      * Handles a left-click by a player.
      *
-     * - Normal left-clicking will attempt to extract a single item from this barrel.
-     * - Crouch-left-clicking will attempt to remove an entire stack from this barrel.
+     * - Normal left-clicking will attempt to extract a single item from this BARREL.
+     * - Crouch-left-clicking will attempt to remove an entire stack from this BARREL.
      */
     fun handleLeftClick(player: EntityPlayer) {
         val amountToExtract = if (player.isSneaking) inventoryStackLimit else 1
@@ -111,7 +111,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
         if (!isEmpty) {
             player.sendStatusMessage(
                 TextComponentTranslation(
-                    "stockpile.barrel.contents_world",
+                    "stockpile.BARREL.contents_world",
                     "%,d".format(amountStored),
                     "%,d".format(maxStacks * inventoryStackLimit),
                     stackType.item.name.unformattedComponentText,
@@ -123,7 +123,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     }
 
     /**
-     * Attempts to insert a player's held stack into this barrel. Updates the player's held item if successful.
+     * Attempts to insert a player's held stack into this BARREL. Updates the player's held item if successful.
      * @return Whether or not a change was made.
      */
     private fun insertStackFromHand(player: EntityPlayer, hand: EnumHand): Boolean {
@@ -136,8 +136,8 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
     }
 
     /**
-     * Attempts to insert every single stack from the player's barrelInventory into this barrel. Updates the barrelInventory as
-     * appropriate.
+     * Attempts to insert every single stack from the player's barrelInventory into this BARREL. Updates the
+     * barrelInventory as appropriate.
      * @return Whether or not any changes were made.
      */
     private fun insertAllPossibleStacks(player: EntityPlayer): Boolean {

@@ -6,7 +6,6 @@
   "package": "notjoe.stockpile.mixin",
   "refmap": "mixins.stockpile.refmap.json",
   "mixins": [
-    "BlockHopperMixin",
     "ContainerRepairMixin"
   ],
   "client": []

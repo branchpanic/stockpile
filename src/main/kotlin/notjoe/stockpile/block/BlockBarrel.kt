@@ -175,7 +175,7 @@ class BlockBarrel :
         storedTile.readPersistentValuesFromNBT(stack.orCreateTagCompound.getCompoundTag("BarrelTileData"))
 
         if (storedTile.isEmpty) {
-            val emptyComponent = TextComponentTranslation("stockpile.barrel.empty")
+            val emptyComponent = TextComponentTranslation("stockpile.BARREL.empty")
             emptyComponent.style.color = TextFormatting.GRAY
             lore.add(emptyComponent)
         } else {
@@ -184,14 +184,14 @@ class BlockBarrel :
             val containedAmount = storedTile.amountStored
             val containedStacks = containedAmount / containedItem.maxStackSize
             val stacksContainedComponent = TextComponentTranslation(
-                "stockpile.barrel.contents_stack",
+                "stockpile.BARREL.contents_stack",
                 containedItemName, "%,d".format(containedAmount), "%,d".format(containedStacks)
             )
             stacksContainedComponent.style.color = TextFormatting.GRAY
             lore.add(stacksContainedComponent)
         }
 
-        val stackSizeComponent = TextComponentTranslation("stockpile.barrel.size_stack", storedTile.maxStacks)
+        val stackSizeComponent = TextComponentTranslation("stockpile.BARREL.size_stack", storedTile.maxStacks)
         stackSizeComponent.style.color = TextFormatting.DARK_GRAY
         lore.add(stackSizeComponent)
     }

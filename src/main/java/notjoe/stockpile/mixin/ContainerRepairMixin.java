@@ -37,7 +37,7 @@ abstract public class ContainerRepairMixin extends Container {
     private void onRepairOutputUpdated(CallbackInfo ci) {
         ItemStack currentInput = inputSlots.getStackInSlot(0);
         ItemStack currentModifier = inputSlots.getStackInSlot(1);
-        if (currentInput.getItem() != StockpileBlocks.Definitions.getBarrel().asItem()) {
+        if (currentInput.getItem() != StockpileBlocks.BARREL.asItem()) {
             return;
         }
 

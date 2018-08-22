@@ -11,7 +11,7 @@ import org.dimdev.rift.listener.client.TileEntityRendererAdder
 class StockpileTileEntities : TileEntityTypeAdder, TileEntityRendererAdder {
     override fun registerTileEntityTypes() {
         TileBarrel.TYPE =
-            TileEntityType.registerTileEntityType("stockpile:BARREL", TileEntityType.Builder.create { TileBarrel() })
+            TileEntityType.registerTileEntityType("stockpile:barrel", TileEntityType.Builder.create { TileBarrel() })
         TileTrashCan.TYPE = TileEntityType.registerTileEntityType(
             "stockpile:trash_can",
             TileEntityType.Builder.create { TileTrashCan() })
@@ -19,7 +19,7 @@ class StockpileTileEntities : TileEntityTypeAdder, TileEntityRendererAdder {
 
     override fun addTileEntityRenderers(renderers: MutableMap<Class<out TileEntity>, TileEntityRenderer<out TileEntity>>?) {
         TileBarrel.TYPE =
-            TileEntityType.registerTileEntityType("stockpile:BARREL", TileEntityType.Builder.create { TileBarrel() })
+            TileEntityType.registerTileEntityType("stockpile:barrel", TileEntityType.Builder.create { TileBarrel() })
         TileTrashCan.TYPE = TileEntityType.registerTileEntityType(
             "stockpile:trash_can",
             TileEntityType.Builder.create { TileTrashCan() })

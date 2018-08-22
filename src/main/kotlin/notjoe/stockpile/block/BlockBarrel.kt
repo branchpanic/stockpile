@@ -111,6 +111,15 @@ class BlockBarrel :
             return
         }
 
+        world.removeTileEntity(pos)
+    }
+
+    override fun onBlockHarvested(world: World?, pos: BlockPos?, state: IBlockState?, player: EntityPlayer?) {
+        if (world == null || pos == null || player == null || player.isCreative) {
+            super.onBlockHarvested(world, pos, state, player)
+            return
+        }
+
         val tile = world.getTileEntity(pos) as TileBarrel
         val workingStack = ItemStack(asItem())
 
@@ -124,8 +133,7 @@ class BlockBarrel :
 
         Block.spawnAsEntity(world, pos, workingStack)
 
-        world.removeTileEntity(pos)
-        super.onReplaced(oldState, world, pos, newState, unknown)
+        super.onBlockHarvested(world, pos, state, player)
     }
 
     override fun dropBlockAsItemWithChance(
@@ -157,6 +165,7 @@ class BlockBarrel :
         }
     }
 
+
     override fun addInformation(
         stack: ItemStack?,
         world: IBlockReader?,
@@ -172,10 +181,11 @@ class BlockBarrel :
         } catch (e: Exception) {
             return
         }
+
         storedTile.readPersistentValuesFromNBT(stack.orCreateTagCompound.getCompoundTag("BarrelTileData"))
 
         if (storedTile.isEmpty) {
-            val emptyComponent = TextComponentTranslation("stockpile.BARREL.empty")
+            val emptyComponent = TextComponentTranslation("stockpile.barrel.empty")
             emptyComponent.style.color = TextFormatting.GRAY
             lore.add(emptyComponent)
         } else {
@@ -184,14 +194,14 @@ class BlockBarrel :
             val containedAmount = storedTile.amountStored
             val containedStacks = containedAmount / containedItem.maxStackSize
             val stacksContainedComponent = TextComponentTranslation(
-                "stockpile.BARREL.contents_stack",
+                "stockpile.barrel.contents_stack",
                 containedItemName, "%,d".format(containedAmount), "%,d".format(containedStacks)
             )
             stacksContainedComponent.style.color = TextFormatting.GRAY
             lore.add(stacksContainedComponent)
         }
 
-        val stackSizeComponent = TextComponentTranslation("stockpile.BARREL.size_stack", storedTile.maxStacks)
+        val stackSizeComponent = TextComponentTranslation("stockpile.barrel.size_stack", storedTile.maxStacks)
         stackSizeComponent.style.color = TextFormatting.DARK_GRAY
         lore.add(stackSizeComponent)
     }

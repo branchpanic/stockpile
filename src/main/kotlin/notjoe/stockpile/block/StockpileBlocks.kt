@@ -16,7 +16,7 @@ class StockpileBlocks : BlockAdder, ItemAdder {
     }
 
     override fun registerBlocks() {
-        Block.register(ResourceLocation("stockpile", "BARREL"), BARREL)
+        Block.register(ResourceLocation("stockpile", "barrel"), BARREL)
         Block.register(ResourceLocation("stockpile", "trash_can"), TRASH_CAN)
     }
 

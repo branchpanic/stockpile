@@ -59,7 +59,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
      *
      * - A single right-click attempts to insert the held item into this BARREL.
      * - A double right-click attempts to insert as many stacks as possible from the player's inventory into this
-     *   BARREL.
+     *   barrel.
      */
     fun handleRightClick(player: EntityPlayer) {
         val heldStack = player.heldItemMainhand
@@ -111,7 +111,7 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
         if (!isEmpty) {
             player.sendStatusMessage(
                 TextComponentTranslation(
-                    "stockpile.BARREL.contents_world",
+                    "stockpile.barrel.contents_world",
                     "%,d".format(amountStored),
                     "%,d".format(maxStacks * inventoryStackLimit),
                     stackType.item.name.unformattedComponentText,

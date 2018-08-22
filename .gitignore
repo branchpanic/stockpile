@@ -1,6 +1,8 @@
 *.class
 *.log
 
+*.iml
+
 *.jar
 *.war
 *.nar
@@ -19,5 +21,6 @@ hs_err_pid*
 /build/
 /out/
 /run/
+/classes/
 
 *.kra       # Just so we don't commit a bunch of unnecessary Krita projects

@@ -165,6 +165,16 @@ class BlockBarrel :
         }
     }
 
+    override fun getItem(world: IBlockReader?, pos: BlockPos?, state: IBlockState?): ItemStack {
+        if (world == null || pos == null || state == null) {
+            return ItemStack.EMPTY
+        }
+
+        val tile = world.getTileEntity(pos) as TileBarrel
+
+        val tileDataCompound = tile.writePersistentValuesToNBT(NBTTagCompound())
+        return super.getItem(world, pos, state).apply { setTagInfo("BarrelTileData", tileDataCompound) }
+    }
 
     override fun addInformation(
         stack: ItemStack?,

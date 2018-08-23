@@ -22,11 +22,11 @@ import net.minecraft.world.World
 import notjoe.stockpile.tile.TileTrashCan
 
 class BlockTrashCan :
-    Block(
-        Block.Builder
-            .create(Material.ROCK)
-            .hardnessAndResistance(3f, 12f)
-    ), ITileEntityProvider {
+        Block(
+                Block.Builder
+                        .create(Material.ROCK)
+                        .hardnessAndResistance(3f, 12f)
+        ), ITileEntityProvider {
 
     companion object Properties {
         val LID_OPEN = BooleanProperty.create("lid_open")!!
@@ -34,8 +34,8 @@ class BlockTrashCan :
 
     init {
         defaultState = blockState.baseState
-            .withProperty(LID_OPEN, false)
-            .withProperty(BlockStateProperties.WATERLOGGED, false)
+                .withProperty(LID_OPEN, false)
+                .withProperty(BlockStateProperties.WATERLOGGED, false)
     }
 
     override fun hasTileEntity(): Boolean = true
@@ -46,11 +46,11 @@ class BlockTrashCan :
     }
 
     override fun onReplaced(
-        oldState: IBlockState?,
-        world: World?,
-        pos: BlockPos?,
-        newState: IBlockState?,
-        unknown: Boolean
+            oldState: IBlockState?,
+            world: World?,
+            pos: BlockPos?,
+            newState: IBlockState?,
+            unknown: Boolean
     ) {
         super.onReplaced(oldState, world, pos, newState, unknown)
 
@@ -65,15 +65,15 @@ class BlockTrashCan :
     }
 
     override fun onBlockActivated(
-        state: IBlockState?,
-        world: World?,
-        pos: BlockPos?,
-        player: EntityPlayer?,
-        hand: EnumHand?,
-        face: EnumFacing?,
-        hitX: Float,
-        hitY: Float,
-        hitZ: Float
+            state: IBlockState?,
+            world: World?,
+            pos: BlockPos?,
+            player: EntityPlayer?,
+            hand: EnumHand?,
+            face: EnumFacing?,
+            hitX: Float,
+            hitY: Float,
+            hitZ: Float
     ): Boolean {
         if (state == null || world == null || pos == null || player == null || world.isRemote) {
             return true

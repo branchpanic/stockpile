@@ -52,13 +52,13 @@ abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEnti
 
     fun readPersistentValuesFromNBT(compound: NBTTagCompound) {
         persistentValues
-            .filter { delegate -> compound.hasKey(delegate.name) }
-            .forEach { delegate -> delegate.loadedValue.loadFromCompound(compound.getCompoundTag(delegate.name)) }
+                .filter { delegate -> compound.hasKey(delegate.name) }
+                .forEach { delegate -> delegate.loadedValue.loadFromCompound(compound.getCompoundTag(delegate.name)) }
     }
 
     class ReadWriteNBTProperty<T : NBTSerializableInPlace>(
-        val name: String,
-        internal var loadedValue: T
+            val name: String,
+            internal var loadedValue: T
     ) : ReadWriteProperty<TileEntity, T> {
         override operator fun getValue(thisRef: TileEntity, property: KProperty<*>): T = loadedValue
         override fun setValue(thisRef: TileEntity, property: KProperty<*>, value: T) {

@@ -27,8 +27,8 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
     maven { url 'https://www.dimdev.org/maven/' }
-    maven { url = "https://minecraft.curseforge.com/api/maven/" }
 }
 
 configurations {
@@ -39,6 +39,7 @@ configurations {
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'org.dimdev:rift:1.0.4-51:dev'
+    implementation 'com.github.InsomniaKitten:Riftlin:2d2f34cc20'
 }
 
 mixin {

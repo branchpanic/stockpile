@@ -65,8 +65,10 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
         val heldStack = player.heldItemMainhand
 
         if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
-            barrelInventory.stackType = heldStack.withCount(1)
-            markDirty()
+            if (!barrelInventory.typeIsLocked) {
+                barrelInventory.stackType = heldStack.withCount(1)
+                markDirty()
+            }
         } else {
             val changesMade = if (playerDoubleRightClicked(player)) {
                 insertAllPossibleStacks(player)
@@ -78,9 +80,9 @@ class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorag
                 world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.1f, 0.9f)
                 markDirty()
             }
-        }
 
-        displayBarrelContents(player)
+            displayBarrelContents(player)
+        }
     }
 
     /**

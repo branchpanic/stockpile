@@ -21,9 +21,9 @@ const val BARREL_INPUT_SLOT_INDEX = 1
  * changes are made.
  */
 class MutableMassItemStorage(
-    private var _stackType: ItemStack,
-    var maxStacks: Int,
-    var amount: Int = 0
+        private var _stackType: ItemStack,
+        var maxStacks: Int,
+        var amount: Int = 0
 ) :
     AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
 
@@ -31,6 +31,7 @@ class MutableMassItemStorage(
         const val STACK_TYPE_KEY = "StackType"
         const val MAX_STACKS_KEY = "MaxStacks"
         const val AMOUNT_KEY = "Amount"
+        const val TYPE_LOCKED_KEY = "TypeIsLocked"
     }
 
     var stackType: ItemStack
@@ -43,12 +44,18 @@ class MutableMassItemStorage(
     private val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
     val typeIsDefined: Boolean get() = !stackType.isEmpty
 
+    var typeIsLocked: Boolean = false
+
     /**
      * Inserts an ItemStack into this MutableMassItemStorage and returns the remainder.
      */
     fun insertStack(stack: ItemStack): ItemStack {
         if (!isItemValidForSlot(BARREL_INPUT_SLOT_INDEX, stack)) {
             return stack
+        }
+
+        if (!typeIsDefined) {
+            stackType = stack.withCount(1)
         }
 
         val insertableAmount = min(stack.count, availableSpace)
@@ -116,8 +123,10 @@ class MutableMassItemStorage(
     override fun isEmpty(): Boolean = amount == 0
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
-        return typeIsDefined && stack != null && !stack.isEmpty &&
-            slotIndex == BARREL_INPUT_SLOT_INDEX && stackType.isStackableWith(stack)
+        return stack != null &&
+                !stack.isEmpty &&
+                slotIndex == BARREL_INPUT_SLOT_INDEX &&
+                (!typeIsDefined && !typeIsLocked || typeIsDefined && stackType.isStackableWith(stack))
     }
 
     override fun setInventorySlotContents(slotIndex: Int, stack: ItemStack?) {
@@ -135,6 +144,7 @@ class MutableMassItemStorage(
         compound.setTag(STACK_TYPE_KEY, stackType.writeToNBT(NBTTagCompound()))
         compound.setInteger(MAX_STACKS_KEY, maxStacks)
         compound.setInteger(AMOUNT_KEY, amount)
+        compound.setBoolean(TYPE_LOCKED_KEY, typeIsLocked)
         return compound
     }
 
@@ -142,5 +152,6 @@ class MutableMassItemStorage(
         stackType = ItemStack.loadFromNBT(compound.getCompoundTag(STACK_TYPE_KEY))
         maxStacks = compound.getInteger(MAX_STACKS_KEY)
         amount = compound.getInteger(AMOUNT_KEY)
+        typeIsLocked = compound.getBoolean(TYPE_LOCKED_KEY)
     }
 }

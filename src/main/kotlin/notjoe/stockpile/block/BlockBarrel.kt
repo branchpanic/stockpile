@@ -186,11 +186,7 @@ class BlockBarrel :
             return
         }
 
-        val storedTile = try {
-            TileBarrel()
-        } catch (e: Exception) {
-            return
-        }
+        val storedTile = try { TileBarrel() } catch (e: Exception) { return }
 
         storedTile.readPersistentValuesFromNBT(stack.orCreateTagCompound.getCompoundTag("BarrelTileData"))
 

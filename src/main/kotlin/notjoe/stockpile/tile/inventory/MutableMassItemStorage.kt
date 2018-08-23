@@ -25,7 +25,7 @@ class MutableMassItemStorage(
         var maxStacks: Int,
         var amount: Int = 0
 ) :
-    AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
+        AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
 
     companion object TagNames {
         const val STACK_TYPE_KEY = "StackType"
@@ -52,10 +52,6 @@ class MutableMassItemStorage(
     fun insertStack(stack: ItemStack): ItemStack {
         if (!isItemValidForSlot(BARREL_INPUT_SLOT_INDEX, stack)) {
             return stack
-        }
-
-        if (!typeIsDefined) {
-            stackType = stack.withCount(1)
         }
 
         val insertableAmount = min(stack.count, availableSpace)
@@ -132,6 +128,10 @@ class MutableMassItemStorage(
     override fun setInventorySlotContents(slotIndex: Int, stack: ItemStack?) {
         if (slotIndex != BARREL_INPUT_SLOT_INDEX || stack == null || stack.isEmpty) {
             return
+        }
+
+        if (!typeIsDefined && !typeIsLocked) {
+            stackType = stack.withCount(1)
         }
 
         amount += min(availableSpace, stack.count)

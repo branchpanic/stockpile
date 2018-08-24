@@ -13,7 +13,7 @@ buildscript {
 
 plugins {
     id 'org.ajoberstar.reckon' version '0.8.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.51'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.61'
 }
 
 apply plugin: 'net.minecraftforge.gradle.tweaker-client'
@@ -38,8 +38,15 @@ configurations {
 
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
     implementation 'org.dimdev:rift:1.0.4-51:dev'
-    implementation 'com.github.InsomniaKitten:Riftlin:2d2f34cc20'
+    implementation 'com.github.InsomniaKitten:Riftlin:0.2.0'
+
+    // We'll need to run our tests on JUnit 4 in order to use PowerMock.
+    testCompile 'io.kotlintest:kotlintest-runner-junit4:3.1.7'
+    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
+    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
+
 }
 
 mixin {

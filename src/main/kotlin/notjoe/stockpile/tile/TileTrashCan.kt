@@ -7,7 +7,7 @@ import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.ITickable
 import net.minecraft.util.math.AxisAlignedBB
 import notjoe.stockpile.block.BlockTrashCan
-import notjoe.stockpile.tile.inventory.VoidInventory
+import notjoe.stockpile.storage.inventory.VoidInventory
 
 /**
  * A TileEntity which destroys items inserted into it.

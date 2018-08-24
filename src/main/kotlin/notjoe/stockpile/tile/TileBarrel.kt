@@ -11,10 +11,10 @@ import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.text.TextComponentTranslation
-import notjoe.stockpile.tile.inventory.BARREL_OUTPUT_SLOT_INDEX
-import notjoe.stockpile.tile.inventory.MutableMassItemStorage
+import notjoe.stockpile.storage.inventory.BARREL_OUTPUT_SLOT_INDEX
+import notjoe.stockpile.storage.inventory.MassItemInventory
 import notjoe.stockpile.util.ext.withCount
-import java.util.UUID
+import java.util.*
 
 const val BARREL_DOUBLE_CLICK_TIME_MS = 500
 const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a capacity of 2^30 items
@@ -22,7 +22,7 @@ const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a ca
 /**
  * A (JABBA|YABBA|Storage Drawers|etc.)-inspired container which allows for storing a large amount of a single item.
  */
-class TileBarrel(barrelInventory: MutableMassItemStorage = MutableMassItemStorage(ItemStack.EMPTY, 32)) :
+class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStack.EMPTY, 32)) :
     AbstractPersistentTileEntity(TileBarrel.TYPE),
     IInventory by barrelInventory {
 

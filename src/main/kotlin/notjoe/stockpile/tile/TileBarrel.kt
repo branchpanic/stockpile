@@ -65,7 +65,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
         val heldStack = player.heldItemMainhand
 
         if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
-            if (!barrelInventory.typeIsLocked) {
+            if (!barrelInventory.disallowChangeOnEmpty) {
                 barrelInventory.stackType = heldStack.withCount(1)
                 markDirty()
             }

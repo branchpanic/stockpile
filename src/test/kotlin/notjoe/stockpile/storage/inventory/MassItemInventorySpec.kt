@@ -28,6 +28,7 @@ class MassItemInventorySpec : WordSpec({
         "accept any item when first initialized" {
             inventory.insertStack(1 of RED_ITEM) shouldBe ItemStack.EMPTY
             inventory.isEmpty shouldBe false
+            inventory.amount shouldBe 1
         }
 
         "have their stack type set when the first item is inserted" {
@@ -53,7 +54,7 @@ class MassItemInventorySpec : WordSpec({
     }
 
     "Unlocked inventories" should {
-        inventory.typeIsLocked = false
+        inventory.disallowChangeOnEmpty = false
 
         "accept new item types upon being emptied" {
             inventory.insertStack(1 of RED_ITEM)
@@ -62,10 +63,20 @@ class MassItemInventorySpec : WordSpec({
             inventory.insertStack(1 of BLUE_ITEM) shouldBe ItemStack.EMPTY
             inventory.isEmpty shouldBe false
         }
+
+        "not report a defined type when empty" {
+            inventory.typeIsDefined shouldBe false
+
+            inventory.insertStack(1 of RED_ITEM)
+            inventory.typeIsDefined shouldBe true
+
+            inventory.removeStackFromSlot(0)
+            inventory.typeIsDefined shouldBe false
+        }
     }
 
     "Locked inventories" should {
-        inventory.typeIsLocked = true
+        inventory.disallowChangeOnEmpty = true
 
         "not accept new item types upon being emptied" {
             inventory.insertStack(1 of RED_ITEM)
@@ -74,6 +85,40 @@ class MassItemInventorySpec : WordSpec({
             val blueItemStack = 1 of BLUE_ITEM
             inventory.insertStack(blueItemStack) should matchStack(blueItemStack)
             inventory.isEmpty shouldBe true
+        }
+
+        "start accepting new items after unlocked when empty" {
+            inventory.insertStack(1 of RED_ITEM)
+            inventory.removeStackFromSlot(0)
+
+            inventory.disallowChangeOnEmpty = false
+
+            val blueItemStack = 1 of BLUE_ITEM
+            inventory.insertStack(blueItemStack) shouldBe ItemStack.EMPTY
+            inventory.isEmpty shouldBe false
+        }
+
+        "continue reporting a defined type when emptied" {
+            inventory.typeIsDefined shouldBe false
+
+            inventory.insertStack(1 of RED_ITEM)
+            inventory.typeIsDefined shouldBe true
+
+            inventory.removeStackFromSlot(0)
+            inventory.typeIsDefined shouldBe true
+        }
+
+        "stop reporting a defined type when empty and unlocked" {
+            inventory.typeIsDefined shouldBe false
+
+            inventory.insertStack(1 of RED_ITEM)
+            inventory.typeIsDefined shouldBe true
+
+            inventory.removeStackFromSlot(0)
+            inventory.typeIsDefined shouldBe true
+
+            inventory.disallowChangeOnEmpty = false
+            inventory.typeIsDefined shouldBe false
         }
     }
 })

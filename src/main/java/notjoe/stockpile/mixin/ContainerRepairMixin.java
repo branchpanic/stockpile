@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import notjoe.stockpile.block.StockpileBlocks;
 import notjoe.stockpile.tile.TileBarrel;
 import notjoe.stockpile.tile.TileBarrelKt;
-import notjoe.stockpile.tile.inventory.MutableMassItemStorage;
+import notjoe.stockpile.storage.inventory.MassItemInventory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -57,14 +57,14 @@ abstract public class ContainerRepairMixin extends Container {
 
     private int getBarrelMaxStacks(ItemStack barrelStack) {
         NBTTagCompound inventoryCompound = getBarrelCompound(barrelStack).getCompoundTag("Inventory");
-        return inventoryCompound.getInteger(MutableMassItemStorage.MAX_STACKS_KEY);
+        return inventoryCompound.getInteger(MassItemInventory.MAX_STACKS_KEY);
     }
 
     private ItemStack getUpgradedBarrelStack(ItemStack barrelStack, int addedStacks) {
         ItemStack upgradedStack = barrelStack.copy();
         NBTTagCompound inventoryCompound = getBarrelCompound(upgradedStack).getCompoundTag("Inventory");
-        int existingMax = inventoryCompound.getInteger(MutableMassItemStorage.MAX_STACKS_KEY);
-        inventoryCompound.setInteger(MutableMassItemStorage.MAX_STACKS_KEY, existingMax + addedStacks);
+        int existingMax = inventoryCompound.getInteger(MassItemInventory.MAX_STACKS_KEY);
+        inventoryCompound.setInteger(MassItemInventory.MAX_STACKS_KEY, existingMax + addedStacks);
         return upgradedStack;
     }
 

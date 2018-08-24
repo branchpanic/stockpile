@@ -3,7 +3,7 @@ package notjoe.stockpile.tile
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
-import notjoe.stockpile.util.nbt.NBTSerializableInPlace
+import notjoe.stockpile.util.nbt.NBTSavable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -20,9 +20,9 @@ abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEnti
     }
 
     /**
-     * Allows for an NBTSerializableInPlace value to persist (via writeToNBT and readFromNBT) automatically.
+     * Allows for an NBTSavable value to persist (via writeToNBT and readFromNBT) automatically.
      */
-    fun <T : NBTSerializableInPlace> nbtBacked(name: String, initialValue: T): ReadWriteNBTProperty<T> {
+    fun <T : NBTSavable> nbtBacked(name: String, initialValue: T): ReadWriteNBTProperty<T> {
         val delegate = ReadWriteNBTProperty(name, initialValue)
         persistentValues += delegate
         return delegate
@@ -56,7 +56,7 @@ abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEnti
                 .forEach { delegate -> delegate.loadedValue.loadFromCompound(compound.getCompoundTag(delegate.name)) }
     }
 
-    class ReadWriteNBTProperty<T : NBTSerializableInPlace>(
+    class ReadWriteNBTProperty<T : NBTSavable>(
             val name: String,
             internal var loadedValue: T
     ) : ReadWriteProperty<TileEntity, T> {

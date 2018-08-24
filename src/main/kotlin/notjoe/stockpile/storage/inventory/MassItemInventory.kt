@@ -1,10 +1,10 @@
-package notjoe.stockpile.tile.inventory
+package notjoe.stockpile.storage.inventory
 
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import notjoe.stockpile.util.ext.isStackableWith
 import notjoe.stockpile.util.ext.withCount
-import notjoe.stockpile.util.nbt.NBTSerializableInPlace
+import notjoe.stockpile.util.nbt.NBTSavable
 import kotlin.math.min
 
 const val BARREL_OUTPUT_SLOT_INDEX = 0
@@ -20,12 +20,12 @@ const val BARREL_INPUT_SLOT_INDEX = 1
  * This implementation allows for the stack type to be mutated in-place. The method markDirty() is called whenever
  * changes are made.
  */
-class MutableMassItemStorage(
+class MassItemInventory(
         private var _stackType: ItemStack,
         var maxStacks: Int,
         var amount: Int = 0
 ) :
-        AbstractSidedInventory("mass_item_storage"), NBTSerializableInPlace {
+        AbstractSidedInventory("mass_item_storage"), NBTSavable {
 
     companion object TagNames {
         const val STACK_TYPE_KEY = "StackType"
@@ -47,7 +47,7 @@ class MutableMassItemStorage(
     var typeIsLocked: Boolean = false
 
     /**
-     * Inserts an ItemStack into this MutableMassItemStorage and returns the remainder.
+     * Inserts an ItemStack into this MassItemInventory and returns the remainder.
      */
     fun insertStack(stack: ItemStack): ItemStack {
         if (!isItemValidForSlot(BARREL_INPUT_SLOT_INDEX, stack)) {
@@ -56,6 +56,7 @@ class MutableMassItemStorage(
 
         val insertableAmount = min(stack.count, availableSpace)
         val remainderAmount = stack.count - insertableAmount
+
         setInventorySlotContents(BARREL_INPUT_SLOT_INDEX, stack)
 
         return if (remainderAmount > 0) {
@@ -97,6 +98,7 @@ class MutableMassItemStorage(
 
     override fun clear() {
         amount = 0
+        markDirty()
     }
 
     override fun getInventoryStackLimit(): Int = stackType.maxStackSize

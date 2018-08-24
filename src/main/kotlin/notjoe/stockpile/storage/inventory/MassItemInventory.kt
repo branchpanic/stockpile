@@ -21,7 +21,7 @@ const val BARREL_INPUT_SLOT_INDEX = 1
  * changes are made.
  */
 class MassItemInventory(
-        private var _stackType: ItemStack,
+        initialStackType: ItemStack = ItemStack.EMPTY,
         var maxStacks: Int,
         var amount: Int = 0
 ) :
@@ -34,17 +34,16 @@ class MassItemInventory(
         const val TYPE_LOCKED_KEY = "TypeIsLocked"
     }
 
-    var stackType: ItemStack
-        get() = _stackType
+    var stackType: ItemStack = initialStackType
         set(value) {
-            _stackType = value
+            field = value
             amount = 0
         }
 
-    private val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
-    val typeIsDefined: Boolean get() = !stackType.isEmpty
+    val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
+    val typeIsDefined: Boolean get() = (!disallowChangeOnEmpty && amount == 0) || !stackType.isEmpty
 
-    var typeIsLocked: Boolean = false
+    var disallowChangeOnEmpty: Boolean = false
 
     /**
      * Inserts an ItemStack into this MassItemInventory and returns the remainder.
@@ -121,10 +120,10 @@ class MassItemInventory(
     override fun isEmpty(): Boolean = amount == 0
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
-        return stack != null &&
-                !stack.isEmpty &&
-                slotIndex == BARREL_INPUT_SLOT_INDEX &&
-                (!typeIsDefined && !typeIsLocked || typeIsDefined && stackType.isStackableWith(stack))
+        return stack != null
+                && !stack.isEmpty
+                && slotIndex == BARREL_INPUT_SLOT_INDEX
+                && (typeIsDefined && stack.isStackableWith(stackType) || !typeIsDefined)
     }
 
     override fun setInventorySlotContents(slotIndex: Int, stack: ItemStack?) {
@@ -132,8 +131,8 @@ class MassItemInventory(
             return
         }
 
-        if (!typeIsDefined && !typeIsLocked) {
-            stackType = stack.withCount(1)
+        if (!typeIsDefined && !disallowChangeOnEmpty) {
+            stackType = stack
         }
 
         amount += min(availableSpace, stack.count)
@@ -146,7 +145,7 @@ class MassItemInventory(
         compound.setTag(STACK_TYPE_KEY, stackType.writeToNBT(NBTTagCompound()))
         compound.setInteger(MAX_STACKS_KEY, maxStacks)
         compound.setInteger(AMOUNT_KEY, amount)
-        compound.setBoolean(TYPE_LOCKED_KEY, typeIsLocked)
+        compound.setBoolean(TYPE_LOCKED_KEY, disallowChangeOnEmpty)
         return compound
     }
 
@@ -154,6 +153,6 @@ class MassItemInventory(
         stackType = ItemStack.loadFromNBT(compound.getCompoundTag(STACK_TYPE_KEY))
         maxStacks = compound.getInteger(MAX_STACKS_KEY)
         amount = compound.getInteger(AMOUNT_KEY)
-        typeIsLocked = compound.getBoolean(TYPE_LOCKED_KEY)
+        disallowChangeOnEmpty = compound.getBoolean(TYPE_LOCKED_KEY)
     }
 }

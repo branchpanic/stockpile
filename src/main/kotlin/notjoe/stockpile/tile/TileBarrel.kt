@@ -59,7 +59,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
     /**
      * Handles a right-click (single or double) by a player.
      *
-     * - A single right-click attempts to insert the held item into this BARREL.
+     * - A single right-click attempts to insert the held item into this barrel.
      * - A double right-click attempts to insert as many stacks as possible from the player's inventory into this
      *   barrel.
      */
@@ -67,7 +67,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
         val heldStack = player.heldItemMainhand
 
         if (player.isSneaking && (barrelInventory.typeIsLocked || !barrelInventory.typeIsLocked && !barrelInventory.isEmpty)) {
-            barrelInventory.typeIsLocked = !barrelInventory.typeIsLocked
+            toggleBarrelLockState(player)
             markDirty()
         } else {
             if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
@@ -87,6 +87,24 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
             }
 
             displayBarrelContents(player)
+        }
+    }
+
+    private fun toggleBarrelLockState(player: EntityPlayer) {
+        barrelInventory.typeIsLocked = !barrelInventory.typeIsLocked
+        world.playSound(
+            null,
+            pos,
+            SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON,
+            SoundCategory.BLOCKS,
+            0.1f,
+            0.9f
+        )
+
+        if (barrelInventory.typeIsLocked) {
+            player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.just_locked"), true)
+        } else {
+            player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.just_unlocked"), true)
         }
     }
 

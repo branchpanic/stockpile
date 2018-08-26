@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). 
 
+## [Unreleased]
+
+### Added
+ - Dependency on Riftlin
+ - Ability to "lock" barrels
+    - By default, barrels are unlocked
+    - Shift right-click to toggle lock state
+    - Locked barrels continue accepting only one item when empty
+    - Unlocked barrels accept any item when empty
+    
+### Changed
+ - Barrel drop behavior in creative mode
+    - Barrels no longer drop when broken in creative
+    - Copies can be obtained via pick block
+
 ## [0.2.0] - 2018-08-16
 
 ### Added

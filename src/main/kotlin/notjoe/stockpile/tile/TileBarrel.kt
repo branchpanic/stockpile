@@ -37,6 +37,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
     val stackType get() = barrelInventory.stackType
     val amountStored get() = barrelInventory.amount
     val maxStacks get() = barrelInventory.maxStacks
+    val typeIsLocked get() = barrelInventory.typeIsLocked
 
     fun clearStackType() {
         barrelInventory.stackType = ItemStack.EMPTY
@@ -65,12 +66,15 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
     fun handleRightClick(player: EntityPlayer) {
         val heldStack = player.heldItemMainhand
 
-        if (!barrelInventory.typeCannotBeChanged && !heldStack.isEmpty) {
-            if (!barrelInventory.typeIsLocked) {
+        if (player.isSneaking && (barrelInventory.typeIsLocked || !barrelInventory.typeIsLocked && !barrelInventory.isEmpty)) {
+            barrelInventory.typeIsLocked = !barrelInventory.typeIsLocked
+            markDirty()
+        } else {
+            if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
                 barrelInventory.stackType = heldStack.withCount(1)
                 markDirty()
             }
-        } else {
+
             val changesMade = if (playerDoubleRightClicked(player)) {
                 insertAllPossibleStacks(player)
             } else {

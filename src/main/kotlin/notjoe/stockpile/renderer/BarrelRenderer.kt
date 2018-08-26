@@ -10,9 +10,7 @@ import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.client.resources.I18n
-import net.minecraft.item.ItemStack
 import net.minecraft.util.EnumFacing
-import net.minecraft.util.math.BlockPos
 import notjoe.stockpile.tile.TileBarrel
 import notjoe.stockpile.util.shorthand
 import org.lwjgl.opengl.GL11
@@ -47,10 +45,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         GlStateManager.pushMatrix()
         renderDisplay(
-            containedItem,
-            tile.amountStored,
-            tile.maxStacks * tile.inventoryStackLimit,
-            tile.pos,
+            tile,
             barrelFrontDirection,
             xPos,
             yPos,
@@ -157,15 +152,18 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     }
 
     private fun renderDisplay(
-        stack: ItemStack,
-        amount: Int,
-        maxItems: Int,
-        tilePos: BlockPos,
+        tile: TileBarrel,
         side: EnumFacing,
         xPos: Double,
         yPos: Double,
         zPos: Double
     ) {
+        val stack = tile.stackType
+        val amount = tile.amountStored
+        val maxItems = tile.maxStacks * tile.inventoryStackLimit
+        val tilePos = tile.pos
+        val isLocked = tile.typeIsLocked
+
         if (stack.isEmpty) {
             return
         }
@@ -191,8 +189,10 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         renderItem.renderItemAndEffectIntoGUI(stack, 0, -3)
 
+        val displayText = if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty")
+
         renderProgressBar(
-            if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
+            displayText + if (!isLocked) "*" else "",
             amount.toDouble() / maxItems, 8f, 16f, if (maxItems - amount <= 0) 0xFFFF22 else 0xFFFFFF
         )
 

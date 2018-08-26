@@ -38,7 +38,7 @@ class MassItemInventorySpec : WordSpec({
         "have their stack type set when the first item is inserted" {
             val inventory = MassItemInventory(ItemStack.EMPTY, 32)
             inventory.insertStack(1 of BLUE_ITEM)
-            inventory.typeCannotBeChanged shouldBe true
+            inventory.typeIsDefined shouldBe true
             inventory.stackType should matchStack(1 of BLUE_ITEM)
         }
 
@@ -91,10 +91,10 @@ class MassItemInventorySpec : WordSpec({
             inventory.typeIsLocked = false
 
             inventory.insertStack(1 of RED_ITEM)
-            inventory.typeCannotBeChanged shouldBe true
+            inventory.typeIsDefined shouldBe true
 
             inventory.removeStackFromSlot(0)
-            inventory.typeCannotBeChanged shouldBe false
+            inventory.typeIsDefined shouldBe false
         }
     }
 
@@ -130,29 +130,29 @@ class MassItemInventorySpec : WordSpec({
             val inventory = MassItemInventory(ItemStack.EMPTY, 32)
             inventory.typeIsLocked = true
 
-            inventory.typeCannotBeChanged shouldBe false
+            inventory.typeIsDefined shouldBe false
 
             inventory.insertStack(1 of RED_ITEM)
-            inventory.typeCannotBeChanged shouldBe true
+            inventory.typeIsDefined shouldBe true
 
             inventory.removeStackFromSlot(0)
-            inventory.typeCannotBeChanged shouldBe true
+            inventory.typeIsDefined shouldBe true
         }
 
         "stop reporting a defined type when empty and unlocked" {
             val inventory = MassItemInventory(ItemStack.EMPTY, 32)
             inventory.typeIsLocked = true
 
-            inventory.typeCannotBeChanged shouldBe false
+            inventory.typeIsDefined shouldBe false
 
             inventory.insertStack(1 of RED_ITEM)
-            inventory.typeCannotBeChanged shouldBe true
+            inventory.typeIsDefined shouldBe true
 
             inventory.removeStackFromSlot(0)
-            inventory.typeCannotBeChanged shouldBe true
+            inventory.typeIsDefined shouldBe true
 
             inventory.typeIsLocked = false
-            inventory.typeCannotBeChanged shouldBe false
+            inventory.typeIsDefined shouldBe false
         }
     }
 })

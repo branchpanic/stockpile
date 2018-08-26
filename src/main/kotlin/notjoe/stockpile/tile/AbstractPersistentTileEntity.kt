@@ -7,9 +7,6 @@ import notjoe.stockpile.util.nbt.NBTSerializable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-/**
- * A base tile entity for Stockpile, which
- */
 abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEntity(type) {
     private var persistentValues = emptyList<ReadWriteNBTProperty<*>>()
 
@@ -21,6 +18,8 @@ abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEnti
 
     /**
      * Allows for an NBTSerializable value to persist (via writeToNBT and readFromNBT) automatically.
+     *
+     * Pretend you didn't see this... it'll be improved in the future.
      */
     fun <T : NBTSerializable> nbtBacked(name: String, initialValue: T): ReadWriteNBTProperty<T> {
         val delegate = ReadWriteNBTProperty(name, initialValue)

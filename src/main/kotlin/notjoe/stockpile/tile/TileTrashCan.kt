@@ -15,6 +15,7 @@ import notjoe.stockpile.storage.inventory.VoidInventory
 class TileTrashCan : TileEntity(TYPE), ISidedInventory by VoidInventory(), ITickable {
     companion object Type {
         lateinit var TYPE: TileEntityType<TileTrashCan>
+            internal set
     }
 
     override fun update() {

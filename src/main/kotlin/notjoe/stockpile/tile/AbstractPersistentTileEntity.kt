@@ -3,7 +3,7 @@ package notjoe.stockpile.tile
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.tileentity.TileEntityType
-import notjoe.stockpile.util.nbt.NBTSavable
+import notjoe.stockpile.util.nbt.NBTSerializable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -20,9 +20,9 @@ abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEnti
     }
 
     /**
-     * Allows for an NBTSavable value to persist (via writeToNBT and readFromNBT) automatically.
+     * Allows for an NBTSerializable value to persist (via writeToNBT and readFromNBT) automatically.
      */
-    fun <T : NBTSavable> nbtBacked(name: String, initialValue: T): ReadWriteNBTProperty<T> {
+    fun <T : NBTSerializable> nbtBacked(name: String, initialValue: T): ReadWriteNBTProperty<T> {
         val delegate = ReadWriteNBTProperty(name, initialValue)
         persistentValues += delegate
         return delegate
@@ -52,13 +52,13 @@ abstract class AbstractPersistentTileEntity(type: TileEntityType<*>?) : TileEnti
 
     fun readPersistentValuesFromNBT(compound: NBTTagCompound) {
         persistentValues
-                .filter { delegate -> compound.hasKey(delegate.name) }
-                .forEach { delegate -> delegate.loadedValue.loadFromCompound(compound.getCompoundTag(delegate.name)) }
+            .filter { delegate -> compound.hasKey(delegate.name) }
+            .forEach { delegate -> delegate.loadedValue.loadFromCompound(compound.getCompoundTag(delegate.name)) }
     }
 
-    class ReadWriteNBTProperty<T : NBTSavable>(
-            val name: String,
-            internal var loadedValue: T
+    class ReadWriteNBTProperty<T : NBTSerializable>(
+        val name: String,
+        internal var loadedValue: T
     ) : ReadWriteProperty<TileEntity, T> {
         override operator fun getValue(thisRef: TileEntity, property: KProperty<*>): T = loadedValue
         override fun setValue(thisRef: TileEntity, property: KProperty<*>, value: T) {

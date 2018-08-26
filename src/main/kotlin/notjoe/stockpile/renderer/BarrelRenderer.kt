@@ -2,13 +2,15 @@ package notjoe.stockpile.renderer
 
 import net.minecraft.block.BlockDirectional
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.*
+import net.minecraft.client.renderer.BufferBuilder
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.OpenGlHelper
+import net.minecraft.client.renderer.RenderHelper
+import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.client.resources.I18n
-import net.minecraft.item.ItemStack
 import net.minecraft.util.EnumFacing
-import net.minecraft.util.math.BlockPos
 import notjoe.stockpile.tile.TileBarrel
 import notjoe.stockpile.util.shorthand
 import org.lwjgl.opengl.GL11
@@ -23,12 +25,12 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
     @Suppress("FunctionName")
     override fun render(
-            tile: TileBarrel?,
-            xPos: Double,
-            yPos: Double,
-            zPos: Double,
-            partialTicks: Float,
-            destroyStage: Int
+        tile: TileBarrel?,
+        xPos: Double,
+        yPos: Double,
+        zPos: Double,
+        partialTicks: Float,
+        destroyStage: Int
     ) {
         if (tile == null) {
             return
@@ -43,14 +45,11 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         GlStateManager.pushMatrix()
         renderDisplay(
-                containedItem,
-                tile.amountStored,
-                tile.maxStacks * tile.inventoryStackLimit,
-                tile.pos,
-                barrelFrontDirection,
-                xPos,
-                yPos,
-                zPos
+            tile,
+            barrelFrontDirection,
+            xPos,
+            yPos,
+            zPos
         )
         GlStateManager.popMatrix()
     }
@@ -97,17 +96,17 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         buffer.begin(7, DefaultVertexFormats.POSITION_COLOR)
         buffer.pos(x2, y1, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
         buffer.pos(x2, y2, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
         buffer.pos(x1, y2, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
         buffer.pos(x1, y1, 0.0)
-                .color(color)
-                .endVertex()
+            .color(color)
+            .endVertex()
 
         tessellator.draw()
     }
@@ -128,21 +127,21 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         if (filledBarWidth > 0) {
             drawFlatRectangle(
-                    -0.25 * BARREL_BAR_WIDTH,
-                    textCenterY + textHeight.toDouble(),
-                    filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
-                    textCenterY - 0.25 * textHeight,
-                    Color(0f, 0f, 1f, 0.7f)
+                -0.25 * BARREL_BAR_WIDTH,
+                textCenterY + textHeight.toDouble(),
+                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
+                textCenterY - 0.25 * textHeight,
+                Color(0f, 0f, 1f, 0.7f)
             )
         }
 
         if (unfilledBarWidth > 0) {
             drawFlatRectangle(
-                    filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
-                    textCenterY + textHeight.toDouble(),
-                    filledBarWidth + unfilledBarWidth,
-                    textCenterY - 0.25 * textHeight,
-                    Color(0f, 0f, 0f, 0.7f)
+                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
+                textCenterY + textHeight.toDouble(),
+                filledBarWidth + unfilledBarWidth,
+                textCenterY - 0.25 * textHeight,
+                Color(0f, 0f, 0f, 0.7f)
             )
         }
 
@@ -153,15 +152,18 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     }
 
     private fun renderDisplay(
-            stack: ItemStack,
-            amount: Int,
-            maxItems: Int,
-            tilePos: BlockPos,
-            side: EnumFacing,
-            xPos: Double,
-            yPos: Double,
-            zPos: Double
+        tile: TileBarrel,
+        side: EnumFacing,
+        xPos: Double,
+        yPos: Double,
+        zPos: Double
     ) {
+        val stack = tile.stackType
+        val amount = tile.amountStored
+        val maxItems = tile.maxStacks * tile.inventoryStackLimit
+        val tilePos = tile.pos
+        val isLocked = tile.typeIsLocked
+
         if (stack.isEmpty) {
             return
         }
@@ -179,17 +181,19 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
             val lightmapU = lightmapCombined % 65536
             val lightmapV = lightmapCombined / 65536
             OpenGlHelper.setLightmapTextureCoords(
-                    OpenGlHelper.lightmapTexUnit,
-                    lightmapU.toFloat(),
-                    lightmapV.toFloat()
+                OpenGlHelper.lightmapTexUnit,
+                lightmapU.toFloat(),
+                lightmapV.toFloat()
             )
         }
 
         renderItem.renderItemAndEffectIntoGUI(stack, 0, -3)
 
+        val displayText = if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty")
+
         renderProgressBar(
-                if (amount > 0) amount.shorthand() else I18n.format("stockpile.barrel.empty"),
-                amount.toDouble() / maxItems, 8f, 16f, if (maxItems - amount <= 0) 0xFFFF22 else 0xFFFFFF
+            displayText + if (!isLocked) "*" else "",
+            amount.toDouble() / maxItems, 8f, 16f, if (maxItems - amount <= 0) 0xFFFF22 else 0xFFFFFF
         )
 
         GlStateManager.enableAlpha()

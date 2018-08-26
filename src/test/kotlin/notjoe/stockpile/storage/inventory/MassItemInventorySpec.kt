@@ -6,7 +6,11 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
-import notjoe.stockpile.testutil.*
+import notjoe.stockpile.testutil.BLUE_ITEM
+import notjoe.stockpile.testutil.RED_ITEM
+import notjoe.stockpile.testutil.matchStack
+import notjoe.stockpile.testutil.of
+import notjoe.stockpile.testutil.stubItems
 import org.junit.runner.RunWith
 import org.powermock.core.classloader.annotations.PowerMockIgnore
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -22,22 +26,24 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate
 class MassItemInventorySpec : WordSpec({
     stubItems("AIR")
 
-    val inventory = MassItemInventory(ItemStack.EMPTY, 32)
-
     "All inventories" should {
+
         "accept any item when first initialized" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
             inventory.insertStack(1 of RED_ITEM) shouldBe ItemStack.EMPTY
             inventory.isEmpty shouldBe false
             inventory.amount shouldBe 1
         }
 
         "have their stack type set when the first item is inserted" {
-            inventory.insertStack(1 of RED_ITEM)
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.insertStack(1 of BLUE_ITEM)
             inventory.typeIsDefined shouldBe true
-            inventory.stackType should matchStack(1 of RED_ITEM)
+            inventory.stackType should matchStack(1 of BLUE_ITEM)
         }
 
         "reject items that don't match the stored stack type" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
             inventory.insertStack(1 of RED_ITEM)
 
             val blueItemStack = 1 of BLUE_ITEM
@@ -51,12 +57,28 @@ class MassItemInventorySpec : WordSpec({
             val redItemStack = 1 of RED_ITEM
             tinyInventory.insertStack(redItemStack) should matchStack(redItemStack)
         }
+
+        "provide as many items as possible in their backing output slots" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.insertStack(1 of RED_ITEM)
+            inventory.getStackInSlot(MASS_INVENTORY_OUTPUT_SLOT).count shouldBe 1
+        }
+
+        "provide items in their input slots within a stack of being full" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 2)
+            inventory.insertStack(64 of RED_ITEM)
+            inventory.getStackInSlot(MASS_INVENTORY_INPUT_SLOT).count shouldBe 0
+
+            inventory.insertStack(1 of RED_ITEM)
+            inventory.getStackInSlot(MASS_INVENTORY_INPUT_SLOT).count shouldBe 1
+        }
     }
 
     "Unlocked inventories" should {
-        inventory.disallowChangeOnEmpty = false
-
         "accept new item types upon being emptied" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.typeIsLocked = false
+
             inventory.insertStack(1 of RED_ITEM)
             inventory.removeStackFromSlot(0)
 
@@ -65,7 +87,8 @@ class MassItemInventorySpec : WordSpec({
         }
 
         "not report a defined type when empty" {
-            inventory.typeIsDefined shouldBe false
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.typeIsLocked = false
 
             inventory.insertStack(1 of RED_ITEM)
             inventory.typeIsDefined shouldBe true
@@ -76,9 +99,11 @@ class MassItemInventorySpec : WordSpec({
     }
 
     "Locked inventories" should {
-        inventory.disallowChangeOnEmpty = true
 
         "not accept new item types upon being emptied" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.typeIsLocked = true
+
             inventory.insertStack(1 of RED_ITEM)
             inventory.removeStackFromSlot(0)
 
@@ -88,10 +113,13 @@ class MassItemInventorySpec : WordSpec({
         }
 
         "start accepting new items after unlocked when empty" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.typeIsLocked = true
+
             inventory.insertStack(1 of RED_ITEM)
             inventory.removeStackFromSlot(0)
 
-            inventory.disallowChangeOnEmpty = false
+            inventory.typeIsLocked = false
 
             val blueItemStack = 1 of BLUE_ITEM
             inventory.insertStack(blueItemStack) shouldBe ItemStack.EMPTY
@@ -99,6 +127,9 @@ class MassItemInventorySpec : WordSpec({
         }
 
         "continue reporting a defined type when emptied" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.typeIsLocked = true
+
             inventory.typeIsDefined shouldBe false
 
             inventory.insertStack(1 of RED_ITEM)
@@ -109,6 +140,9 @@ class MassItemInventorySpec : WordSpec({
         }
 
         "stop reporting a defined type when empty and unlocked" {
+            val inventory = MassItemInventory(ItemStack.EMPTY, 32)
+            inventory.typeIsLocked = true
+
             inventory.typeIsDefined shouldBe false
 
             inventory.insertStack(1 of RED_ITEM)
@@ -117,7 +151,7 @@ class MassItemInventorySpec : WordSpec({
             inventory.removeStackFromSlot(0)
             inventory.typeIsDefined shouldBe true
 
-            inventory.disallowChangeOnEmpty = false
+            inventory.typeIsLocked = false
             inventory.typeIsDefined shouldBe false
         }
     }

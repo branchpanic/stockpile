@@ -11,10 +11,10 @@ import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.text.TextComponentTranslation
-import notjoe.stockpile.storage.inventory.BARREL_OUTPUT_SLOT_INDEX
+import notjoe.stockpile.storage.inventory.MASS_INVENTORY_OUTPUT_SLOT
 import notjoe.stockpile.storage.inventory.MassItemInventory
 import notjoe.stockpile.util.ext.withCount
-import java.util.*
+import java.util.UUID
 
 const val BARREL_DOUBLE_CLICK_TIME_MS = 500
 const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a capacity of 2^30 items
@@ -28,6 +28,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
 
     companion object Type {
         lateinit var TYPE: TileEntityType<TileBarrel>
+            internal set
     }
 
     private var barrelInventory by nbtBacked("Inventory", barrelInventory)
@@ -36,6 +37,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
     val stackType get() = barrelInventory.stackType
     val amountStored get() = barrelInventory.amount
     val maxStacks get() = barrelInventory.maxStacks
+    val typeIsLocked get() = barrelInventory.typeIsLocked
 
     fun clearStackType() {
         barrelInventory.stackType = ItemStack.EMPTY
@@ -57,19 +59,22 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
     /**
      * Handles a right-click (single or double) by a player.
      *
-     * - A single right-click attempts to insert the held item into this BARREL.
+     * - A single right-click attempts to insert the held item into this barrel.
      * - A double right-click attempts to insert as many stacks as possible from the player's inventory into this
      *   barrel.
      */
     fun handleRightClick(player: EntityPlayer) {
         val heldStack = player.heldItemMainhand
 
-        if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
-            if (!barrelInventory.disallowChangeOnEmpty) {
+        if (player.isSneaking && (barrelInventory.typeIsLocked || !barrelInventory.typeIsLocked && !barrelInventory.isEmpty)) {
+            toggleBarrelLockState(player)
+            markDirty()
+        } else {
+            if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
                 barrelInventory.stackType = heldStack.withCount(1)
                 markDirty()
             }
-        } else {
+
             val changesMade = if (playerDoubleRightClicked(player)) {
                 insertAllPossibleStacks(player)
             } else {
@@ -85,6 +90,24 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
         }
     }
 
+    private fun toggleBarrelLockState(player: EntityPlayer) {
+        barrelInventory.typeIsLocked = !barrelInventory.typeIsLocked
+        world.playSound(
+            null,
+            pos,
+            SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON,
+            SoundCategory.BLOCKS,
+            0.1f,
+            0.9f
+        )
+
+        if (barrelInventory.typeIsLocked) {
+            player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.just_locked"), true)
+        } else {
+            player.sendStatusMessage(TextComponentTranslation("stockpile.barrel.just_unlocked"), true)
+        }
+    }
+
     /**
      * Handles a left-click by a player.
      *
@@ -93,7 +116,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
      */
     fun handleLeftClick(player: EntityPlayer) {
         val amountToExtract = if (player.isSneaking) inventoryStackLimit else 1
-        val extractedStack = decrStackSize(BARREL_OUTPUT_SLOT_INDEX, amountToExtract)
+        val extractedStack = decrStackSize(MASS_INVENTORY_OUTPUT_SLOT, amountToExtract)
 
         if (!extractedStack.isEmpty) {
             val allItemsGiven = player.addItemStackToInventory(extractedStack)

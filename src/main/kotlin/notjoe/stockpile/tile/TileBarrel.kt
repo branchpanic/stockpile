@@ -11,10 +11,10 @@ import net.minecraft.tileentity.TileEntityType
 import net.minecraft.util.EnumHand
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.text.TextComponentTranslation
-import notjoe.stockpile.storage.inventory.BARREL_OUTPUT_SLOT_INDEX
+import notjoe.stockpile.storage.inventory.MASS_INVENTORY_OUTPUT_SLOT
 import notjoe.stockpile.storage.inventory.MassItemInventory
 import notjoe.stockpile.util.ext.withCount
-import java.util.*
+import java.util.UUID
 
 const val BARREL_DOUBLE_CLICK_TIME_MS = 500
 const val BARREL_MAX_STACK_CAPACITY = 16777216 // 2^24 stacks, which yields a capacity of 2^30 items
@@ -28,6 +28,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
 
     companion object Type {
         lateinit var TYPE: TileEntityType<TileBarrel>
+            internal set
     }
 
     private var barrelInventory by nbtBacked("Inventory", barrelInventory)
@@ -64,8 +65,8 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
     fun handleRightClick(player: EntityPlayer) {
         val heldStack = player.heldItemMainhand
 
-        if (!barrelInventory.typeIsDefined && !heldStack.isEmpty) {
-            if (!barrelInventory.disallowChangeOnEmpty) {
+        if (!barrelInventory.typeCannotBeChanged && !heldStack.isEmpty) {
+            if (!barrelInventory.typeIsLocked) {
                 barrelInventory.stackType = heldStack.withCount(1)
                 markDirty()
             }
@@ -93,7 +94,7 @@ class TileBarrel(barrelInventory: MassItemInventory = MassItemInventory(ItemStac
      */
     fun handleLeftClick(player: EntityPlayer) {
         val amountToExtract = if (player.isSneaking) inventoryStackLimit else 1
-        val extractedStack = decrStackSize(BARREL_OUTPUT_SLOT_INDEX, amountToExtract)
+        val extractedStack = decrStackSize(MASS_INVENTORY_OUTPUT_SLOT, amountToExtract)
 
         if (!extractedStack.isEmpty) {
             val allItemsGiven = player.addItemStackToInventory(extractedStack)

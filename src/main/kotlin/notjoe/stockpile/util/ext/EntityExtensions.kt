@@ -14,8 +14,8 @@ import net.minecraft.util.math.Vec3d
  * @return A RayTraceResult providing access to what was hit.
  */
 fun EntityLivingBase.rayTraceFromEyes(
-        distance: Double,
-        fluidMode: RayTraceFluidMode = RayTraceFluidMode.NEVER
+    distance: Double,
+    fluidMode: RayTraceFluidMode = RayTraceFluidMode.NEVER
 ): RayTraceResult? {
     val startPos = Vec3d(posX, posY + eyeHeight, posZ)
     val endPos = startPos.add(lookVec.scale(distance))

@@ -38,6 +38,7 @@ configurations {
 
 dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    compile 'org.jetbrains:annotations:13.0'
 
     implementation 'org.dimdev:rift:1.0.4-51:dev'
     implementation 'com.github.InsomniaKitten:Riftlin:0.2.0'

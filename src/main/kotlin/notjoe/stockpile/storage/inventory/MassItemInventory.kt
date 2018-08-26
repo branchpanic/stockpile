@@ -41,7 +41,7 @@ class MassItemInventory(
         }
 
     val availableSpace: Int get() = (maxStacks * inventoryStackLimit) - amount
-    val typeCannotBeChanged: Boolean get() = !stackType.isEmpty && (typeIsLocked || !isEmpty)
+    val typeIsDefined: Boolean get() = !stackType.isEmpty && (typeIsLocked || !isEmpty)
 
     var typeIsLocked: Boolean = false
         set(locked) {
@@ -128,7 +128,7 @@ class MassItemInventory(
 
     override fun isItemValidForSlot(slotIndex: Int, stack: ItemStack?): Boolean {
         return stack != null && !stack.isEmpty && slotIndex == MASS_INVENTORY_INPUT_SLOT &&
-            (!typeCannotBeChanged || isEmpty && !typeIsLocked || stack.isStackableWith(stackType))
+            (!typeIsDefined || isEmpty && !typeIsLocked || stack.isStackableWith(stackType))
     }
 
     override fun setInventorySlotContents(slotIndex: Int, stack: ItemStack?) {
@@ -136,7 +136,7 @@ class MassItemInventory(
             return
         }
 
-        if (!typeCannotBeChanged || isEmpty && !typeIsLocked) {
+        if (!typeIsDefined || isEmpty && !typeIsLocked) {
             stackType = stack
         }
 

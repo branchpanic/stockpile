@@ -36,10 +36,10 @@ class BlockBarrel :
     ), ITileEntityProvider {
 
     init {
-        defaultState = blockState.baseState.withProperty(FACING, EnumFacing.NORTH)
+        defaultState = defaultState.withProperty(FACING, EnumFacing.NORTH)
     }
 
-    override fun addPropertiesToBuilder(stateBuilder: StateContainer.Builder<Block, IBlockState>?) {
+    override fun fillStateContainer(stateBuilder: StateContainer.Builder<Block, IBlockState>?) {
         stateBuilder?.add(FACING)
     }
 

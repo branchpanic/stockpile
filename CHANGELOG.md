@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).  
 
-## [Unreleased]
+## [0.3.0] - 2018-08-30
 
 ### Added
  - Dependency on Riftlin
@@ -17,12 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  - French translation (thanks to Yanis48)
     
 ### Changed
+ - Rift version to 1.0.4-66
  - Barrel drop behavior in creative mode
     - Barrels no longer drop when broken in creative
     - Copies can be obtained via pick block
     
 ### Fixed
- - Indicator bar not properly filling up fully
+ - Indicator bar not properly filling up properly
 
 ## [0.2.0] - 2018-08-16
 

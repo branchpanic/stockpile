@@ -40,7 +40,7 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     // compile 'org.jetbrains:annotations:13.0'
 
-    implementation 'org.dimdev:rift:1.0.4-51:dev'
+    implementation 'org.dimdev:rift:1.0.4-66:dev'
     implementation 'com.github.InsomniaKitten:Riftlin:0.2.0'
 
     // We'll need to run our tests on JUnit 4 in order to use PowerMock.
@@ -57,7 +57,7 @@ mixin {
 
 minecraft {
     version = '1.13'
-    mappings = 'snapshot_20180817'
+    mappings = 'snapshot_20180823'
     runDir = 'run'
     tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderClientTweaker'
 }

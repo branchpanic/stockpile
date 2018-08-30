@@ -41,7 +41,7 @@ dependencies {
     // compile 'org.jetbrains:annotations:13.0'
 
     implementation 'org.dimdev:rift:1.0.4-51:dev'
-    // implementation 'com.github.InsomniaKitten:Riftlin:0.2.0'
+    implementation 'com.github.InsomniaKitten:Riftlin:0.2.0'
 
     // We'll need to run our tests on JUnit 4 in order to use PowerMock.
     testCompile 'io.kotlintest:kotlintest-runner-junit4:3.1.7'

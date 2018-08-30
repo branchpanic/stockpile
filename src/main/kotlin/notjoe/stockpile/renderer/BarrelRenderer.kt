@@ -20,6 +20,8 @@ import kotlin.math.min
 const val BARREL_TRANSFORM_OFFSET = 1.0 / 512.0
 const val BARREL_BAR_WIDTH = 18.0
 
+// FIXME: This entire file
+
 class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
     private val renderItem = Minecraft.getMinecraft().renderItem
 
@@ -122,14 +124,15 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         GlStateManager.disableTexture2D()
 
-        val filledBarWidth = 2 * min(filledAmount, 1.0) * BARREL_BAR_WIDTH
-        val unfilledBarWidth = 2 * BARREL_BAR_WIDTH - filledBarWidth
+        val totalBarWidth = 2 * BARREL_BAR_WIDTH + 0.25 * BARREL_BAR_WIDTH
+        val filledBarWidth = totalBarWidth * min(filledAmount, 1.0)
+        val unfilledBarWidth = totalBarWidth - filledBarWidth
 
         if (filledBarWidth > 0) {
             drawFlatRectangle(
                 -0.25 * BARREL_BAR_WIDTH,
                 textCenterY + textHeight.toDouble(),
-                filledBarWidth,
+                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
                 textCenterY - 0.25 * textHeight,
                 Color(0f, 0f, 1f, 0.7f)
             )
@@ -137,9 +140,9 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         if (unfilledBarWidth > 0) {
             drawFlatRectangle(
-                filledBarWidth,
+                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
                 textCenterY + textHeight.toDouble(),
-                filledBarWidth + unfilledBarWidth,
+                filledBarWidth + unfilledBarWidth - 0.25 * BARREL_BAR_WIDTH,
                 textCenterY - 0.25 * textHeight,
                 Color(0f, 0f, 0f, 0.7f)
             )

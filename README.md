@@ -13,7 +13,7 @@ See the [wiki](https://github.com/notjoe7F/stockpile/wiki) for a list of feature
 
 ## Getting Started
 
-To set up a development environment, the following `setupDevWorkspace` Gradle task can be used. From there,
+To set up a development environment, the Gradle task `setupDevWorkspace` can be used. From there,
 the project can be imported into your IDE of choice.
 
 ### Building

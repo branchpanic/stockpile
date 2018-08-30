@@ -129,7 +129,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
             drawFlatRectangle(
                 -0.25 * BARREL_BAR_WIDTH,
                 textCenterY + textHeight.toDouble(),
-                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
+                filledBarWidth,
                 textCenterY - 0.25 * textHeight,
                 Color(0f, 0f, 1f, 0.7f)
             )
@@ -137,7 +137,7 @@ class BarrelRenderer : TileEntityRenderer<TileBarrel>() {
 
         if (unfilledBarWidth > 0) {
             drawFlatRectangle(
-                filledBarWidth - 0.25 * BARREL_BAR_WIDTH,
+                filledBarWidth,
                 textCenterY + textHeight.toDouble(),
                 filledBarWidth + unfilledBarWidth,
                 textCenterY - 0.25 * textHeight,

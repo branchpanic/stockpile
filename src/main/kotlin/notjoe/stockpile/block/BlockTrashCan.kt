@@ -33,7 +33,7 @@ class BlockTrashCan :
     }
 
     init {
-        defaultState = blockState.baseState
+        defaultState = defaultState
             .withProperty(LID_OPEN, false)
             .withProperty(BlockStateProperties.WATERLOGGED, false)
     }
@@ -41,7 +41,7 @@ class BlockTrashCan :
     override fun hasTileEntity(): Boolean = true
     override fun createNewTileEntity(p0: IBlockReader?): TileEntity? = TileTrashCan()
 
-    override fun addPropertiesToBuilder(builder: StateContainer.Builder<Block, IBlockState>?) {
+    override fun fillStateContainer(builder: StateContainer.Builder<Block, IBlockState>?) {
         builder?.add(LID_OPEN, BlockStateProperties.WATERLOGGED)
     }
 

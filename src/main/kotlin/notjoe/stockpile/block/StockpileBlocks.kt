@@ -23,7 +23,7 @@ class StockpileBlocks : BlockAdder, ItemAdder {
     }
 
     override fun registerItems() {
-        Item.registerItemBlock(ItemBlock(BARREL, Item.Builder().maxStackSize(1).group(ItemGroup.DECORATIONS)))
-        Item.registerItemBlock(TRASH_CAN, ItemGroup.DECORATIONS)
+        Item.register(ItemBlock(BARREL, Item.Builder().maxStackSize(1).group(ItemGroup.DECORATIONS)))
+        Item.register(TRASH_CAN, ItemGroup.DECORATIONS)
     }
 }

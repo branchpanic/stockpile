@@ -1,0 +1,15 @@
+{
+  "id": "stockpile",
+  "name": "Stockpile",
+  "description": "A mod all about storage.",
+  "version": "1.0.0",
+  "side": "universal",
+  "initializers": [
+    "notjoe.stockpile.StockpileInitializer"
+  ],
+  "languageAdapter": "net.fabricmc.language.scala.ScalaLanguageAdapter",
+  "requires": {
+    "fabric": "*",
+    "fabric-language-scala": "*"
+  }
+}

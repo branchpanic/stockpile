@@ -1,0 +1,10 @@
+{
+  "stockpile.crate.empty": "Empty",
+  "stockpile.crate.contents_stack": "%s x%s (%s full stacks)",
+  "stockpile.crate.contents_world": "Contents: %s/%s %s (%s/%s stacks)",
+  "stockpile.crate.capacity": "Holds up to %s stacks of one item",
+  "stockpile.crate.just_locked": "Locked: this crate will only accept the current item, even when empty.",
+  "stockpile.crate.just_unlocked": "Unlocked: this crate will accept any item when empty.",
+  "block.stockpile.crate": "Crate",
+  "block.stockpile.trash_can": "Trash Can"
+}

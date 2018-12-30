@@ -1,5 +1,6 @@
 package notjoe.stockpile.blockentity
 
+import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.nbt.CompoundTag
 import notjoe.cereal.deserialization.CompoundTagDeserializer
@@ -14,9 +15,7 @@ trait AutoPersistence extends BlockEntity {
   def persistentDataToTag(): CompoundTag = SERIALIZER.serializeToCompound(this)
 
   def loadPersistentDataFromTag(tag: CompoundTag): Unit = {
-    if (tag.containsKey("PersistentData")) {
-      DESERIALIZER.deserializeInPlace(this, tag.getCompound("PersistentData"))
-    }
+    DESERIALIZER.deserializeInPlace(this, tag)
   }
 
   abstract override def toTag(tag: CompoundTag): CompoundTag = {
@@ -27,7 +26,9 @@ trait AutoPersistence extends BlockEntity {
 
   abstract override def fromTag(tag: CompoundTag): Unit = {
     super.fromTag(tag)
-    loadPersistentDataFromTag(tag)
+    if (tag.containsKey("PersistentData", NbtType.COMPOUND)) {
+      loadPersistentDataFromTag(tag.getCompound("PersistentData"))
+    }
   }
 }
 

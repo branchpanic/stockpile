@@ -7,6 +7,12 @@ import net.minecraft.text.{StringTextComponent, TextComponent}
 import notjoe.stockpile.blockentity.AutoPersistence.PersistentField
 import notjoe.stockpile.extension.ItemStackExtensions._
 
+object MassItemInventory {
+  final val DEFAULT_MAX_STACKS = 16
+  final val OUTPUT_SLOT = 0
+  final val INPUT_SLOT = 1
+}
+
 /**
   * An Inventory implementation which stores an arbitrary amount of a single ItemStack.
   *
@@ -20,13 +26,10 @@ import notjoe.stockpile.extension.ItemStackExtensions._
   */
 class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EMPTY,
                         @PersistentField var amountStored: Int = 0,
-                        @PersistentField var maxStacks: Int = 16,
+                        @PersistentField var maxStacks: Int = MassItemInventory.DEFAULT_MAX_STACKS,
                         @PersistentField var allowNewStackWhenEmpty: Boolean = true,
                         @PersistentField var name: String = "Crate",
                         val onChanged: () => Unit) extends Inventory {
-
-  final val OUTPUT_SLOT = 0
-  final val INPUT_SLOT = 1
 
   override def toString: String = s"MassItemInventory{stackType=$stackType, amountStored=$amountStored, " +
     s"maxStacks=$maxStacks, allowNewStackWhenEmpty=$allowNewStackWhenEmpty, name=$name ... empty? $isInvEmpty isAcceptingNewStackType? $isAcceptingNewStackType}"
@@ -42,13 +45,13 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
     * @return The portion of the ItemStack that couldn't be inserted.
     */
   def insertStack(itemStack: ItemStack): ItemStack = {
-    if (!isValidInvStack(INPUT_SLOT, itemStack) && !isAcceptingNewStackType) {
+    if (!isValidInvStack(MassItemInventory.INPUT_SLOT, itemStack) && !isAcceptingNewStackType) {
       itemStack
     } else {
       val insertableAmount = Math.min(itemStack.getAmount, availableSpace)
       val remainingAmount = itemStack.getAmount - insertableAmount
 
-      setInvStack(INPUT_SLOT, itemStack)
+      setInvStack(MassItemInventory.INPUT_SLOT, itemStack)
 
       itemStack.withAmount(remainingAmount)
     }
@@ -57,14 +60,14 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
   def isAcceptingNewStackType: Boolean = stackType.isEmpty || (allowNewStackWhenEmpty && isInvEmpty)
 
   override def isValidInvStack(slotIndex: Int, stack: ItemStack): Boolean =
-    slotIndex == INPUT_SLOT && ItemStack.areEqual(stack.withAmount(1), stackType)
+    slotIndex == MassItemInventory.INPUT_SLOT && ItemStack.areEqual(stack.withAmount(1), stackType)
 
   override def getInvSize: Int = 2
 
   override def isInvEmpty: Boolean = amountStored == 0 || stackType.isEmpty
 
   override def getInvStack(slotIndex: Int): ItemStack = slotIndex match {
-    case INPUT_SLOT =>
+    case MassItemInventory.INPUT_SLOT =>
       val overflowStackAmount = amountStored - ((maxStacks - 1) * stackSize)
       if (overflowStackAmount > 0) {
         stackType.withAmount(overflowStackAmount)
@@ -72,7 +75,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
         ItemStack.EMPTY
       }
 
-    case OUTPUT_SLOT =>
+    case MassItemInventory.OUTPUT_SLOT =>
       val outputStackAmount = Math.min(amountStored, stackSize)
       if (outputStackAmount > 0) {
         stackType.withAmount(outputStackAmount)
@@ -110,7 +113,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
   }
 
   override def setInvStack(slotIndex: Int, itemStack: ItemStack): Unit = {
-    if (slotIndex != INPUT_SLOT || itemStack.isEmpty) {
+    if (slotIndex != MassItemInventory.INPUT_SLOT || itemStack.isEmpty) {
       return
     }
 

@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=down": {
-      "model": "stockpile:block/crate",
+      "model": "stockpile:block/barrel",
       "x": 90
     },
     "facing=up": {
-      "model": "stockpile:block/crate",
+      "model": "stockpile:block/barrel",
       "x": 270
     },
     "facing=north": {
-      "model": "stockpile:block/crate"
+      "model": "stockpile:block/barrel"
     },
     "facing=south": {
-      "model": "stockpile:block/crate",
+      "model": "stockpile:block/barrel",
       "y": 180
     },
     "facing=west": {
-      "model": "stockpile:block/crate",
+      "model": "stockpile:block/barrel",
       "y": 270
     },
     "facing=east": {
-      "model": "stockpile:block/crate",
+      "model": "stockpile:block/barrel",
       "y": 90
     }
   }

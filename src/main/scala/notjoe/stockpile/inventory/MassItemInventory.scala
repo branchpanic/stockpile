@@ -28,7 +28,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
                         @PersistentField var amountStored: Int = 0,
                         @PersistentField var maxStacks: Int = MassItemInventory.DEFAULT_MAX_STACKS,
                         @PersistentField var allowNewStackWhenEmpty: Boolean = true,
-                        @PersistentField var name: String = "Crate",
+                        @PersistentField var name: String = "Barrel",
                         val onChanged: () => Unit) extends Inventory {
 
   override def toString: String = s"MassItemInventory{stackType=$stackType, amountStored=$amountStored, " +

@@ -8,18 +8,18 @@ import net.minecraft.item.block.BlockItem
 import net.minecraft.item.{Item, ItemStack, Items}
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
-import notjoe.stockpile.block.CrateBlock
-import notjoe.stockpile.blockentity.CrateBlockEntity
+import notjoe.stockpile.block.StockpileBarrelBlock
+import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 
 object StockpileInitializer extends ModInitializer {
   final val ITEM_GROUP = FabricItemGroupBuilder.build(new Identifier("stockpile", "all"), () => new ItemStack(Items.APPLE))
 
   private final implicit val BLOCKS: Map[String, Block] = Map(
-    "crate" -> CrateBlock
+    "barrel" -> StockpileBarrelBlock
   )
 
   private final implicit val BLOCK_ENTITY_TYPES: Map[String, BlockEntityType[_ <: BlockEntity]] = Map(
-    "crate" -> CrateBlockEntity.TYPE
+    "barrel" -> StockpileBarrelBlockEntity.TYPE
   )
 
   private def registerAll[T](registryType: Registry[T])(implicit contents: Map[String, T]): Unit = {

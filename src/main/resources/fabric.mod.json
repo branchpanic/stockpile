@@ -5,7 +5,8 @@
   "version": "1.0.0",
   "side": "universal",
   "initializers": [
-    "notjoe.stockpile.StockpileInitializer"
+    "notjoe.stockpile.StockpileInitializer",
+    "notjoe.stockpile.StockpileClientInitializer"
   ],
   "languageAdapter": "net.fabricmc.language.scala.ScalaLanguageAdapter",
   "requires": {

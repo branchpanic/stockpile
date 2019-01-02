@@ -3,11 +3,14 @@ package notjoe.stockpile.blockentity
 import java.text.NumberFormat
 import java.util.UUID
 
+import net.fabricmc.fabric.api.util.NbtType
+import net.fabricmc.fabric.block.entity.ClientSerializable
 import net.minecraft.block.entity.{BlockEntity, BlockEntityType}
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.{SoundCategory, SoundEvents}
 import net.minecraft.text.{TextComponent, TranslatableTextComponent}
 import notjoe.cereal.serialization.Persistent
@@ -16,12 +19,13 @@ import notjoe.stockpile.inventory.MassItemInventory
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
-object CrateBlockEntity {
-  final val TYPE = BlockEntityType.Builder.create[CrateBlockEntity](() => new CrateBlockEntity).method_11034(null)
+object StockpileBarrelBlockEntity {
+  final val TYPE = BlockEntityType.Builder.create[StockpileBarrelBlockEntity](() => new StockpileBarrelBlockEntity).method_11034(null)
 }
 
-class CrateBlockEntity extends BlockEntity(CrateBlockEntity.TYPE)
+class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.TYPE)
   with AutoPersistence
+  with ClientSerializable
   with Inventory {
 
   final val DOUBLE_CLICK_PERIOD_MS = 500
@@ -45,7 +49,7 @@ class CrateBlockEntity extends BlockEntity(CrateBlockEntity.TYPE)
   /**
     * Handles a right-click from a specified PlayerEntity.
     *
-    * @param player Player that interacted with this crate.
+    * @param player Player that interacted with this barrel.
     */
   def onRightClick(player: PlayerEntity): Unit = {
     playerRightClickTimers = playerRightClickTimers
@@ -75,10 +79,10 @@ class CrateBlockEntity extends BlockEntity(CrateBlockEntity.TYPE)
 
     if (inventory.allowNewStackWhenEmpty) {
       world.playSound(null, pos, SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_OFF, SoundCategory.BLOCK, 0.1f, 0.9f)
-      player.addChatMessage(new TranslatableTextComponent("stockpile.crate.just_unlocked"), true)
+      player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.just_unlocked"), true)
     } else {
       world.playSound(null, pos, SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCK, 0.1f, 0.9f)
-      player.addChatMessage(new TranslatableTextComponent("stockpile.crate.just_locked"), true)
+      player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.just_locked"), true)
     }
 
     markDirty()
@@ -114,18 +118,18 @@ class CrateBlockEntity extends BlockEntity(CrateBlockEntity.TYPE)
   }
 
   /**
-    * Displays information about this crate to a specified player.
+    * Displays information about this barrel to a specified player.
     *
     * @param player Player to display information to.
     */
   def displayContentInfo(player: PlayerEntity): Unit = {
     if (inventory.isInvEmpty) {
-      player.addChatMessage(new TranslatableTextComponent("stockpile.crate.empty"), true)
+      player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.empty"), true)
     } else {
       val formatter = NumberFormat.getInstance()
 
       player.addChatMessage(new TranslatableTextComponent(
-        "stockpile.crate.contents_world",
+        "stockpile.barrel.contents_world",
         formatter.format(inventory.amountStored),
         formatter.format(inventory.maxStacks * inventory.stackSize),
         inventory.stackType.getDisplayName,
@@ -135,9 +139,14 @@ class CrateBlockEntity extends BlockEntity(CrateBlockEntity.TYPE)
     }
   }
 
-  override def toString: String = s"CrateBlockEntity{inventory=$inventory,}"
+  override def toString: String = s"barrelBlockEntity{inventory=$inventory,}"
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = playerEntity.squaredDistanceTo(pos) < 12 * 12
+
+  override def markDirty(): Unit = {
+    super.markDirty()
+    world.updateListeners(pos, world.getBlockState(pos), world.getBlockState(pos), 3)
+  }
 
   // Delegation of Inventory to MassItemInventory
 
@@ -156,4 +165,15 @@ class CrateBlockEntity extends BlockEntity(CrateBlockEntity.TYPE)
   override def getName: TextComponent = inventory.getName
 
   override def clearInv(): Unit = inventory.clearInv()
+
+  override def fromClientTag(compoundTag: CompoundTag): Unit = {
+    println("Loading from client")
+    if (compoundTag.containsKey("PersistentData", NbtType.COMPOUND)) {
+      loadPersistentDataFromTag(compoundTag.getCompound("PersistentData"))
+    }
+  }
+  override def toClientTag(compoundTag: CompoundTag): CompoundTag = {
+    compoundTag.put("PersistentData", persistentDataToTag())
+    compoundTag
+  }
 }

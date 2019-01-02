@@ -14,16 +14,16 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.{BlockPos, Direction}
 import net.minecraft.world.loot.context.{LootContext, Parameters}
 import net.minecraft.world.{BlockView, World}
-import notjoe.stockpile.blockentity.CrateBlockEntity
+import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 import notjoe.stockpile.inventory.MassItemInventory
 
 import scala.collection.JavaConverters._
 
-object CrateBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).strength(2.5f, 2.0f)) with FacingDirection {
-  final val STORED_DATA_TAG = "CrateData"
+object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).strength(2.5f, 2.0f)) with FacingDirection {
+  final val STORED_DATA_TAG = "barrelData"
   final val TOOLTIP_STYLE = new Style().setColor(TextFormat.DARK_GRAY)
 
-  override def createBlockEntity(blockView: BlockView): BlockEntity = new CrateBlockEntity()
+  override def createBlockEntity(blockView: BlockView): BlockEntity = new StockpileBarrelBlockEntity()
 
   override def activate(state: BlockState,
                         world: World,
@@ -36,7 +36,7 @@ object CrateBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).stren
                         hitZ: Float): Boolean = {
     if (!world.isClient) {
       world.getBlockEntity(pos)
-        .asInstanceOf[CrateBlockEntity]
+        .asInstanceOf[StockpileBarrelBlockEntity]
         .onRightClick(player)
     }
 
@@ -45,13 +45,13 @@ object CrateBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).stren
 
   override def getDroppedStacks(state: BlockState,
                                 context: LootContext.Builder): util.List[ItemStack] = {
-    val crateEntity = context.get(Parameters.BLOCK_ENTITY)
-      .asInstanceOf[CrateBlockEntity]
+    val barrelEntity = context.get(Parameters.BLOCK_ENTITY)
+      .asInstanceOf[StockpileBarrelBlockEntity]
 
     val stack = new ItemStack(this, 1)
 
-    if (!crateEntity.isInvEmpty) {
-      stack.setChildTag(STORED_DATA_TAG, crateEntity.persistentDataToTag())
+    if (!barrelEntity.isInvEmpty) {
+      stack.setChildTag(STORED_DATA_TAG, barrelEntity.persistentDataToTag())
     }
 
     List(stack).asJava
@@ -65,7 +65,7 @@ object CrateBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).stren
     if (!world.isClient) {
       try {
         world.getBlockEntity(pos)
-          .asInstanceOf[CrateBlockEntity]
+          .asInstanceOf[StockpileBarrelBlockEntity]
           .loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
       } catch {
         case _: IllegalArgumentException => // NO-OP. There was nothing valid to load, so we didn't load it.
@@ -76,7 +76,7 @@ object CrateBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).stren
   override def onBlockBreakStart(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity): Unit = {
     if (!world.isClient) {
       world.getBlockEntity(pos)
-        .asInstanceOf[CrateBlockEntity]
+        .asInstanceOf[StockpileBarrelBlockEntity]
         .onLeftClick(player)
     }
   }
@@ -88,32 +88,32 @@ object CrateBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).stren
                               blockView: BlockView,
                               information: util.List[TextComponent],
                               options: TooltipOptions): Unit = {
-    val crateEntity = new CrateBlockEntity()
+    val barrelEntity = new StockpileBarrelBlockEntity()
     val formatter = NumberFormat.getInstance()
 
     try {
-      crateEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
+      barrelEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
     } catch {
       case _: IllegalArgumentException =>
-        information.add(new TranslatableTextComponent("stockpile.crate.capacity",
+        information.add(new TranslatableTextComponent("stockpile.barrel.capacity",
           formatter.format(MassItemInventory.DEFAULT_MAX_STACKS)).setStyle(TOOLTIP_STYLE))
-        information.add(new TranslatableTextComponent("stockpile.crate.empty").setStyle(TOOLTIP_STYLE))
+        information.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(TOOLTIP_STYLE))
         return
     }
 
 
-    information.add(new TranslatableTextComponent("stockpile.crate.capacity",
-      formatter.format(crateEntity.inventory.maxStacks)).setStyle(TOOLTIP_STYLE))
+    information.add(new TranslatableTextComponent("stockpile.barrel.capacity",
+      formatter.format(barrelEntity.inventory.maxStacks)).setStyle(TOOLTIP_STYLE))
 
-    if (crateEntity.isInvEmpty) {
-      information.add(new TranslatableTextComponent("stockpile.crate.empty").setStyle(TOOLTIP_STYLE))
+    if (barrelEntity.isInvEmpty) {
+      information.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(TOOLTIP_STYLE))
       return
     }
 
-    information.add(new TranslatableTextComponent("stockpile.crate.contents_stack",
-      crateEntity.inventory.stackType.getDisplayName,
-      formatter.format(crateEntity.inventory.amountStored),
-      formatter.format(crateEntity.inventory.amountStored / crateEntity.inventory.stackSize)
+    information.add(new TranslatableTextComponent("stockpile.barrel.contents_stack",
+      barrelEntity.inventory.stackType.getDisplayName,
+      formatter.format(barrelEntity.inventory.amountStored),
+      formatter.format(barrelEntity.inventory.amountStored / barrelEntity.inventory.stackSize)
     ).setStyle(TOOLTIP_STYLE))
   }
 }

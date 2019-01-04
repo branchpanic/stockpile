@@ -15,7 +15,6 @@ import net.minecraft.util.math.{BlockPos, Direction}
 import net.minecraft.world.loot.context.{LootContext, Parameters}
 import net.minecraft.world.{BlockView, World}
 import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
-import notjoe.stockpile.inventory.MassItemInventory
 
 import scala.collection.JavaConverters._
 
@@ -63,13 +62,9 @@ object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.W
                         placer: LivingEntity,
                         stack: ItemStack): Unit = {
     if (!world.isClient) {
-      try {
-        world.getBlockEntity(pos)
-          .asInstanceOf[StockpileBarrelBlockEntity]
-          .loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
-      } catch {
-        case _: IllegalArgumentException => // NO-OP. There was nothing valid to load, so we didn't load it.
-      }
+      world.getBlockEntity(pos)
+        .asInstanceOf[StockpileBarrelBlockEntity]
+        .loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
     }
   }
 
@@ -91,16 +86,7 @@ object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.W
     val barrelEntity = new StockpileBarrelBlockEntity()
     val formatter = NumberFormat.getInstance()
 
-    try {
-      barrelEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
-    } catch {
-      case _: IllegalArgumentException =>
-        information.add(new TranslatableTextComponent("stockpile.barrel.capacity",
-          formatter.format(MassItemInventory.DEFAULT_MAX_STACKS)).setStyle(TOOLTIP_STYLE))
-        information.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(TOOLTIP_STYLE))
-        return
-    }
-
+    barrelEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
 
     information.add(new TranslatableTextComponent("stockpile.barrel.capacity",
       formatter.format(barrelEntity.inventory.maxStacks)).setStyle(TOOLTIP_STYLE))

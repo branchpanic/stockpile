@@ -3,19 +3,19 @@ package notjoe.stockpile.blockentity
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.nbt.CompoundTag
-import notjoe.cereal.deserialization.CompoundTagDeserializer
+import notjoe.cereal.deserialization.InPlaceDeserializer
 import notjoe.cereal.serialization.{CompoundTagSerializer, Persistent}
 
 import scala.annotation.meta.field
 
 trait AutoPersistence extends BlockEntity {
-  final val SERIALIZER = CompoundTagSerializer.withDefaults()
-  final val DESERIALIZER = CompoundTagDeserializer.withDefaults()
+  final val serializer = CompoundTagSerializer.withDefaults()
+  final val deserializer = InPlaceDeserializer.forObject(this)
 
-  def persistentDataToTag(): CompoundTag = SERIALIZER.serializeToCompound(this)
+  def persistentDataToTag(): CompoundTag = serializer.serializeToCompound(this)
 
   def loadPersistentDataFromTag(tag: CompoundTag): Unit = {
-    DESERIALIZER.deserializeInPlace(this, tag)
+    deserializer.deserializeFromTag(tag, false)
   }
 
   abstract override def toTag(tag: CompoundTag): CompoundTag = {

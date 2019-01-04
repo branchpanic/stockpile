@@ -36,7 +36,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
 
   def stackSize: Int = stackType.getMaxAmount
 
-  def availableSpace: Int = stackSize * maxStacks
+  def availableSpace: Int = (stackSize * maxStacks) - amountStored
 
   /**
     * Inserts the largest portion possible of the supplied ItemStack into this MassItemInventory.
@@ -51,7 +51,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
       val insertableAmount = Math.min(itemStack.getAmount, availableSpace)
       val remainingAmount = itemStack.getAmount - insertableAmount
 
-      setInvStack(MassItemInventory.INPUT_SLOT, itemStack)
+      setInvStack(MassItemInventory.INPUT_SLOT, itemStack.withAmount(insertableAmount))
 
       itemStack.withAmount(remainingAmount)
     }

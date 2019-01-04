@@ -148,6 +148,16 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
     world.updateListeners(pos, world.getBlockState(pos), world.getBlockState(pos), 3)
   }
 
+  override def fromClientTag(compoundTag: CompoundTag): Unit = {
+    if (compoundTag.containsKey("PersistentData", NbtType.COMPOUND)) {
+      loadPersistentDataFromTag(compoundTag.getCompound("PersistentData"))
+    }
+  }
+  override def toClientTag(compoundTag: CompoundTag): CompoundTag = {
+    compoundTag.put("PersistentData", persistentDataToTag())
+    compoundTag
+  }
+
   // Delegation of Inventory to MassItemInventory
 
   override def getInvSize: Int = inventory.getInvSize
@@ -165,15 +175,4 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
   override def getName: TextComponent = inventory.getName
 
   override def clearInv(): Unit = inventory.clearInv()
-
-  override def fromClientTag(compoundTag: CompoundTag): Unit = {
-    println("Loading from client")
-    if (compoundTag.containsKey("PersistentData", NbtType.COMPOUND)) {
-      loadPersistentDataFromTag(compoundTag.getCompound("PersistentData"))
-    }
-  }
-  override def toClientTag(compoundTag: CompoundTag): CompoundTag = {
-    compoundTag.put("PersistentData", persistentDataToTag())
-    compoundTag
-  }
 }

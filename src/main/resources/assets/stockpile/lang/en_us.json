@@ -6,5 +6,7 @@
   "stockpile.barrel.just_locked": "Locked: this barrel will only accept the current item, even when empty.",
   "stockpile.barrel.just_unlocked": "Unlocked: this barrel will accept any item when empty.",
   "block.stockpile.barrel": "Barrel",
-  "block.stockpile.trash_can": "Trash Can"
+  "block.stockpile.trash_can": "Trash Can",
+  "block.stockpile.trash_can.description": "Destroys thrown items! Right-click to open/close",
+  "itemGroup.stockpile.all": "Stockpile"
 }

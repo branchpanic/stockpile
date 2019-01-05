@@ -18,7 +18,9 @@ import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 
 import scala.collection.JavaConverters._
 
-object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).strength(2.5f, 2.0f)) with FacingDirection {
+object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).strength(2.5f, 2.0f))
+  with FacingDirection {
+
   final val STORED_DATA_TAG = "barrelData"
   final val TOOLTIP_STYLE = new Style().setColor(TextFormat.DARK_GRAY)
 
@@ -80,23 +82,23 @@ object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.W
   override def getRenderType(state: BlockState): BlockRenderType = BlockRenderType.MODEL
 
   override def addInformation(stack: ItemStack,
-                              blockView: BlockView,
-                              information: util.List[TextComponent],
+                              view: BlockView,
+                              tooltip: util.List[TextComponent],
                               options: TooltipOptions): Unit = {
     val barrelEntity = new StockpileBarrelBlockEntity()
     val formatter = NumberFormat.getInstance()
 
     barrelEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
 
-    information.add(new TranslatableTextComponent("stockpile.barrel.capacity",
-      formatter.format(barrelEntity.inventory.maxStacks)).setStyle(TOOLTIP_STYLE))
+    tooltip.add(new TranslatableTextComponent("stockpile.barrel.capacity",
+      formatter.format(barrelEntity.inventory.maxStacks)).setStyle(Description.STYLE))
 
     if (barrelEntity.isInvEmpty) {
-      information.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(TOOLTIP_STYLE))
+      tooltip.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(TOOLTIP_STYLE))
       return
     }
 
-    information.add(new TranslatableTextComponent("stockpile.barrel.contents_stack",
+    tooltip.add(new TranslatableTextComponent("stockpile.barrel.contents_stack",
       barrelEntity.inventory.stackType.getDisplayName,
       formatter.format(barrelEntity.inventory.amountStored),
       formatter.format(barrelEntity.inventory.amountStored / barrelEntity.inventory.stackSize)

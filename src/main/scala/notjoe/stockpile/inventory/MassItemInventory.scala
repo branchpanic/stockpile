@@ -1,9 +1,10 @@
 package notjoe.stockpile.inventory
 
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.inventory.Inventory
+import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.text.{StringTextComponent, TextComponent}
+import net.minecraft.util.math.Direction
 import notjoe.stockpile.blockentity.AutoPersistence.PersistentField
 import notjoe.stockpile.extension.ItemStackExtensions._
 
@@ -29,7 +30,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
                         @PersistentField var maxStacks: Int = MassItemInventory.DEFAULT_MAX_STACKS,
                         @PersistentField var allowNewStackWhenEmpty: Boolean = true,
                         @PersistentField var name: String = "Barrel",
-                        val onChanged: () => Unit) extends Inventory {
+                        val onChanged: () => Unit) extends SidedInventory {
 
   override def toString: String = s"MassItemInventory{stackType=$stackType, amountStored=$amountStored, " +
     s"maxStacks=$maxStacks, allowNewStackWhenEmpty=$allowNewStackWhenEmpty, name=$name ... empty? $isInvEmpty isAcceptingNewStackType? $isAcceptingNewStackType}"
@@ -135,4 +136,10 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
     stackType = ItemStack.EMPTY
     amountStored = 0
   }
+
+  override def getInvAvailableSlots(direction: Direction): Array[Int] = Array(MassItemInventory.INPUT_SLOT, MassItemInventory.OUTPUT_SLOT)
+
+  override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean = i == MassItemInventory.INPUT_SLOT
+
+  override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean = i == MassItemInventory.OUTPUT_SLOT
 }

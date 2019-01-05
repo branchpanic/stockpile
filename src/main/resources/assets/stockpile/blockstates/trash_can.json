@@ -1,0 +1,17 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "stockpile:block/trash_can_body"
+      }
+    },
+    {
+      "when": {
+        "is_open": "false"
+      },
+      "apply": {
+        "model": "stockpile:block/trash_can_lid"
+      }
+    }
+  ]
+}

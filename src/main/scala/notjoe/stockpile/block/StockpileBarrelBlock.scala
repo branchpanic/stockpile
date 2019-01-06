@@ -23,8 +23,8 @@ import scala.collection.JavaConverters._
 object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.CHEST).build())
   with FacingDirection {
 
-  final val StoredTileTagName = "barrelData"
-  final val ContentsTextStyle = new Style().setColor(TextFormat.DARK_GRAY)
+  val StoredTileTagName = "barrelData"
+  val ContentsTextStyle: Style = new Style().setColor(TextFormat.DARK_GRAY)
 
   override def createBlockEntity(blockView: BlockView): BlockEntity = new StockpileBarrelBlockEntity()
 
@@ -38,21 +38,22 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
                         hitY: Float,
                         hitZ: Float): Boolean = {
     if (direction != state.get(Properties.FACING)) {
-      return false
+      false
+    } else {
+      if (!world.isClient) {
+        world
+          .getBlockEntity(pos)
+          .asInstanceOf[StockpileBarrelBlockEntity]
+          .handleRightClick(player)
+      }
+      true
     }
-
-    if (!world.isClient) {
-      world.getBlockEntity(pos)
-        .asInstanceOf[StockpileBarrelBlockEntity]
-        .onRightClick(player)
-    }
-
-    true
   }
 
   override def getDroppedStacks(state: BlockState,
                                 context: LootContext.Builder): util.List[ItemStack] = {
-    val barrelEntity = context.get(Parameters.BLOCK_ENTITY)
+    val barrelEntity = context
+      .get(Parameters.BLOCK_ENTITY)
       .asInstanceOf[StockpileBarrelBlockEntity]
 
     val stack = new ItemStack(this, 1)
@@ -70,7 +71,8 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
                         placer: LivingEntity,
                         stack: ItemStack): Unit = {
     if (!world.isClient) {
-      world.getBlockEntity(pos)
+      world
+        .getBlockEntity(pos)
         .asInstanceOf[StockpileBarrelBlockEntity]
         .loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
     }
@@ -86,9 +88,10 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
       val result = world.rayTrace(rayTraceStart, rayTraceEnd, FluidRayTraceMode.NONE)
 
       if (result.side != null && result.side == state.get(Properties.FACING)) {
-        world.getBlockEntity(pos)
+        world
+          .getBlockEntity(pos)
           .asInstanceOf[StockpileBarrelBlockEntity]
-          .onLeftClick(player)
+          .handleLeftClick(player)
       }
     }
   }
@@ -97,27 +100,30 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
 
   override def getRenderLayer: BlockRenderLayer = BlockRenderLayer.MIPPED_CUTOUT
 
+  def getTooltipForStack(stack: ItemStack): Seq[TextComponent] = {
+    val storedEntity = new StockpileBarrelBlockEntity()
+    val formatter = NumberFormat.getInstance()
+
+    storedEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
+
+    val capacityDescription = new TranslatableTextComponent("stockpile.barrel.capacity", formatter.format(storedEntity.inventory.maxStacks)).setStyle(Description.DefaultStyle)
+    val contentDescription = if (storedEntity.isInvEmpty) {
+      new TranslatableTextComponent("stockpile.barrel.empty").setStyle(ContentsTextStyle)
+    } else {
+      new TranslatableTextComponent("stockpile.barrel.contents_stack",
+        storedEntity.inventory.stackType.getDisplayName,
+        formatter.format(storedEntity.inventory.amountStored),
+        formatter.format(storedEntity.inventory.amountStored / storedEntity.inventory.stackSize)
+      ).setStyle(ContentsTextStyle)
+    }
+
+    Seq(capacityDescription, contentDescription)
+  }
+
   override def addInformation(stack: ItemStack,
                               view: BlockView,
                               tooltip: util.List[TextComponent],
                               options: TooltipOptions): Unit = {
-    val barrelEntity = new StockpileBarrelBlockEntity()
-    val formatter = NumberFormat.getInstance()
-
-    barrelEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
-
-    tooltip.add(new TranslatableTextComponent("stockpile.barrel.capacity",
-      formatter.format(barrelEntity.inventory.maxStacks)).setStyle(Description.Style))
-
-    if (barrelEntity.isInvEmpty) {
-      tooltip.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(ContentsTextStyle))
-      return
-    }
-
-    tooltip.add(new TranslatableTextComponent("stockpile.barrel.contents_stack",
-      barrelEntity.inventory.stackType.getDisplayName,
-      formatter.format(barrelEntity.inventory.amountStored),
-      formatter.format(barrelEntity.inventory.amountStored / barrelEntity.inventory.stackSize)
-    ).setStyle(ContentsTextStyle))
+    tooltip.addAll(getTooltipForStack(stack).asJava)
   }
 }

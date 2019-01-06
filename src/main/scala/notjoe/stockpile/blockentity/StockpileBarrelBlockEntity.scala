@@ -32,12 +32,11 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
   with ClientSerializable
   with SidedInventory {
 
-
   @Persistent var inventory = new MassItemInventory(onChanged = () => markDirty())
 
   private var playerRightClickTimers: Map[UUID, Long] = Map.empty
 
-  def onLeftClick(player: PlayerEntity): Unit = {
+  def handleLeftClick(player: PlayerEntity): Unit = {
     val extractedStack = inventory.takeInvStack(MassItemInventory.OutputSlotIndex,
       if (player.isSneaking) inventory.stackSize else 1)
 
@@ -49,12 +48,7 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
     }
   }
 
-  /**
-    * Handles a right-click from a specified PlayerEntity.
-    *
-    * @param player Player that interacted with this barrel.
-    */
-  def onRightClick(player: PlayerEntity): Unit = {
+  def handleRightClick(player: PlayerEntity): Unit = {
     playerRightClickTimers = playerRightClickTimers
       .filter { case (_, time) => System.currentTimeMillis() - time <= StockpileBarrelBlockEntity.DoubleClickPeriodMs }
 

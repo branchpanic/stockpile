@@ -18,8 +18,8 @@ import scala.swing.Color
 
 @Environment(EnvType.CLIENT)
 object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockEntity] {
-  final val BAR_WIDTH = 18.0
-  final val TRANSFORM_OFFSET = 1.0 / 512.0
+  val FillBarWidth = 18.0
+  val CofhTransformOffset: Double = 1.0 / 512.0
 
   override def render(barrel: StockpileBarrelBlockEntity,
                       x: Double,
@@ -40,32 +40,32 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
 
   def transformToFace(orientation: Direction, x: Double, y: Double, z: Double): Unit = orientation match {
     case Direction.NORTH => {
-      GlStateManager.translated(x + 0.75, y + 0.75, z + TRANSFORM_OFFSET * 145)
+      GlStateManager.translated(x + 0.75, y + 0.75, z + CofhTransformOffset * 145)
     }
     case Direction.SOUTH => {
-      GlStateManager.translated(x + 0.25, y + 0.75, z + 1 - TRANSFORM_OFFSET * 145)
+      GlStateManager.translated(x + 0.25, y + 0.75, z + 1 - CofhTransformOffset * 145)
       GlStateManager.rotated(180f, 0f, 1f, 0f)
     }
     case Direction.WEST => {
-      GlStateManager.translated(x + TRANSFORM_OFFSET * 145, y + 0.75, z + 0.25)
+      GlStateManager.translated(x + CofhTransformOffset * 145, y + 0.75, z + 0.25)
       GlStateManager.rotated(90f, 0f, 1f, 0f)
     }
     case Direction.EAST => {
-      GlStateManager.translated(x + 1 - TRANSFORM_OFFSET * 145, y + 0.75, z + 0.75)
+      GlStateManager.translated(x + 1 - CofhTransformOffset * 145, y + 0.75, z + 0.75)
       GlStateManager.rotated(-90f, 0f, 1f, 0f)
     }
     case Direction.UP => {
-      GlStateManager.translated(x + 0.75, y + 1 - TRANSFORM_OFFSET * 145, z + 0.75)
+      GlStateManager.translated(x + 0.75, y + 1 - CofhTransformOffset * 145, z + 0.75)
       GlStateManager.rotated(90f, 1f, 0f, 0f)
     }
     case Direction.DOWN => {
-      GlStateManager.translated(x + 0.75, y + TRANSFORM_OFFSET * 145, z + 0.25)
+      GlStateManager.translated(x + 0.75, y + CofhTransformOffset * 145, z + 0.25)
       GlStateManager.rotated(-90f, 1f, 0f, 0f)
     }
   }
 
   def renderFillBar(inventory: MassItemInventory, xCenter: Float, yCenter: Float): Unit = {
-    GlStateManager.translated(0.0, 0.0, 0.315 * 1 / TRANSFORM_OFFSET)
+    GlStateManager.translated(0.0, 0.0, 0.3 * 1 / CofhTransformOffset)
     GlStateManager.scaled(0.5, 0.5, 1.0)
 
     val displayText = getDisplayString(inventory)
@@ -83,7 +83,7 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     val textCenterX = xCenter * 2 - (textWidth / 2)
     val textCenterY = yCenter * 2 - (textHeight / 2)
 
-    val totalBarWidth = 2 * BAR_WIDTH + 0.25 * BAR_WIDTH
+    val totalBarWidth = 2 * FillBarWidth + 0.25 * FillBarWidth
     val filledBarWidth = totalBarWidth * Math.min(filledAmount, 1.0)
     val unfilledBarWidth = totalBarWidth - filledBarWidth
 
@@ -91,9 +91,9 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
 
     if (filledBarWidth > 0) {
       drawRectangle(
-        -0.25 * BAR_WIDTH,
+        -0.25 * FillBarWidth,
         textCenterY + textHeight,
-        filledBarWidth - 0.25 * BAR_WIDTH,
+        filledBarWidth - 0.25 * FillBarWidth,
         textCenterY - 0.25 * textHeight,
         new Color(0f, 0f, 1f, 0.7f)
       )
@@ -101,9 +101,9 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
 
     if (unfilledBarWidth > 0) {
       drawRectangle(
-        filledBarWidth - 0.25 * BAR_WIDTH,
+        filledBarWidth - 0.25 * FillBarWidth,
         textCenterY + textHeight,
-        filledBarWidth + unfilledBarWidth - 0.25 * BAR_WIDTH,
+        filledBarWidth + unfilledBarWidth - 0.25 * FillBarWidth,
         textCenterY - 0.25 * textHeight,
         new Color(0f, 0f, 0f, 0.7f)
       )
@@ -131,7 +131,7 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
 
     transformToFace(orientation, x, y, z)
 
-    GlStateManager.scaled(0.03125, 0.03125, -TRANSFORM_OFFSET)
+    GlStateManager.scaled(0.03125, 0.03125, -CofhTransformOffset)
     GlStateManager.rotated(180, 0, 0, 1)
 
     MinecraftClient.getInstance().getItemRenderer.renderItemAndGlowInGui(stack, 0, -3)

@@ -9,7 +9,7 @@ import notjoe.stockpile.blockentity.AutoPersistence.PersistentField
 import notjoe.stockpile.extension.ItemStackExtensions._
 
 object MassItemInventory {
-  final val DEFAULT_MAX_STACKS = 16
+  final val DEFAULT_MAX_STACKS = 32
   final val OUTPUT_SLOT = 0
   final val INPUT_SLOT = 1
 }
@@ -137,9 +137,11 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
     amountStored = 0
   }
 
-  override def getInvAvailableSlots(direction: Direction): Array[Int] = Array(MassItemInventory.INPUT_SLOT, MassItemInventory.OUTPUT_SLOT)
+  override def getInvAvailableSlots(direction: Direction): Array[Int] =
+    Array(MassItemInventory.INPUT_SLOT, MassItemInventory.OUTPUT_SLOT)
 
-  override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean = i == MassItemInventory.INPUT_SLOT
+  override def canInsertInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean = isValidInvStack(i, stack)
 
-  override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean = i == MassItemInventory.OUTPUT_SLOT
+  override def canExtractInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
+    i == MassItemInventory.OUTPUT_SLOT
 }

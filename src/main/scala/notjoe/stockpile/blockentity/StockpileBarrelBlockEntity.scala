@@ -8,11 +8,12 @@ import net.fabricmc.fabric.block.entity.ClientSerializable
 import net.minecraft.block.entity.{BlockEntity, BlockEntityType}
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.inventory.Inventory
+import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.{SoundCategory, SoundEvents}
 import net.minecraft.text.{TextComponent, TranslatableTextComponent}
+import net.minecraft.util.math.Direction
 import notjoe.cereal.serialization.Persistent
 import notjoe.stockpile.inventory.MassItemInventory
 
@@ -26,7 +27,7 @@ object StockpileBarrelBlockEntity {
 class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.TYPE)
   with AutoPersistence
   with ClientSerializable
-  with Inventory {
+  with SidedInventory {
 
   final val DOUBLE_CLICK_PERIOD_MS = 500
 
@@ -158,7 +159,7 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
     compoundTag
   }
 
-  // Delegation of Inventory to MassItemInventory
+  // Delegation of SidedInventory to MassItemInventory
 
   override def getInvSize: Int = inventory.getInvSize
 
@@ -168,6 +169,8 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
 
   override def takeInvStack(i: Int, i1: Int): ItemStack = inventory.takeInvStack(i, i1)
 
+  override def isValidInvStack(int_1: Int, itemStack_1: ItemStack): Boolean = inventory.isValidInvStack(int_1, itemStack_1)
+
   override def removeInvStack(i: Int): ItemStack = inventory.removeInvStack(i)
 
   override def setInvStack(i: Int, itemStack: ItemStack): Unit = inventory.setInvStack(i, itemStack)
@@ -175,4 +178,12 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
   override def getName: TextComponent = inventory.getName
 
   override def clearInv(): Unit = inventory.clearInv()
+
+  override def getInvAvailableSlots(direction: Direction): Array[Int] = inventory.getInvAvailableSlots(direction)
+
+  override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
+    inventory.canInsertInvStack(i, itemStack, direction)
+
+  override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
+    inventory.canExtractInvStack(i, itemStack, direction)
 }

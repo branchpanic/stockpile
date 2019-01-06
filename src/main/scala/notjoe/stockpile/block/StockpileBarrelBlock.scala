@@ -3,22 +3,24 @@ package notjoe.stockpile.block
 import java.text.NumberFormat
 import java.util
 
+import net.fabricmc.fabric.block.FabricBlockSettings
 import net.minecraft.block._
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipOptions
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.state.property.Properties
 import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextComponent}
 import net.minecraft.util.Hand
 import net.minecraft.util.math.{BlockPos, Direction}
 import net.minecraft.world.loot.context.{LootContext, Parameters}
-import net.minecraft.world.{BlockView, World}
+import net.minecraft.world.{BlockView, FluidRayTraceMode, World}
 import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 
 import scala.collection.JavaConverters._
 
-object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.WOOD).strength(2.5f, 2.0f))
+object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.CHEST).build())
   with FacingDirection {
 
   final val STORED_DATA_TAG = "barrelData"
@@ -35,6 +37,10 @@ object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.W
                         hitX: Float,
                         hitY: Float,
                         hitZ: Float): Boolean = {
+    if (direction != state.get(Properties.FACING)) {
+      return false
+    }
+
     if (!world.isClient) {
       world.getBlockEntity(pos)
         .asInstanceOf[StockpileBarrelBlockEntity]
@@ -72,14 +78,24 @@ object StockpileBarrelBlock extends BlockWithEntity(Block.Settings.of(Material.W
 
   override def onBlockBreakStart(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity): Unit = {
     if (!world.isClient) {
-      world.getBlockEntity(pos)
-        .asInstanceOf[StockpileBarrelBlockEntity]
-        .onLeftClick(player)
+      val rayTraceStart = player.getCameraPosVec(1)
+
+      // FIXME: Replace 5 with player's actual reach distance
+      val rayTraceEnd = rayTraceStart.add(player.getRotationVec(1).multiply(5))
+
+      val result = world.rayTrace(rayTraceStart, rayTraceEnd, FluidRayTraceMode.NONE)
+
+      if (result.side != null && result.side == state.get(Properties.FACING)) {
+        world.getBlockEntity(pos)
+          .asInstanceOf[StockpileBarrelBlockEntity]
+          .onLeftClick(player)
+      }
     }
   }
 
-  // BlockWithEntity sets this to INVISIBLE by default
   override def getRenderType(state: BlockState): BlockRenderType = BlockRenderType.MODEL
+
+  override def getRenderLayer: BlockRenderLayer = BlockRenderLayer.MIPPED_CUTOUT
 
   override def addInformation(stack: ItemStack,
                               view: BlockView,

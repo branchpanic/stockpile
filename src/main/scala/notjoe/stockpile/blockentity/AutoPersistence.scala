@@ -8,9 +8,13 @@ import notjoe.cereal.serialization.{CompoundTagSerializer, Persistent}
 
 import scala.annotation.meta.field
 
+object AutoPersistence {
+  type PersistentField = Persistent@field
+}
+
 trait AutoPersistence extends BlockEntity {
-  final val serializer = CompoundTagSerializer.withDefaults()
-  final val deserializer = InPlaceDeserializer.forObject(this)
+  val serializer: CompoundTagSerializer = CompoundTagSerializer.withDefaults()
+  val deserializer: InPlaceDeserializer = InPlaceDeserializer.forObject(this)
 
   def persistentDataToTag(): CompoundTag = serializer.serializeToCompound(this)
 
@@ -32,6 +36,3 @@ trait AutoPersistence extends BlockEntity {
   }
 }
 
-object AutoPersistence {
-  type PersistentField = Persistent@field
-}

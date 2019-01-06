@@ -23,8 +23,8 @@ import scala.collection.JavaConverters._
 object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.CHEST).build())
   with FacingDirection {
 
-  final val STORED_DATA_TAG = "barrelData"
-  final val TOOLTIP_STYLE = new Style().setColor(TextFormat.DARK_GRAY)
+  final val StoredTileTagName = "barrelData"
+  final val ContentsTextStyle = new Style().setColor(TextFormat.DARK_GRAY)
 
   override def createBlockEntity(blockView: BlockView): BlockEntity = new StockpileBarrelBlockEntity()
 
@@ -58,7 +58,7 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     val stack = new ItemStack(this, 1)
 
     if (!barrelEntity.isInvEmpty) {
-      stack.setChildTag(STORED_DATA_TAG, barrelEntity.persistentDataToTag())
+      stack.setChildTag(StoredTileTagName, barrelEntity.persistentDataToTag())
     }
 
     List(stack).asJava
@@ -72,7 +72,7 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     if (!world.isClient) {
       world.getBlockEntity(pos)
         .asInstanceOf[StockpileBarrelBlockEntity]
-        .loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
+        .loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
     }
   }
 
@@ -104,13 +104,13 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     val barrelEntity = new StockpileBarrelBlockEntity()
     val formatter = NumberFormat.getInstance()
 
-    barrelEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(STORED_DATA_TAG))
+    barrelEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
 
     tooltip.add(new TranslatableTextComponent("stockpile.barrel.capacity",
-      formatter.format(barrelEntity.inventory.maxStacks)).setStyle(Description.STYLE))
+      formatter.format(barrelEntity.inventory.maxStacks)).setStyle(Description.Style))
 
     if (barrelEntity.isInvEmpty) {
-      tooltip.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(TOOLTIP_STYLE))
+      tooltip.add(new TranslatableTextComponent("stockpile.barrel.empty").setStyle(ContentsTextStyle))
       return
     }
 
@@ -118,6 +118,6 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
       barrelEntity.inventory.stackType.getDisplayName,
       formatter.format(barrelEntity.inventory.amountStored),
       formatter.format(barrelEntity.inventory.amountStored / barrelEntity.inventory.stackSize)
-    ).setStyle(TOOLTIP_STYLE))
+    ).setStyle(ContentsTextStyle))
   }
 }

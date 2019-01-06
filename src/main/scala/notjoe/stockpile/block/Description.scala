@@ -9,7 +9,7 @@ import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextCom
 import net.minecraft.world.BlockView
 
 object Description {
-  final val STYLE = new Style().setColor(TextFormat.GRAY)
+  val Style: Style = new Style().setColor(TextFormat.GRAY)
 }
 
 trait Description extends Block {
@@ -17,7 +17,7 @@ trait Description extends Block {
                               view: BlockView,
                               tooltip: util.List[TextComponent],
                               options: TooltipOptions): Unit = {
-    tooltip.add(new TranslatableTextComponent(stack.getTranslationKey + ".description").setStyle(Description.STYLE))
+    tooltip.add(new TranslatableTextComponent(stack.getTranslationKey + ".description").setStyle(Description.Style))
     super.addInformation(stack, view, tooltip, options)
   }
 }

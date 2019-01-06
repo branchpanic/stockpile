@@ -12,10 +12,11 @@ import net.minecraft.util.math.{BoundingBox, Direction}
 import notjoe.stockpile.block.StockpileProperties
 
 object TrashCanBlockEntity {
-  final val TYPE = BlockEntityType.Builder.create[TrashCanBlockEntity](() => new TrashCanBlockEntity).method_11034(null)
+  val Type: BlockEntityType[TrashCanBlockEntity] =
+    BlockEntityType.Builder.create[TrashCanBlockEntity](() => new TrashCanBlockEntity).method_11034(null)
 }
 
-class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.TYPE) with SidedInventory with Tickable {
+class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.Type) with SidedInventory with Tickable {
   override def getInvAvailableSlots(direction: Direction): Array[Int] = Array(1)
 
   override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean = true
@@ -41,7 +42,7 @@ class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.TYPE) with Sid
   override def clearInv(): Unit = {}
 
   override def tick(): Unit = {
-    if (world.isClient || !world.getBlockState(pos).get(StockpileProperties.IS_OPEN)) {
+    if (world.isClient || !world.getBlockState(pos).get(StockpileProperties.IsOpen)) {
       return
     }
 

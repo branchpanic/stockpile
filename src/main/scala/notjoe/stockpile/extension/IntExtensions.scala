@@ -1,7 +1,7 @@
 package notjoe.stockpile.extension
 
 object IntExtensions {
-  private final val SUFFIXES = "kMBT"
+  private val Suffixes = "kMBT"
 
   implicit class RichInt(val i: Int) extends AnyVal {
 
@@ -12,7 +12,7 @@ object IntExtensions {
       }
 
       val displayMagnitude = orderOfMagnitude / 3
-      val suffix = SUFFIXES.charAt(Math.min(displayMagnitude - 1, SUFFIXES.length))
+      val suffix = Suffixes.charAt(Math.min(displayMagnitude - 1, Suffixes.length))
       val displayNumber = "%.1f".format(i / Math.pow(10, 3 * displayMagnitude))
 
       displayNumber + suffix

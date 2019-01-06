@@ -21,7 +21,10 @@ import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
 object StockpileBarrelBlockEntity {
-  final val TYPE = BlockEntityType.Builder.create[StockpileBarrelBlockEntity](() => new StockpileBarrelBlockEntity).method_11034(null)
+  val TYPE: BlockEntityType[StockpileBarrelBlockEntity] =
+    BlockEntityType.Builder.create[StockpileBarrelBlockEntity](() => new StockpileBarrelBlockEntity).method_11034(null)
+
+  val DoubleClickPeriodMs = 500
 }
 
 class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.TYPE)
@@ -29,14 +32,13 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
   with ClientSerializable
   with SidedInventory {
 
-  final val DOUBLE_CLICK_PERIOD_MS = 500
 
   @Persistent var inventory = new MassItemInventory(onChanged = () => markDirty())
 
   private var playerRightClickTimers: Map[UUID, Long] = Map.empty
 
   def onLeftClick(player: PlayerEntity): Unit = {
-    val extractedStack = inventory.takeInvStack(MassItemInventory.OUTPUT_SLOT,
+    val extractedStack = inventory.takeInvStack(MassItemInventory.OutputSlotIndex,
       if (player.isSneaking) inventory.stackSize else 1)
 
     if (!extractedStack.isEmpty) {
@@ -54,7 +56,7 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
     */
   def onRightClick(player: PlayerEntity): Unit = {
     playerRightClickTimers = playerRightClickTimers
-      .filter { case (_, time) => System.currentTimeMillis() - time <= DOUBLE_CLICK_PERIOD_MS }
+      .filter { case (_, time) => System.currentTimeMillis() - time <= StockpileBarrelBlockEntity.DoubleClickPeriodMs }
 
     if (player.isSneaking) {
       toggleEmptyBehavior(player)

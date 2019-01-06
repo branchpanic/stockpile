@@ -11,7 +11,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.math.{BlockPos, Direction}
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.{BlockView, World}
-import notjoe.stockpile.block.StockpileProperties.IS_OPEN
+import notjoe.stockpile.block.StockpileProperties.IsOpen
 import notjoe.stockpile.blockentity.TrashCanBlockEntity
 
 object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PISTON).build()) with Description {
@@ -19,11 +19,11 @@ object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PIS
 
   override def appendProperties(builder: StateFactory.Builder[Block, BlockState]): Unit = {
     super.appendProperties(builder)
-    builder.`with`(IS_OPEN)
+    builder.`with`(IsOpen)
   }
 
   override def getPlacementState(context: ItemPlacementContext): BlockState = {
-    super.getPlacementState(context).`with`(IS_OPEN, boolean2Boolean(false)) // scala pls
+    super.getPlacementState(context).`with`(IsOpen, boolean2Boolean(false)) // scala pls
   }
 
   override def getRenderType(blockState_1: BlockState): BlockRenderType = BlockRenderType.MODEL
@@ -38,7 +38,7 @@ object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PIS
                         hitY: Float,
                         hitZ: Float): Boolean = {
     if (!world.isClient) {
-      world.setBlockState(pos, state.`with`(IS_OPEN, boolean2Boolean(!state.get(IS_OPEN))), 3)
+      world.setBlockState(pos, state.`with`(IsOpen, boolean2Boolean(!state.get(IsOpen))), 3)
       world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCK, 0.5f, 0.8f)
     }
 

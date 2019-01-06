@@ -16,14 +16,14 @@ object StockpileInitializer extends ModInitializer {
   final val ITEM_GROUP = FabricItemGroupBuilder.build(new Identifier("stockpile", "all"),
     () => new ItemStack(StockpileBarrelBlock))
 
-  private final implicit val BLOCKS: Map[String, Block] = Map(
+  private implicit val BLOCKS: Map[String, Block] = Map(
     "barrel" -> StockpileBarrelBlock,
     "trash_can" -> TrashCanBlock
   )
 
-  private final implicit val BLOCK_ENTITY_TYPES: Map[String, BlockEntityType[_ <: BlockEntity]] = Map(
+  private implicit val BLOCK_ENTITY_TYPES: Map[String, BlockEntityType[_ <: BlockEntity]] = Map(
     "barrel" -> StockpileBarrelBlockEntity.TYPE,
-    "trash_can" -> TrashCanBlockEntity.TYPE
+    "trash_can" -> TrashCanBlockEntity.Type
   )
 
   private def registerAll[T](registryType: Registry[T])(implicit contents: Map[String, T]): Unit = {

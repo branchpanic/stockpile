@@ -18,7 +18,6 @@ import scala.swing.Color
 
 @Environment(EnvType.CLIENT)
 object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockEntity] {
-  final val TESSELLATOR = Tessellator.getInstance()
   final val BAR_WIDTH = 18.0
   final val TRANSFORM_OFFSET = 1.0 / 512.0
 
@@ -144,7 +143,8 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
   }
 
   def drawRectangle(x1: Double, y1: Double, x2: Double, y2: Double, color: Color): Unit = {
-    val bufferBuilder = TESSELLATOR.getBufferBuilder
+    val tessellator = Tessellator.getInstance()
+    val bufferBuilder = tessellator.getBufferBuilder
 
     bufferBuilder.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR)
 
@@ -154,7 +154,7 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
         .next()
     }
 
-    TESSELLATOR.draw()
+    tessellator.draw()
   }
 
   def getDisplayString(inventory: MassItemInventory): String = if (inventory.isInvEmpty) {

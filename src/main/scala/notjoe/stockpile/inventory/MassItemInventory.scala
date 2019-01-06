@@ -9,9 +9,9 @@ import notjoe.stockpile.blockentity.AutoPersistence.PersistentField
 import notjoe.stockpile.extension.ItemStackExtensions._
 
 object MassItemInventory {
-  final val DEFAULT_MAX_STACKS = 32
-  final val OUTPUT_SLOT = 0
-  final val INPUT_SLOT = 1
+  val DefaultCapacityStacks = 32
+  val OutputSlotIndex = 0
+  val InputSlotIndex = 1
 }
 
 /**
@@ -27,7 +27,7 @@ object MassItemInventory {
   */
 class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EMPTY,
                         @PersistentField var amountStored: Int = 0,
-                        @PersistentField var maxStacks: Int = MassItemInventory.DEFAULT_MAX_STACKS,
+                        @PersistentField var maxStacks: Int = MassItemInventory.DefaultCapacityStacks,
                         @PersistentField var allowNewStackWhenEmpty: Boolean = true,
                         @PersistentField var name: String = "Barrel",
                         val onChanged: () => Unit) extends SidedInventory {
@@ -46,13 +46,13 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
     * @return The portion of the ItemStack that couldn't be inserted.
     */
   def insertStack(itemStack: ItemStack): ItemStack = {
-    if (!isValidInvStack(MassItemInventory.INPUT_SLOT, itemStack) && !isAcceptingNewStackType) {
+    if (!isValidInvStack(MassItemInventory.InputSlotIndex, itemStack) && !isAcceptingNewStackType) {
       itemStack
     } else {
       val insertableAmount = Math.min(itemStack.getAmount, availableSpace)
       val remainingAmount = itemStack.getAmount - insertableAmount
 
-      setInvStack(MassItemInventory.INPUT_SLOT, itemStack.withAmount(insertableAmount))
+      setInvStack(MassItemInventory.InputSlotIndex, itemStack.withAmount(insertableAmount))
 
       itemStack.withAmount(remainingAmount)
     }
@@ -61,14 +61,14 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
   def isAcceptingNewStackType: Boolean = stackType.isEmpty || (allowNewStackWhenEmpty && isInvEmpty)
 
   override def isValidInvStack(slotIndex: Int, stack: ItemStack): Boolean =
-    slotIndex == MassItemInventory.INPUT_SLOT && ItemStack.areEqual(stack.withAmount(1), stackType)
+    slotIndex == MassItemInventory.InputSlotIndex && ItemStack.areEqual(stack.withAmount(1), stackType)
 
   override def getInvSize: Int = 2
 
   override def isInvEmpty: Boolean = amountStored == 0 || stackType.isEmpty
 
   override def getInvStack(slotIndex: Int): ItemStack = slotIndex match {
-    case MassItemInventory.INPUT_SLOT =>
+    case MassItemInventory.InputSlotIndex =>
       val overflowStackAmount = amountStored - ((maxStacks - 1) * stackSize)
       if (overflowStackAmount > 0) {
         stackType.withAmount(overflowStackAmount)
@@ -76,7 +76,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
         ItemStack.EMPTY
       }
 
-    case MassItemInventory.OUTPUT_SLOT =>
+    case MassItemInventory.OutputSlotIndex =>
       val outputStackAmount = Math.min(amountStored, stackSize)
       if (outputStackAmount > 0) {
         stackType.withAmount(outputStackAmount)
@@ -114,7 +114,7 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
   }
 
   override def setInvStack(slotIndex: Int, itemStack: ItemStack): Unit = {
-    if (slotIndex != MassItemInventory.INPUT_SLOT || itemStack.isEmpty) {
+    if (slotIndex != MassItemInventory.InputSlotIndex || itemStack.isEmpty) {
       return
     }
 
@@ -138,10 +138,10 @@ class MassItemInventory(@PersistentField var stackType: ItemStack = ItemStack.EM
   }
 
   override def getInvAvailableSlots(direction: Direction): Array[Int] =
-    Array(MassItemInventory.INPUT_SLOT, MassItemInventory.OUTPUT_SLOT)
+    Array(MassItemInventory.InputSlotIndex, MassItemInventory.OutputSlotIndex)
 
   override def canInsertInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean = isValidInvStack(i, stack)
 
   override def canExtractInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
-    i == MassItemInventory.OUTPUT_SLOT
+    i == MassItemInventory.OutputSlotIndex
 }

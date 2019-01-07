@@ -32,6 +32,10 @@ dependencies {
     compile 'net.fabricmc:fabric-language-scala:0.1.0'
     compile 'com.google.code.findbugs:jsr305:3.0.0'
 
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.scalatest:scalatest_2.12:3.0.5'
+    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
+    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

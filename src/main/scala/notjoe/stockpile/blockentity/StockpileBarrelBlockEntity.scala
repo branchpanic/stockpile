@@ -21,13 +21,13 @@ import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
 object StockpileBarrelBlockEntity {
-  val TYPE: BlockEntityType[StockpileBarrelBlockEntity] =
+  val Type: BlockEntityType[StockpileBarrelBlockEntity] =
     BlockEntityType.Builder.create[StockpileBarrelBlockEntity](() => new StockpileBarrelBlockEntity).method_11034(null)
 
   val DoubleClickPeriodMs = 500
 }
 
-class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.TYPE)
+class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.Type)
   with AutoPersistence
   with ClientSerializable
   with SidedInventory {

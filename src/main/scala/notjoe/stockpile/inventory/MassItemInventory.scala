@@ -9,6 +9,7 @@ import notjoe.stockpile.blockentity.AutoPersistence.PersistentField
 import notjoe.stockpile.extension.ItemStackExtensions._
 
 object MassItemInventory {
+  val MaxCapacityStacks = 16777216
   val DefaultCapacityStacks = 32
   val OutputSlotIndex = 0
   val InputSlotIndex = 1
@@ -124,7 +125,9 @@ class MassItemInventory(@PersistentField private var _stackType: ItemStack = Ite
     markDirty()
   }
 
-  override def markDirty(): Unit = onChanged()
+  override def markDirty(): Unit = {
+    onChanged()
+  }
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
 

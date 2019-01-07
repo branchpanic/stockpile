@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "notjoe.stockpile.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "AnvilContainerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

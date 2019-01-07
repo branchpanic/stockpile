@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.minecraft.block.Block
 import net.minecraft.block.entity.{BlockEntity, BlockEntityType}
 import net.minecraft.item.block.BlockItem
-import net.minecraft.item.{Item, ItemStack}
+import net.minecraft.item.{Item, ItemGroup, ItemStack}
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import notjoe.stockpile.block.{StockpileBarrelBlock, TrashCanBlock}
@@ -13,16 +13,16 @@ import notjoe.stockpile.blockentity.{StockpileBarrelBlockEntity, TrashCanBlockEn
 
 object StockpileInitializer extends ModInitializer {
 
-  final val ITEM_GROUP = FabricItemGroupBuilder.build(new Identifier("stockpile", "all"),
+  val ItemGroup: ItemGroup = FabricItemGroupBuilder.build(new Identifier("stockpile", "all"),
     () => new ItemStack(StockpileBarrelBlock))
 
-  private implicit val BLOCKS: Map[String, Block] = Map(
+  private implicit val Blocks: Map[String, Block] = Map(
     "barrel" -> StockpileBarrelBlock,
     "trash_can" -> TrashCanBlock
   )
 
-  private implicit val BLOCK_ENTITY_TYPES: Map[String, BlockEntityType[_ <: BlockEntity]] = Map(
-    "barrel" -> StockpileBarrelBlockEntity.TYPE,
+  private implicit val BlockEntityTypes: Map[String, BlockEntityType[_ <: BlockEntity]] = Map(
+    "barrel" -> StockpileBarrelBlockEntity.Type,
     "trash_can" -> TrashCanBlockEntity.Type
   )
 
@@ -35,6 +35,8 @@ object StockpileInitializer extends ModInitializer {
   override def onInitialize(): Unit = {
     registerAll(Registry.BLOCK)
     registerAll(Registry.BLOCK_ENTITY)
-    registerAll(Registry.ITEM)(BLOCKS.mapValues(new BlockItem(_, new Item.Settings().itemGroup(ITEM_GROUP))))
+    registerAll(Registry.ITEM)(Blocks.mapValues(new BlockItem(_, new Item.Settings().itemGroup(ItemGroup))))
+
+    StockpileTags.initializeAll()
   }
 }

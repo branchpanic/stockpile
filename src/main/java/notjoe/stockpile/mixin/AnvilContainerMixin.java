@@ -4,17 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.container.AnvilContainer;
 import net.minecraft.container.Container;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TagHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import notjoe.stockpile.StockpileInitializer;
-import notjoe.stockpile.StockpileInitializer$;
 import notjoe.stockpile.StockpileTags;
 import notjoe.stockpile.block.StockpileBarrelBlock;
 import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity;
@@ -81,7 +74,7 @@ public abstract class AnvilContainerMixin extends Container {
     }
 
     private int getAddedStacks(ItemStack stack) {
-        if (StockpileTags.barrelUpgrade27().contains(stack.getItem())) {
+        if (StockpileTags.barrelStorageUpgrade().contains(stack.getItem())) {
             return 27 * stack.getAmount();
         }
 

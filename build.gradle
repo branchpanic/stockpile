@@ -53,6 +53,7 @@ dependencies {
     testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
 
     compile files("$sourceSets.main.scala.outputDir")
+    // modCompile files("env-mods")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

@@ -1,9 +1,9 @@
 {
   "type": "crafting_shaped",
   "pattern": [
-    "WIW",
-    "CPC",
-    "WIW"
+    "WCW",
+    "IPI",
+    "WCW"
   ],
   "key": {
     "W": {
@@ -13,13 +13,14 @@
       "item": "minecraft:iron_ingot"
     },
     "C": {
-      "item": "minecraft:chest"
+      "tag": "stockpile:barrel_upgrade_27"
     },
     "P": {
       "item": "minecraft:paper"
     }
   },
   "result": {
-    "item": "stockpile:barrel"
+    "item": "stockpile:barrel",
+    "count": 2
   }
 }

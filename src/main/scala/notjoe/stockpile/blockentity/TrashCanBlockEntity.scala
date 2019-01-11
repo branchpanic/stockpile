@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.predicate.entity.EntityPredicates
-import net.minecraft.text.{TextComponent, TranslatableTextComponent}
 import net.minecraft.util.Tickable
 import net.minecraft.util.math.{BoundingBox, Direction}
 import notjoe.stockpile.block.StockpileProperties
@@ -36,8 +35,6 @@ class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.Type) with Sid
   override def setInvStack(i: Int, itemStack: ItemStack): Unit = {}
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
-
-  override def getName: TextComponent = new TranslatableTextComponent("block.stockpile.trash_can")
 
   override def clearInv(): Unit = {}
 

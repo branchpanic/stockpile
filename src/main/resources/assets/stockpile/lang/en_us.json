@@ -2,7 +2,7 @@
   "stockpile.barrel.empty": "Empty",
   "stockpile.barrel.contents_stack": "%s x%s (%s full stacks)",
   "stockpile.barrel.contents_world": "Contents: %s/%s %s (%s/%s stacks)",
-  "stockpile.barrel.capacity": "Holds up to %s stacks of one item",
+  "stockpile.barrel.capacity": "Holds up to %s stacks",
   "stockpile.barrel.just_locked": "Locked: this barrel will only accept the current item, even when empty.",
   "stockpile.barrel.just_unlocked": "Unlocked: this barrel will accept any item when empty.",
   "block.stockpile.barrel": "Barrel",

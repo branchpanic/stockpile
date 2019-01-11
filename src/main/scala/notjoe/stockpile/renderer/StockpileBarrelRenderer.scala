@@ -1,5 +1,7 @@
 package notjoe.stockpile.renderer
 
+import java.awt.Color
+
 import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.platform.GlStateManager.{DstBlendFactor, SrcBlendFactor}
 import net.fabricmc.api.{EnvType, Environment}
@@ -13,8 +15,6 @@ import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 import notjoe.stockpile.extension.IntExtensions._
 import notjoe.stockpile.inventory.MassItemInventory
 import org.lwjgl.opengl.GL11
-
-import scala.swing.Color
 
 @Environment(EnvType.CLIENT)
 object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockEntity] {

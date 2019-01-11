@@ -12,7 +12,7 @@ import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.{SoundCategory, SoundEvents}
-import net.minecraft.text.{TextComponent, TranslatableTextComponent}
+import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.math.Direction
 import notjoe.cereal.serialization.Persistent
 import notjoe.stockpile.inventory.MassItemInventory
@@ -170,8 +170,6 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
   override def removeInvStack(i: Int): ItemStack = inventory.removeInvStack(i)
 
   override def setInvStack(i: Int, itemStack: ItemStack): Unit = inventory.setInvStack(i, itemStack)
-
-  override def getName: TextComponent = inventory.getName
 
   override def clearInv(): Unit = inventory.clearInv()
 

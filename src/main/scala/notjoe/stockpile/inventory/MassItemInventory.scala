@@ -3,7 +3,6 @@ package notjoe.stockpile.inventory
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
-import net.minecraft.text.{StringTextComponent, TextComponent}
 import net.minecraft.util.math.Direction
 import notjoe.stockpile.blockentity.AutoPersistence.PersistentField
 import notjoe.stockpile.extension.ItemStackExtensions._
@@ -23,14 +22,12 @@ object MassItemInventory {
   * @param maxStacks              The maximum number of *stacks* that this MassItemInventory can hold. This is affected
   *                               by the maximum stack size of the current _stackType.
   * @param allowNewStackWhenEmpty Whether or not *any* stack will be accepted if this inventory is currently empty.
-  * @param name                   Inventory name.
   * @param onChanged              Action to perform when a change has been made.
   */
 class MassItemInventory(@PersistentField private var _stackType: ItemStack = ItemStack.EMPTY,
                         @PersistentField var amountStored: Int = 0,
                         @PersistentField var maxStacks: Int = MassItemInventory.DefaultCapacityStacks,
                         @PersistentField var allowNewStackWhenEmpty: Boolean = true,
-                        @PersistentField var name: String = "Barrel",
                         val onChanged: () => Unit = () => {}) extends SidedInventory {
 
   def stackType: ItemStack = _stackType
@@ -130,8 +127,6 @@ class MassItemInventory(@PersistentField private var _stackType: ItemStack = Ite
   }
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
-
-  override def getName: TextComponent = new StringTextComponent(name)
 
   override def clearInv(): Unit = {
     _stackType = ItemStack.EMPTY

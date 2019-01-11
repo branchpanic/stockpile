@@ -1,13 +1,13 @@
 package notjoe.stockpile.mixin;
 
 import net.minecraft.block.Block;
+import net.minecraft.class_3915;
 import net.minecraft.container.AnvilContainer;
 import net.minecraft.container.Container;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
 import notjoe.stockpile.StockpileTags;
 import notjoe.stockpile.block.StockpileBarrelBlock;
 import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity;
@@ -22,9 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AnvilContainer.class)
 public abstract class AnvilContainerMixin extends Container {
     private final Block BARREL = Registry.BLOCK.get(new Identifier("stockpile", "barrel"));
-
-    @Shadow
-    public int field_7772;
+    private final double XP_REQUIRED_PER_STACK = 0.07;
 
     @Shadow
     @Final
@@ -34,14 +32,17 @@ public abstract class AnvilContainerMixin extends Container {
     @Final
     private Inventory inventory;
 
-    @Shadow @Final private World world;
+    @Shadow
+    @Final
+    private class_3915 pos;
+
+    public AnvilContainerMixin(int __) {
+        super(__);
+    }
+
 
     @Inject(method = "method_7628()V", at = @At("RETURN"))
     private void method_7628(CallbackInfo ci) {
-        if (world.isClient) {
-            return;
-        }
-
         ItemStack input = inventory.getInvStack(0);
         ItemStack modifier = inventory.getInvStack(1);
 
@@ -69,7 +70,7 @@ public abstract class AnvilContainerMixin extends Container {
         upgradedBarrel.setChildTag(StockpileBarrelBlock.StoredTileTagName(), barrelInfo.persistentDataToTag());
 
         result.setInvStack(0, upgradedBarrel);
-        field_7772 = (int) (0.3 * stacksAddedByModifier);
+        pos.method_17404((int) (XP_REQUIRED_PER_STACK * stacksAddedByModifier));
         sendContentUpdates();
     }
 

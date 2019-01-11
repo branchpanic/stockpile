@@ -11,7 +11,8 @@
   "languageAdapter": "net.fabricmc.language.scala.ScalaLanguageAdapter",
   "requires": {
     "fabric": "*",
-    "fabric-language-scala": "*"
+    "fabric-language-scala": "*",
+    "cereal": "*"
   },
   "mixins": {
     "common": "stockpile.common.json"

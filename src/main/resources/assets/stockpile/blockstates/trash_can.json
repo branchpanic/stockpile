@@ -7,7 +7,7 @@
     },
     {
       "when": {
-        "lid_open": "false"
+        "is_open": "false"
       },
       "apply": {
         "model": "stockpile:block/trash_can_lid"

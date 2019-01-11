@@ -22,5 +22,10 @@ hs_err_pid*
 /out/
 /run/
 /classes/
+/logs/
 
-*.kra       # Just so we don't commit a bunch of unnecessary Krita projects
+*.kra
+
+# Dev environment mods
+
+env-mods/

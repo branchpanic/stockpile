@@ -1,65 +1,15 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven { url 'https://www.dimdev.org/maven/' }
-        maven { url 'http://repo.spongepowered.org/maven' }
-    }
-
-    dependencies {
-        classpath 'org.dimdev:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
-    }
-}
-
 plugins {
+    id 'fabric-loom' version '0.2.0-SNAPSHOT'
+    id 'scala'
     id 'org.ajoberstar.reckon' version '0.8.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.61'
 }
-
-apply plugin: 'net.minecraftforge.gradle.tweaker-client'
-apply plugin: 'org.spongepowered.mixin'
-
-archivesBaseName = 'stockpile'
-group 'notjoe.stockpile'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://www.dimdev.org/maven/' }
-}
-
-configurations {
-    shade
-    compile.extendsFrom shade
-}
-
-dependencies {
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    // compile 'org.jetbrains:annotations:13.0'
-
-    implementation 'org.dimdev:rift:1.0.4-66:dev'
-    implementation 'com.github.InsomniaKitten:Riftlin:0.2.0'
-
-    // We'll need to run our tests on JUnit 4 in order to use PowerMock.
-    testCompile 'io.kotlintest:kotlintest-runner-junit4:3.1.7'
-    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
-    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
-
-}
-
-mixin {
-    defaultObfuscationEnv notch
-    add sourceSets.main, 'mixins.stockpile.refmap.json'
-}
+archivesBaseName = 'stockpile'
 
 minecraft {
-    version = '1.13'
-    mappings = 'snapshot_20180823'
-    runDir = 'run'
-    tweakClass = 'org.dimdev.riftloader.launch.RiftLoaderClientTweaker'
 }
 
 reckon {
@@ -67,38 +17,63 @@ reckon {
     stageFromProp('beta', 'rc', 'final')
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven { url 'https://jitpack.io' }
 }
 
-jar {
-    configurations.shade.each { dep ->
-        from(project.zipTree(dep)){
-            exclude 'META-INF', 'META-INF/**'
+// For Mixin's annotation processor to work, we need to compile Java independently from Scala.
+
+tasks.compileJava.dependsOn compileScala
+tasks.compileScala.dependsOn.remove("compileJava")
+
+sourceSets {
+    main {
+        scala {
+            outputDir = file("$buildDir/classes/scala/main")
+        }
+
+        java {
+            outputDir = file("$buildDir/classes/java/main")
         }
     }
-
-    finalizedBy reobfJar
 }
 
-task devJar(type: Jar, dependsOn: classes) {
-    classifier 'dev'
-    from sourceSets.main.output
+dependencies {
+    minecraft 'com.mojang:minecraft:19w02a'
+
+    mappings 'net.fabricmc:yarn:19w02a.12'
+
+    modCompile 'net.fabricmc:fabric-loader:0.3.2.92'
+    modCompile 'net.fabricmc:fabric:0.1.4.71'
+    modCompile 'net.fabricmc:fabric-language-scala:0.1.0'
+
+    modCompile 'com.github.notjoe7F:cereal:2.0.1'
+
+    compile 'org.scala-lang:scala-library:2.12.8'
+
+    // Scala seems unhappy without this! It provides @Nullable.
+    compile 'com.google.code.findbugs:jsr305:3.0.0'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.scalatest:scalatest_2.12:3.0.5'
+    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
+    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
+
+    compile files("$sourceSets.main.scala.outputDir")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier 'sources'
+    classifier = 'sources'
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives jar
-    archives devJar
-    archives sourcesJar
-}
-
 processResources {
-    filesMatching('riftmod.json') {
+    filesMatching('fabric.mod.json') {
         expand 'version': project.version
     }
 }
+
+reckonTagCreate.dependsOn check

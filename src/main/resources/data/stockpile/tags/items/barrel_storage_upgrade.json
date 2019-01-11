@@ -2,7 +2,6 @@
   "values": [
     "minecraft:chest",
     "minecraft:barrel",
-    "minecraft:ender_chest",
-    "minecraft:shulker_box"
+    "minecraft:ender_chest"
   ]
 }

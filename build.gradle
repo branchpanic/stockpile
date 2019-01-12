@@ -1,20 +1,15 @@
 plugins {
     id 'fabric-loom' version '0.2.0-SNAPSHOT'
     id 'scala'
-    id 'org.ajoberstar.reckon' version '0.8.0'
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 archivesBaseName = 'stockpile'
+version = '0.4.0+19w20a'
 
 minecraft {
-}
-
-reckon {
-    scopeFromProp()
-    stageFromProp('beta', 'rc', 'final')
 }
 
 repositories {
@@ -75,5 +70,3 @@ processResources {
         expand 'version': project.version
     }
 }
-
-reckonTagCreate.dependsOn check

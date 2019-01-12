@@ -25,7 +25,4 @@ hs_err_pid*
 /logs/
 
 *.kra
-
-# Dev environment mods
-
-env-mods/
+*.png~

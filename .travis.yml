@@ -1,12 +1,1 @@
 language: java
-
-deploy:
-  provider: releases
-  api_key:
-    secure: QZe60N1c666auU1560XIf0VR7Tnup8UYLWLwpAL1gqGRBR6LOkoigbzDHwVbBKAWuefYtcWG5JviROF7n5ClzUNBAJ93FJ0YER9XSCSK46P6r4tVa0mXlq0ySyXxCAVK0d5d37klzRSLwsapNuEeMp3kIOP8m1GKIx73wO3ddCFfh0gObxyKQScjAuw18vh+GKDsliedr3GVSZuWKo1C6XF1/GYILpeoNrHJYjbOdWOi8UmJYMVGWR85+YpKCDh4GD17b8q+qJE8wDZNJyAqXIQMHylQJklK+XRrey0hHls2OnnuQlmYbebzR3WcAxw9Z4sW1+Wnf6QHzPJQQu/3FI83iSCE93yDG0Pp+lYXqe+BfBAW2CEp+M/O9O1iETOEoQBk6qAA67utv7YyyloozdHWbWRdEmdqhuv8KsNxCuUuoNyZX0Rdaj2OS3zGWTCZXLKQwZ09HicCCYrkT5YcrHZ5CPiObQdyVRqdKTFZ1vdlmZU1835MU7t2fA0tXB6mik76T8kusVALPML1UH0KaKnP3Omq0nim6q4F+82t82/6T1/JKB02OZ0dvT2n83PydlF3S8QqCJ7GTrvfiHX7TIsX/MAFwz+a83SKvBcx0nGfETQ+fR7O7Lyo7x/4uwP2FHxgfP9FhNE3l/efl0VzIe0b/cmuzdtLITcBiiDL3RM=
-  file_glob: true
-  file: "./build/libs/*"
-  skip_cleanup: true
-  on:
-    repo: notjoe7F/stockpile
-    tags: true

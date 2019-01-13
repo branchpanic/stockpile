@@ -79,6 +79,16 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     }
   }
 
+  override def hasComparatorOutput(state: BlockState): Boolean = true
+
+  override def getComparatorOutput(state: BlockState, world: World, pos: BlockPos): Int = {
+    val barrel = world
+      .getBlockEntity(pos)
+      .asInstanceOf[StockpileBarrelBlockEntity]
+
+    (15 * barrel.inventory.amountStored.toDouble / (barrel.inventory.maxStacks * barrel.inventory.stackSize)).toInt
+  }
+
   override def onBlockBreakStart(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity): Unit = {
     if (!world.isClient) {
       val rayTraceStart = player.getCameraPosVec(1)

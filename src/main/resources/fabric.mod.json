@@ -2,7 +2,7 @@
   "id": "stockpile",
   "name": "Stockpile",
   "description": "A mod all about storage.",
-  "version": "1.0.0",
+  "version": "$version",
   "side": "universal",
   "initializers": [
     "notjoe.stockpile.StockpileInitializer",

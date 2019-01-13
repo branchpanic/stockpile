@@ -9,7 +9,7 @@ import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextCom
 import net.minecraft.world.BlockView
 
 object Description {
-  val DefaultStyle = new Style().setColor(TextFormat.GRAY)
+  val DefaultStyle: Style = new Style().setColor(TextFormat.GRAY)
 }
 
 trait Description extends Block {

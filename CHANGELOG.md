@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).  
 
-## [Unreleased]
+## [0.4.0] - 2019-01-12
 
 ### Added
  - Dependency on Cereal
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     - Uses tag `stockpile:barrel_storage_upgrade` to allow any chest-like block to be used in the recipe
     - Now yields 2 barrels to offset iron requirement
  - Barrel upgrades to take a little bit less experience
+ - Barrel texture to fit in a bit more new textures
  
 ### Removed
  - Dependency on Riftlin

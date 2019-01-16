@@ -22,13 +22,13 @@ jobs:
         name: Building and remapping jars
         command: |
           gradle --stop
-          gradle build
+          gradle cleanLoomMappings build remapJar remapSourcesJar --stacktrace
 
     - run:
         name: Running tests
         command: |
           gradle --stop
-          gradle check --stacktrace
+          gradle check
 
     - store_test_results:
         path: build/test-results

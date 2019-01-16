@@ -15,14 +15,9 @@ jobs:
     - checkout
 
     - run:
-        name: Fetching dependencies
-        command: gradle dependencies
-
-    - run:
-        name: Building and remapping jars
+        name: Building project
         command: |
-          gradle --stop
-          gradle cleanLoomMappings build remapJar remapSourcesJar --stacktrace
+          gradle build remapJar remapSourcesJar --stacktrace
 
     - run:
         name: Running tests

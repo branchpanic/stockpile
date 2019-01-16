@@ -32,6 +32,7 @@ jobs:
         name: Building and remapping jars
         command: |
           gradle --stop
+          gradle build sourcesJar
           gradle remapJar remapSourcesJar --stacktrace
 
     - run:

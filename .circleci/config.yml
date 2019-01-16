@@ -8,6 +8,7 @@ jobs:
     working_directory: ~/repo
 
     environment:
+      GRADLE_OPTS: -Xms3200m -Xmx3200m
       JVM_OPTS: -Xms3200m -Xmx3200m
       TERM: dumb
 

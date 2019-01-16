@@ -8,7 +8,7 @@ jobs:
     working_directory: ~/repo
 
     environment:
-      GRADLE_OPTS: -Xmx3G
+      JVM_OPTS: -Xmx3200m
       TERM: dumb
 
     steps:
@@ -32,7 +32,7 @@ jobs:
         name: Building and remapping jars
         command: |
           gradle --stop
-          gradle remapJar remapSourcesJar
+          gradle remapJar remapSourcesJar --stacktrace
 
     - run:
         name: Running tests

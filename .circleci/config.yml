@@ -28,7 +28,7 @@ jobs:
         name: Running tests
         command: |
           gradle --stop
-          gradle check
+          gradle check --stacktrace
 
     - store_test_results:
         path: build/test-results

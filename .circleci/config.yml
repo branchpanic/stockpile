@@ -23,7 +23,7 @@ jobs:
 
     - run:
         name: Fetching dependencies
-        command: gradle dependencies
+        command: ./gradlew dependencies
 
     - save_cache:
         paths:
@@ -32,11 +32,11 @@ jobs:
 
     - run:
         name: Building and remapping jars
-        command: gradle remapJar remapSourcesJar
+        command: ./gradlew remapJar remapSourcesJar
 
     - run:
         name: Running tests
-        command: gradle check
+        command: ./gradlew check
 
     - store_artifacts:
         path: ~/repo/libs

@@ -8,6 +8,8 @@ jobs:
     working_directory: ~/repo
 
     environment:
+      # Currently, we can't rely on using the Gradle Daemon due to a bug in Loom.
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
       JVM_OPTS: -Xmx3200m
       TERM: dumb
 
@@ -19,15 +21,22 @@ jobs:
         - v1-dependencies-{{ checksum "build.gradle" }}
         - v1-dependencies-
 
-    - run: gradle dependencies
+    - run:
+        name: Fetching dependencies
+        command: gradle dependencies
 
     - save_cache:
         paths:
         - ~/.gradle
         key: v1-dependencies-{{ checksum "build.gradle" }}
 
-    - run: gradle build remapJar remapSourcesJar
-    - run: gradle test
+    - run:
+        name: Building and remapping jars
+        command: gradle remapJar remapSourcesJar
+
+    - run:
+        name: Running tests
+        command: gradle check
 
     - store_artifacts:
         path: ~/repo/libs

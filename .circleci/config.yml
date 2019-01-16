@@ -8,8 +8,6 @@ jobs:
     working_directory: ~/repo
 
     environment:
-      # Currently, we can't rely on using the Gradle Daemon due to a bug in Loom.
-      GRADLE_OPTS: -Dorg.gradle.daemon=false
       JVM_OPTS: -Xmx3200m
       TERM: dumb
 
@@ -23,7 +21,7 @@ jobs:
 
     - run:
         name: Fetching dependencies
-        command: ./gradlew dependencies
+        command: gradle dependencies
 
     - save_cache:
         paths:
@@ -32,12 +30,19 @@ jobs:
 
     - run:
         name: Building and remapping jars
-        command: ./gradlew remapJar remapSourcesJar
+        command: |
+          gradle --stop
+          gradle remapJar remapSourcesJar
 
     - run:
         name: Running tests
-        command: ./gradlew check
+        command: |
+          gradle --stop
+          gradle check
+
+    - store_test_results:
+        path: build/test-results
 
     - store_artifacts:
-        path: ~/repo/libs
+        path: build/libs
         destination: jars

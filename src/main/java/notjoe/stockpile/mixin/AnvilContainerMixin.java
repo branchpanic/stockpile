@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.class_3915;
 import net.minecraft.container.AnvilContainer;
 import net.minecraft.container.Container;
+import net.minecraft.container.ContainerType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -18,6 +19,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import javax.annotation.Nullable;
 
 @Mixin(AnvilContainer.class)
 public abstract class AnvilContainerMixin extends Container {
@@ -36,10 +39,9 @@ public abstract class AnvilContainerMixin extends Container {
     @Final
     private class_3915 pos;
 
-    public AnvilContainerMixin(int __) {
-        super(__);
+    protected AnvilContainerMixin(@Nullable ContainerType<?> containerType_1, int int_1) {
+        super(containerType_1, int_1);
     }
-
 
     @Inject(method = "method_7628()V", at = @At("RETURN"))
     private void method_7628(CallbackInfo ci) {

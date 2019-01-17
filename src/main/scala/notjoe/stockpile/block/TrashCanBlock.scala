@@ -3,12 +3,13 @@ package notjoe.stockpile.block
 import net.fabricmc.fabric.block.FabricBlockSettings
 import net.minecraft.block._
 import net.minecraft.block.entity.BlockEntity
+import net.minecraft.class_3965
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.sound.{SoundCategory, SoundEvents}
 import net.minecraft.state.StateFactory
 import net.minecraft.util.Hand
-import net.minecraft.util.math.{BlockPos, Direction}
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.{BlockView, World}
 import notjoe.stockpile.block.StockpileProperties.IsOpen
@@ -33,10 +34,7 @@ object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PIS
                         pos: BlockPos,
                         player: PlayerEntity,
                         hand: Hand,
-                        direction: Direction,
-                        hitX: Float,
-                        hitY: Float,
-                        hitZ: Float): Boolean = {
+                        hitContext: class_3965): Boolean = {
     if (!world.isClient) {
       world.setBlockState(pos, state.`with`(IsOpen, boolean2Boolean(!state.get(IsOpen))), 3)
       world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCK, 0.5f, 0.8f)
@@ -47,6 +45,6 @@ object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PIS
 
   override def isSimpleFullBlock(state: BlockState, view: BlockView, pos: BlockPos): Boolean = false
 
-  override def getBoundingShape(state: BlockState, view: BlockView, pos: BlockPos): VoxelShape =
+  override def getRayTraceShape(state: BlockState, view: BlockView, pos: BlockPos): VoxelShape =
     Block.createCubeShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
 }

@@ -12,7 +12,7 @@ import notjoe.stockpile.block.StockpileProperties
 
 object TrashCanBlockEntity {
   val Type: BlockEntityType[TrashCanBlockEntity] =
-    BlockEntityType.Builder.create[TrashCanBlockEntity](() => new TrashCanBlockEntity).method_11034(null)
+    BlockEntityType.Builder.create[TrashCanBlockEntity](() => new TrashCanBlockEntity).build(null)
 }
 
 class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.Type) with SidedInventory with Tickable {

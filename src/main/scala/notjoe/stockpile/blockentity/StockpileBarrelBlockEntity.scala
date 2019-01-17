@@ -22,7 +22,7 @@ import scala.language.implicitConversions
 
 object StockpileBarrelBlockEntity {
   val Type: BlockEntityType[StockpileBarrelBlockEntity] =
-    BlockEntityType.Builder.create[StockpileBarrelBlockEntity](() => new StockpileBarrelBlockEntity).method_11034(null)
+    BlockEntityType.Builder.create[StockpileBarrelBlockEntity](() => new StockpileBarrelBlockEntity).build(null)
 
   val DoubleClickPeriodMs = 500
 }

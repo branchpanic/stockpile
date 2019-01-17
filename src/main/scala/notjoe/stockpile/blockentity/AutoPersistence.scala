@@ -19,7 +19,7 @@ trait AutoPersistence extends BlockEntity {
   def persistentDataToTag(): CompoundTag = serializer.serializeToCompound(this)
 
   def loadPersistentDataFromTag(tag: CompoundTag): Unit = {
-    deserializer.deserializeFromTag(tag, false)
+    deserializer.deserializeFromCompound(tag, false)
   }
 
   abstract override def toTag(tag: CompoundTag): CompoundTag = {

@@ -4,6 +4,7 @@ import net.fabricmc.fabric.block.FabricBlockSettings
 import net.minecraft.block._
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.class_3965
+import net.minecraft.entity.VerticalEntityPosition
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.sound.{SoundCategory, SoundEvents}
@@ -45,6 +46,9 @@ object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PIS
 
   override def isSimpleFullBlock(state: BlockState, view: BlockView, pos: BlockPos): Boolean = false
 
-  override def getRayTraceShape(state: BlockState, view: BlockView, pos: BlockPos): VoxelShape =
+  override def canCollideWith(state: BlockState,
+                              view: BlockView,
+                              pos: BlockPos,
+                              entityPosition: VerticalEntityPosition): VoxelShape =
     Block.createCubeShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
 }

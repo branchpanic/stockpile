@@ -14,7 +14,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.{SoundCategory, SoundEvents}
 import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.math.Direction
-import notjoe.cereal.serialization.Persistent
+import notjoe.cereal.persistence.Persistent
 import notjoe.stockpile.inventory.MassItemInventory
 
 import scala.collection.JavaConverters._

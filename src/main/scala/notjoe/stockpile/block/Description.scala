@@ -15,11 +15,11 @@ object Description {
 trait Description extends Block {
   val descriptionStyle: Style = Description.DefaultStyle
 
-  override def addInformation(stack: ItemStack,
+  override def buildTooltip(stack: ItemStack,
                               view: BlockView,
                               tooltip: util.List[TextComponent],
                               options: TooltipOptions): Unit = {
     tooltip.add(new TranslatableTextComponent(stack.getTranslationKey + ".description").setStyle(descriptionStyle))
-    super.addInformation(stack, view, tooltip, options)
+    super.buildTooltip(stack, view, tooltip, options)
   }
 }

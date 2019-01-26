@@ -16,11 +16,11 @@ trait FacingDirection extends Block {
     super.getPlacementState(context).`with`(Properties.FACING, context.getPlayerFacing.getOpposite)
   }
 
-  override def applyRotation(state: BlockState, rotation: Rotation): BlockState = {
-    state.`with`(Properties.FACING, rotation.method_10503(state.get(Properties.FACING)))
+  override def rotate(state: BlockState, rotation: Rotation): BlockState = {
+    state.`with`(Properties.FACING, rotation.rotate(state.get(Properties.FACING)))
   }
 
-  override def applyMirror(state: BlockState, mirror: Mirror): BlockState = {
+  override def mirror(state: BlockState, mirror: Mirror): BlockState = {
     state.`with`(Properties.FACING, mirror.apply(state.get(Properties.FACING)))
   }
 }

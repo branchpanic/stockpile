@@ -9,10 +9,10 @@ targetCompatibility = 1.8
 
 archivesBaseName = 'stockpile'
 
-def mcVersion = '19w03a'
+def mcVersion = '19w04a'
 def isRelease = project.hasProperty("release")
 
-version = '0.4.2'
+version = '0.4.3'
 
 if (!isRelease) {
     def ciBuildNumber = System.getenv("CIRCLE_BUILD_NUM") ?: 0
@@ -50,15 +50,15 @@ sourceSets {
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:19w03a'
+    minecraft 'com.mojang:minecraft:19w04a'
 
-    mappings 'net.fabricmc:yarn:19w03a.4'
+    mappings 'net.fabricmc:yarn:19w04a.2'
 
-    modCompile 'net.fabricmc:fabric-loader:0.3.2.96'
-    modCompile 'net.fabricmc:fabric:0.1.4.75'
+    modCompile 'net.fabricmc:fabric-loader:0.3.3.101'
+    modCompile 'net.fabricmc:fabric:0.1.4.79'
     modCompile 'net.fabricmc:fabric-language-scala:0.1.0'
 
-    modCompile 'com.github.notjoe7F:cereal:2.0.4'
+    modCompile 'com.github.notjoe7F:cereal:3.0.0-beta'
 
     compile 'org.scala-lang:scala-library:2.12.8'
 

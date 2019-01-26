@@ -6,18 +6,17 @@ import java.util
 import net.fabricmc.fabric.block.FabricBlockSettings
 import net.minecraft.block._
 import net.minecraft.block.entity.BlockEntity
-import net.minecraft.{class_3959, class_3965}
-import net.minecraft.class_3959.{class_242, class_3960}
 import net.minecraft.client.item.TooltipOptions
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.state.property.Properties
 import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextComponent}
-import net.minecraft.util.{Hand, HitResult}
+import net.minecraft.util.Hand
+import net.minecraft.util.hit.{BlockHitResult, HitResult}
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.loot.context.{LootContext, Parameters}
-import net.minecraft.world.{BlockView, World}
+import net.minecraft.world.{BlockView, RayTraceContext, World}
 import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 
 import scala.collection.JavaConverters._
@@ -35,8 +34,8 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
                         pos: BlockPos,
                         player: PlayerEntity,
                         hand: Hand,
-                        hitContext: class_3965): Boolean = {
-    if (hitContext.method_17780() != state.get(Properties.FACING)) {
+                        hitResult: BlockHitResult): Boolean = {
+    if (hitResult.getSide != state.get(Properties.FACING)) {
       false
     } else {
       if (!world.isClient) {
@@ -101,9 +100,9 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
       // FIXME: Replace 5 with player's actual reach distance
       val rayTraceEnd = rayTraceStart.add(player.getRotationVec(1).multiply(5))
 
-      val result = world.method_17742(new class_3959(rayTraceStart, rayTraceEnd, class_3960.OUTLINE, class_242.NONE, player))
+      val result = world.rayTrace(new RayTraceContext(rayTraceStart, rayTraceEnd, RayTraceContext.ShapeType.OUTLINE, RayTraceContext.FluidHandling.NONE, player))
 
-      if (result.method_17783() == HitResult.Type.BLOCK && result.method_17780() == state.get(Properties.FACING)) {
+      if (result.getType == HitResult.Type.BLOCK && result.getSide == state.get(Properties.FACING)) {
         world
           .getBlockEntity(pos)
           .asInstanceOf[StockpileBarrelBlockEntity]
@@ -136,10 +135,10 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     Seq(capacityDescription, contentDescription)
   }
 
-  override def addInformation(stack: ItemStack,
-                              view: BlockView,
-                              tooltip: util.List[TextComponent],
-                              options: TooltipOptions): Unit = {
+  override def buildTooltip(stack: ItemStack,
+                            view: BlockView,
+                            tooltip: util.List[TextComponent],
+                            options: TooltipOptions): Unit = {
     tooltip.addAll(getTooltipForStack(stack).asJava)
   }
 }

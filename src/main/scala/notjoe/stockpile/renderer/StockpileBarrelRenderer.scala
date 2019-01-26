@@ -3,7 +3,7 @@ package notjoe.stockpile.renderer
 import java.awt.Color
 
 import com.mojang.blaze3d.platform.GlStateManager
-import com.mojang.blaze3d.platform.GlStateManager.{DstBlendFactor, SrcBlendFactor}
+import com.mojang.blaze3d.platform.GlStateManager.{DestFactor, SourceFactor}
 import net.fabricmc.api.{EnvType, Environment}
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
@@ -126,7 +126,7 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     GlStateManager.alphaFunc(516, 0.1F)
     GlStateManager.enableBlend()
     GuiLighting.enable()
-    GlStateManager.blendFuncSeparate(SrcBlendFactor.SRC_ALPHA, DstBlendFactor.ONE_MINUS_SRC_ALPHA, SrcBlendFactor.ONE, DstBlendFactor.ZERO)
+    GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO)
     GlStateManager.pushMatrix()
 
     transformToFace(orientation, x, y, z)

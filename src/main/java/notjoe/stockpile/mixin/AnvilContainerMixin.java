@@ -48,7 +48,7 @@ public abstract class AnvilContainerMixin extends Container {
         ItemStack input = inventory.getInvStack(0);
         ItemStack modifier = inventory.getInvStack(1);
 
-        if (!input.getItem().equals(BARREL.getItem())) {
+        if (!input.getItem().equals(BARREL.getItem()) || input.getAmount() != 1) {
             return;
         }
 

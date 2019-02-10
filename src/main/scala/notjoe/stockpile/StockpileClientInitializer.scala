@@ -1,7 +1,7 @@
 package notjoe.stockpile
 
 import net.fabricmc.api.{ClientModInitializer, EnvType, Environment}
-import net.fabricmc.fabric.client.render.BlockEntityRendererRegistry
+import net.fabricmc.fabric.api.client.render.BlockEntityRendererRegistry
 import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 import notjoe.stockpile.renderer.StockpileBarrelRenderer
 

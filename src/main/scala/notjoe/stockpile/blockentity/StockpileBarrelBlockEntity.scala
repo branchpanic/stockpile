@@ -3,8 +3,8 @@ package notjoe.stockpile.blockentity
 import java.text.NumberFormat
 import java.util.UUID
 
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.util.NbtType
-import net.fabricmc.fabric.block.entity.ClientSerializable
 import net.minecraft.block.entity.{BlockEntity, BlockEntityType}
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -29,7 +29,7 @@ object StockpileBarrelBlockEntity {
 
 class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.Type)
   with AutoPersistence
-  with ClientSerializable
+  with BlockEntityClientSerializable
   with SidedInventory {
 
   @Persistent var inventory = new MassItemInventory(onChanged = () => markDirty())

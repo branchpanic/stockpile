@@ -3,7 +3,7 @@ package notjoe.stockpile.block
 import java.text.NumberFormat
 import java.util
 
-import net.fabricmc.fabric.block.FabricBlockSettings
+import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block._
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipOptions
@@ -15,7 +15,7 @@ import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextCom
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.{BlockHitResult, HitResult}
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.loot.context.{LootContext, Parameters}
+import net.minecraft.world.loot.context.{LootContext, LootContextParameters}
 import net.minecraft.world.{BlockView, RayTraceContext, World}
 import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 
@@ -51,7 +51,7 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
   override def getDroppedStacks(state: BlockState,
                                 context: LootContext.Builder): util.List[ItemStack] = {
     val barrelEntity = context
-      .get(Parameters.BLOCK_ENTITY)
+      .get(LootContextParameters.BLOCK_ENTITY)
       .asInstanceOf[StockpileBarrelBlockEntity]
 
     val stack = new ItemStack(this, 1)

@@ -134,7 +134,7 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     GlStateManager.scaled(0.03125, 0.03125, -CofhTransformOffset)
     GlStateManager.rotated(180, 0, 0, 1)
 
-    MinecraftClient.getInstance().getItemRenderer.renderItemAndGlowInGui(stack, 0, -3)
+    MinecraftClient.getInstance().getItemRenderer.renderGuiItem(stack, 0, -3)
     renderFillBar(barrel.inventory, 8f, 16f)
 
     GlStateManager.popMatrix()

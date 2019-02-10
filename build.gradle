@@ -9,10 +9,10 @@ targetCompatibility = 1.8
 
 archivesBaseName = 'stockpile'
 
-def mcVersion = '19w04a'
+def mcVersion = '19w06a'
 def isRelease = project.hasProperty("release")
 
-version = '0.4.4'
+version = '0.4.5'
 
 if (!isRelease) {
     def ciBuildNumber = System.getenv("CIRCLE_BUILD_NUM") ?: 0

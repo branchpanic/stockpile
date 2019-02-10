@@ -1,6 +1,6 @@
 package notjoe.stockpile.block
 
-import net.fabricmc.fabric.block.FabricBlockSettings
+import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block._
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.entity.VerticalEntityPosition

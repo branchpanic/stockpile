@@ -71,7 +71,7 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
     inventory.allowNewStackWhenEmpty = !inventory.allowNewStackWhenEmpty
 
     if (inventory.isInvEmpty && inventory.allowNewStackWhenEmpty) {
-      inventory.clearInv()
+      inventory.method_5448()
     }
 
     if (inventory.allowNewStackWhenEmpty) {
@@ -171,8 +171,6 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
 
   override def setInvStack(i: Int, itemStack: ItemStack): Unit = inventory.setInvStack(i, itemStack)
 
-  override def clearInv(): Unit = inventory.clearInv()
-
   override def getInvAvailableSlots(direction: Direction): Array[Int] = inventory.getInvAvailableSlots(direction)
 
   override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
@@ -180,4 +178,6 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
 
   override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
     inventory.canExtractInvStack(i, itemStack, direction)
+
+  override def method_5448(): Unit = inventory.method_5448()
 }

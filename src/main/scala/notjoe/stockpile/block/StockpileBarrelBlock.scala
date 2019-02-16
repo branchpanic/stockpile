@@ -57,7 +57,7 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     val stack = new ItemStack(this, 1)
 
     if (barrelEntity.isInvEmpty) {
-      barrelEntity.clearInv()
+      barrelEntity.method_5448()
     }
 
     stack.setChildTag(StoredTileTagName, barrelEntity.persistentDataToTag())

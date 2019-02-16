@@ -128,7 +128,7 @@ class MassItemInventory(@PersistentField private var _stackType: ItemStack = Ite
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
 
-  override def clearInv(): Unit = {
+  override def method_5448(): Unit = {
     _stackType = ItemStack.EMPTY
     amountStored = 0
   }

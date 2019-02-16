@@ -36,7 +36,7 @@ class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.Type) with Sid
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
 
-  override def clearInv(): Unit = {}
+  override def method_5448(): Unit = {}
 
   override def tick(): Unit = {
     if (world.isClient || !world.getBlockState(pos).get(StockpileProperties.IsOpen)) {

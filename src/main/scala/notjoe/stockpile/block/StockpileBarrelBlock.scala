@@ -6,7 +6,7 @@ import java.util
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block._
 import net.minecraft.block.entity.BlockEntity
-import net.minecraft.client.item.TooltipOptions
+import net.minecraft.client.item.{TooltipContext}
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -57,10 +57,10 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     val stack = new ItemStack(this, 1)
 
     if (barrelEntity.isInvEmpty) {
-      barrelEntity.method_5448()
+      barrelEntity.clear()
     }
 
-    stack.setChildTag(StoredTileTagName, barrelEntity.persistentDataToTag())
+    stack.setChildTag(StoredTileTagName, barrelEntity.saveToTag())
     List(stack).asJava
   }
 
@@ -73,7 +73,7 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
       world
         .getBlockEntity(pos)
         .asInstanceOf[StockpileBarrelBlockEntity]
-        .loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
+        .loadFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
     }
   }
 
@@ -119,7 +119,7 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     val storedEntity = new StockpileBarrelBlockEntity()
     val formatter = NumberFormat.getInstance()
 
-    storedEntity.loadPersistentDataFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
+    storedEntity.loadFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
 
     val capacityDescription = new TranslatableTextComponent("stockpile.barrel.capacity", formatter.format(storedEntity.inventory.maxStacks)).setStyle(Description.DefaultStyle)
     val contentDescription = if (storedEntity.isInvEmpty) {
@@ -138,7 +138,7 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
   override def buildTooltip(stack: ItemStack,
                             view: BlockView,
                             tooltip: util.List[TextComponent],
-                            options: TooltipOptions): Unit = {
+                            context: TooltipContext): Unit = {
     tooltip.addAll(getTooltipForStack(stack).asJava)
   }
 }

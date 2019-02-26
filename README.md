@@ -12,7 +12,8 @@ It depends on [Cereal](https://github.com/notjoe7F/cereal) and Fabric's
 
 ## Features
 
-See the [wiki](https://github.com/notjoe7F/stockpile/wiki) for a list of features.
+See the [wiki](https://github.com/notjoe7F/stockpile/wiki) for a list of features. Feature requests are welcome through
+GitHub issues!
 
 ## Integrations
 

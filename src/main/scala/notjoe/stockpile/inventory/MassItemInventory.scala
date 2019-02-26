@@ -3,8 +3,9 @@ package notjoe.stockpile.inventory
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.math.Direction
-import notjoe.stockpile.blockentity.AutoPersistence.PersistentField
+import notjoe.stockpile.blockentity.Persistence
 import notjoe.stockpile.extension.ItemStackExtensions._
 
 object MassItemInventory {
@@ -24,11 +25,11 @@ object MassItemInventory {
   * @param allowNewStackWhenEmpty Whether or not *any* stack will be accepted if this inventory is currently empty.
   * @param onChanged              Action to perform when a change has been made.
   */
-class MassItemInventory(@PersistentField private var _stackType: ItemStack = ItemStack.EMPTY,
-                        @PersistentField var amountStored: Int = 0,
-                        @PersistentField var maxStacks: Int = MassItemInventory.DefaultCapacityStacks,
-                        @PersistentField var allowNewStackWhenEmpty: Boolean = true,
-                        val onChanged: () => Unit = () => {}) extends SidedInventory {
+class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
+                        var amountStored: Int = 0,
+                        var maxStacks: Int = MassItemInventory.DefaultCapacityStacks,
+                        var allowNewStackWhenEmpty: Boolean = true,
+                        val onChanged: () => Unit = () => {}) extends SidedInventory with Persistence {
 
   def stackType: ItemStack = _stackType
 
@@ -128,7 +129,7 @@ class MassItemInventory(@PersistentField private var _stackType: ItemStack = Ite
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
 
-  override def method_5448(): Unit = {
+  override def clear(): Unit = {
     _stackType = ItemStack.EMPTY
     amountStored = 0
   }
@@ -140,4 +141,20 @@ class MassItemInventory(@PersistentField private var _stackType: ItemStack = Ite
 
   override def canExtractInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
     i == MassItemInventory.OutputSlotIndex
+
+  override def saveToTag(): CompoundTag = {
+    val tag = new CompoundTag
+    tag.putBoolean("allowNewStackWhenEmpty", allowNewStackWhenEmpty)
+    tag.putInt("maxStacks", maxStacks)
+    tag.putInt("amountStored", amountStored)
+    tag.put("_stackType", _stackType.toTag(new CompoundTag))
+    tag
+  }
+
+  override def loadFromTag(tag: CompoundTag): Unit = {
+    allowNewStackWhenEmpty = tag.getBoolean("allowNewStackWhenEmpty")
+    maxStacks = tag.getInt("maxStacks")
+    amountStored = tag.getInt("amountStored")
+    _stackType = ItemStack.fromTag(tag.getCompound("_stackType"))
+  }
 }

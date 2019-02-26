@@ -14,7 +14,6 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.{SoundCategory, SoundEvents}
 import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.math.Direction
-import notjoe.cereal.persistence.Persistent
 import notjoe.stockpile.inventory.MassItemInventory
 
 import scala.collection.JavaConverters._
@@ -28,11 +27,11 @@ object StockpileBarrelBlockEntity {
 }
 
 class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.Type)
-  with AutoPersistence
+  with BlockEntityPersistence
   with BlockEntityClientSerializable
   with SidedInventory {
 
-  @Persistent var inventory = new MassItemInventory(onChanged = () => markDirty())
+  var inventory = new MassItemInventory(onChanged = () => markDirty())
 
   private var playerRightClickTimers: Map[UUID, Long] = Map.empty
 
@@ -71,7 +70,7 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
     inventory.allowNewStackWhenEmpty = !inventory.allowNewStackWhenEmpty
 
     if (inventory.isInvEmpty && inventory.allowNewStackWhenEmpty) {
-      inventory.method_5448()
+      inventory.clear()
     }
 
     if (inventory.allowNewStackWhenEmpty) {
@@ -147,11 +146,11 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
 
   override def fromClientTag(compoundTag: CompoundTag): Unit = {
     if (compoundTag.containsKey("PersistentData", NbtType.COMPOUND)) {
-      loadPersistentDataFromTag(compoundTag.getCompound("PersistentData"))
+      loadFromTag(compoundTag.getCompound("PersistentData"))
     }
   }
   override def toClientTag(compoundTag: CompoundTag): CompoundTag = {
-    compoundTag.put("PersistentData", persistentDataToTag())
+    compoundTag.put("PersistentData", saveToTag())
     compoundTag
   }
 
@@ -179,5 +178,17 @@ class StockpileBarrelBlockEntity extends BlockEntity(StockpileBarrelBlockEntity.
   override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
     inventory.canExtractInvStack(i, itemStack, direction)
 
-  override def method_5448(): Unit = inventory.method_5448()
+  override def clear(): Unit = inventory.clear()
+
+  override def saveToTag(): CompoundTag = {
+    val tag = new CompoundTag()
+    tag.put("inventory", inventory.saveToTag())
+    tag
+  }
+
+  override def loadFromTag(tag: CompoundTag): Unit = {
+    if (tag.containsKey("inventory")) {
+      inventory.loadFromTag(tag.getCompound("inventory"))
+    }
+  }
 }

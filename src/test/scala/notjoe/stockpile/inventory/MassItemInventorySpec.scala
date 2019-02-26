@@ -111,7 +111,7 @@ class MassItemInventorySpec extends FlatSpec with Matchers {
 
   it should "set its stored amount to 0 and stack type to empty when cleared" in {
     val inventory = new MassItemInventory(_stackType =  new ItemStack(TestItems.Red), amountStored = 1)
-    inventory.method_5448()
+    inventory.clear()
 
     inventory.amountStored shouldBe 0
     inventory.stackType.isEmpty shouldBe true

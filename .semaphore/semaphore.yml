@@ -30,9 +30,9 @@ blocks:
         - name: GRADLE_OPTS
           value: "-Dorg.gradle.daemon=false"
 
-    jobs:
-      - name: Lint and run tests
-        commands:
-          - checkout
-          - ./gradlew checkScalafmtAll
-          - ./gradlew check
+      jobs:
+        - name: Lint and run tests
+          commands:
+            - checkout
+            - ./gradlew checkScalafmtAll
+            - ./gradlew check

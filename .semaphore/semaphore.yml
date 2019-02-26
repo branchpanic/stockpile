@@ -31,8 +31,15 @@ blocks:
           value: "-Dorg.gradle.daemon=false"
 
       jobs:
-        - name: Lint and run tests
+        prologue:
           commands:
             - checkout
+            - cache restore gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties),gradle-$SEMAPHORE_GIT_BRANCH,gradle-master
+
+        - name: Lint with scalafmt
+          commands:
             - ./gradlew checkScalafmtAll
+
+        - name: Run tests
+          commands:
             - ./gradlew check

@@ -8,6 +8,7 @@ import notjoe.stockpile.renderer.StockpileBarrelRenderer
 @Environment(EnvType.CLIENT)
 object StockpileClientInitializer extends ClientModInitializer {
   override def onInitializeClient(): Unit = {
-    BlockEntityRendererRegistry.INSTANCE.register(classOf[StockpileBarrelBlockEntity], StockpileBarrelRenderer)
+    BlockEntityRendererRegistry.INSTANCE
+      .register(classOf[StockpileBarrelBlockEntity], StockpileBarrelRenderer)
   }
 }

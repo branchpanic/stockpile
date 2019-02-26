@@ -11,7 +11,12 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.state.property.Properties
-import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextComponent}
+import net.minecraft.text.{
+  Style,
+  TextComponent,
+  TextFormat,
+  TranslatableTextComponent
+}
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.{BlockHitResult, HitResult}
 import net.minecraft.util.math.BlockPos
@@ -21,13 +26,15 @@ import notjoe.stockpile.blockentity.StockpileBarrelBlockEntity
 
 import scala.collection.JavaConverters._
 
-object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.CHEST).build())
-  with FacingDirection {
+object StockpileBarrelBlock
+    extends BlockWithEntity(FabricBlockSettings.copy(Blocks.CHEST).build())
+    with FacingDirection {
 
   val StoredTileTagName = "barrelData"
   val ContentsTextStyle: Style = new Style().setColor(TextFormat.DARK_GRAY)
 
-  override def createBlockEntity(blockView: BlockView): BlockEntity = new StockpileBarrelBlockEntity()
+  override def createBlockEntity(blockView: BlockView): BlockEntity =
+    new StockpileBarrelBlockEntity()
 
   override def activate(state: BlockState,
                         world: World,
@@ -48,8 +55,9 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     }
   }
 
-  override def getDroppedStacks(state: BlockState,
-                                context: LootContext.Builder): util.List[ItemStack] = {
+  override def getDroppedStacks(
+      state: BlockState,
+      context: LootContext.Builder): util.List[ItemStack] = {
     val barrelEntity = context
       .get(LootContextParameters.BLOCK_ENTITY)
       .asInstanceOf[StockpileBarrelBlockEntity]
@@ -79,7 +87,9 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
 
   override def hasComparatorOutput(state: BlockState): Boolean = true
 
-  override def getComparatorOutput(state: BlockState, world: World, pos: BlockPos): Int = {
+  override def getComparatorOutput(state: BlockState,
+                                   world: World,
+                                   pos: BlockPos): Int = {
     val barrel = world
       .getBlockEntity(pos)
       .asInstanceOf[StockpileBarrelBlockEntity]
@@ -93,16 +103,25 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     }
   }
 
-  override def onBlockBreakStart(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity): Unit = {
+  override def onBlockBreakStart(state: BlockState,
+                                 world: World,
+                                 pos: BlockPos,
+                                 player: PlayerEntity): Unit = {
     if (!world.isClient) {
       val rayTraceStart = player.getCameraPosVec(1)
 
       // FIXME: Replace 5 with player's actual reach distance
       val rayTraceEnd = rayTraceStart.add(player.getRotationVec(1).multiply(5))
 
-      val result = world.rayTrace(new RayTraceContext(rayTraceStart, rayTraceEnd, RayTraceContext.ShapeType.OUTLINE, RayTraceContext.FluidHandling.NONE, player))
+      val result = world.rayTrace(
+        new RayTraceContext(rayTraceStart,
+                            rayTraceEnd,
+                            RayTraceContext.ShapeType.OUTLINE,
+                            RayTraceContext.FluidHandling.NONE,
+                            player))
 
-      if (result.getType == HitResult.Type.BLOCK && result.getSide == state.get(Properties.FACING)) {
+      if (result.getType == HitResult.Type.BLOCK && result.getSide == state.get(
+            Properties.FACING)) {
         world
           .getBlockEntity(pos)
           .asInstanceOf[StockpileBarrelBlockEntity]
@@ -111,7 +130,8 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
     }
   }
 
-  override def getRenderType(state: BlockState): BlockRenderType = BlockRenderType.MODEL
+  override def getRenderType(state: BlockState): BlockRenderType =
+    BlockRenderType.MODEL
 
   override def getRenderLayer: BlockRenderLayer = BlockRenderLayer.MIPPED_CUTOUT
 
@@ -121,14 +141,20 @@ object StockpileBarrelBlock extends BlockWithEntity(FabricBlockSettings.copy(Blo
 
     storedEntity.loadFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
 
-    val capacityDescription = new TranslatableTextComponent("stockpile.barrel.capacity", formatter.format(storedEntity.inventory.maxStacks)).setStyle(Description.DefaultStyle)
+    val capacityDescription = new TranslatableTextComponent(
+      "stockpile.barrel.capacity",
+      formatter.format(storedEntity.inventory.maxStacks))
+      .setStyle(Description.DefaultStyle)
     val contentDescription = if (storedEntity.isInvEmpty) {
-      new TranslatableTextComponent("stockpile.barrel.empty").setStyle(ContentsTextStyle)
+      new TranslatableTextComponent("stockpile.barrel.empty")
+        .setStyle(ContentsTextStyle)
     } else {
-      new TranslatableTextComponent("stockpile.barrel.contents_stack",
+      new TranslatableTextComponent(
+        "stockpile.barrel.contents_stack",
         storedEntity.inventory.stackType.getDisplayName,
         formatter.format(storedEntity.inventory.amountStored),
-        formatter.format(storedEntity.inventory.amountStored / storedEntity.inventory.stackSize)
+        formatter.format(
+          storedEntity.inventory.amountStored / storedEntity.inventory.stackSize)
       ).setStyle(ContentsTextStyle)
     }
 

@@ -1,0 +1,41 @@
+version: v1.0
+name: Stockpile CI pipeline
+
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+
+blocks:
+  - name: "Setup, build, and test"
+    task:
+      env_vars:
+        - name: GRADLE_USER_HOME
+          value: "gradle_ci_cache"
+
+        - name: GRADLE_OPTS
+          value: "-Dorg.gradle.daemon=false"
+
+      jobs:
+        - name: Set Java version
+          commands:
+            - sem-version java 8
+
+        - name: Checkout and install dependencies
+          commands:
+            - checkout
+            - cache restore gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties),gradle-$SEMAPHORE_GIT_BRANCH,gradle-master
+            - ./gradlew dependencies
+            - cache store gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties) gradle_ci_cache
+
+        - name: Run Scalatest tests
+          commands:
+            - ./gradlew check
+
+        - name: Lint with scalafmt
+          commands:
+            - ./gradlew checkScalafmtAll
+
+        - name: Build project
+          commands:
+            - ./gradlew build

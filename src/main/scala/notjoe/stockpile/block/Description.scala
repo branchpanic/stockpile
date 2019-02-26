@@ -5,7 +5,12 @@ import java.util
 import net.minecraft.block.Block
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.ItemStack
-import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextComponent}
+import net.minecraft.text.{
+  Style,
+  TextComponent,
+  TextFormat,
+  TranslatableTextComponent
+}
 import net.minecraft.world.BlockView
 
 object Description {
@@ -19,7 +24,9 @@ trait Description extends Block {
                             view: BlockView,
                             tooltip: util.List[TextComponent],
                             context: TooltipContext): Unit = {
-    tooltip.add(new TranslatableTextComponent(stack.getTranslationKey + ".description").setStyle(descriptionStyle))
+    tooltip.add(
+      new TranslatableTextComponent(stack.getTranslationKey + ".description")
+        .setStyle(descriptionStyle))
     super.buildTooltip(stack, view, tooltip, context)
   }
 }

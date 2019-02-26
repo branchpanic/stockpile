@@ -17,7 +17,8 @@ import notjoe.stockpile.inventory.MassItemInventory
 import org.lwjgl.opengl.GL11
 
 @Environment(EnvType.CLIENT)
-object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockEntity] {
+object StockpileBarrelRenderer
+    extends BlockEntityRenderer[StockpileBarrelBlockEntity] {
   val FillBarWidth = 18.0
   val CofhTransformOffset: Double = 1.0 / 512.0
 
@@ -38,33 +39,50 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     GlStateManager.popMatrix()
   }
 
-  def transformToFace(orientation: Direction, x: Double, y: Double, z: Double): Unit = orientation match {
+  def transformToFace(orientation: Direction,
+                      x: Double,
+                      y: Double,
+                      z: Double): Unit = orientation match {
     case Direction.NORTH => {
-      GlStateManager.translated(x + 0.75, y + 0.75, z + CofhTransformOffset * 145)
+      GlStateManager.translated(x + 0.75,
+                                y + 0.75,
+                                z + CofhTransformOffset * 145)
     }
     case Direction.SOUTH => {
-      GlStateManager.translated(x + 0.25, y + 0.75, z + 1 - CofhTransformOffset * 145)
+      GlStateManager.translated(x + 0.25,
+                                y + 0.75,
+                                z + 1 - CofhTransformOffset * 145)
       GlStateManager.rotated(180f, 0f, 1f, 0f)
     }
     case Direction.WEST => {
-      GlStateManager.translated(x + CofhTransformOffset * 145, y + 0.75, z + 0.25)
+      GlStateManager.translated(x + CofhTransformOffset * 145,
+                                y + 0.75,
+                                z + 0.25)
       GlStateManager.rotated(90f, 0f, 1f, 0f)
     }
     case Direction.EAST => {
-      GlStateManager.translated(x + 1 - CofhTransformOffset * 145, y + 0.75, z + 0.75)
+      GlStateManager.translated(x + 1 - CofhTransformOffset * 145,
+                                y + 0.75,
+                                z + 0.75)
       GlStateManager.rotated(-90f, 0f, 1f, 0f)
     }
     case Direction.UP => {
-      GlStateManager.translated(x + 0.75, y + 1 - CofhTransformOffset * 145, z + 0.75)
+      GlStateManager.translated(x + 0.75,
+                                y + 1 - CofhTransformOffset * 145,
+                                z + 0.75)
       GlStateManager.rotated(90f, 1f, 0f, 0f)
     }
     case Direction.DOWN => {
-      GlStateManager.translated(x + 0.75, y + CofhTransformOffset * 145, z + 0.25)
+      GlStateManager.translated(x + 0.75,
+                                y + CofhTransformOffset * 145,
+                                z + 0.25)
       GlStateManager.rotated(-90f, 1f, 0f, 0f)
     }
   }
 
-  def renderFillBar(inventory: MassItemInventory, xCenter: Float, yCenter: Float): Unit = {
+  def renderFillBar(inventory: MassItemInventory,
+                    xCenter: Float,
+                    yCenter: Float): Unit = {
     GlStateManager.translated(0.0, 0.0, 0.3 * 1 / CofhTransformOffset)
     GlStateManager.scaled(0.5, 0.5, 1.0)
 
@@ -126,7 +144,10 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     GlStateManager.alphaFunc(516, 0.1F)
     GlStateManager.enableBlend()
     GuiLighting.enable()
-    GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO)
+    GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA,
+                                     DestFactor.ONE_MINUS_SRC_ALPHA,
+                                     SourceFactor.ONE,
+                                     DestFactor.ZERO)
     GlStateManager.pushMatrix()
 
     transformToFace(orientation, x, y, z)
@@ -142,28 +163,35 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     GlStateManager.disableBlend()
   }
 
-  def drawRectangle(x1: Double, y1: Double, x2: Double, y2: Double, color: Color): Unit = {
+  def drawRectangle(x1: Double,
+                    y1: Double,
+                    x2: Double,
+                    y2: Double,
+                    color: Color): Unit = {
     val tessellator = Tessellator.getInstance()
     val bufferBuilder = tessellator.getBufferBuilder
 
     bufferBuilder.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR)
 
-    Seq((x2, y1), (x2, y2), (x1, y2), (x1, y1)).foreach { case (i, j) =>
-      bufferBuilder.vertex(i, j, 0)
-        .color(color.getRed, color.getGreen, color.getBlue, color.getAlpha)
-        .next()
+    Seq((x2, y1), (x2, y2), (x1, y2), (x1, y1)).foreach {
+      case (i, j) =>
+        bufferBuilder
+          .vertex(i, j, 0)
+          .color(color.getRed, color.getGreen, color.getBlue, color.getAlpha)
+          .next()
     }
 
     tessellator.draw()
   }
 
-  def getDisplayString(inventory: MassItemInventory): String = if (inventory.isInvEmpty) {
-    I18n.translate("stockpile.barrel.empty")
-  } else {
-    inventory.amountStored.shorthand + (if (inventory.allowNewStackWhenEmpty) {
-      "*"
+  def getDisplayString(inventory: MassItemInventory): String =
+    if (inventory.isInvEmpty) {
+      I18n.translate("stockpile.barrel.empty")
     } else {
-      ""
-    })
-  }
+      inventory.amountStored.shorthand + (if (inventory.allowNewStackWhenEmpty) {
+                                            "*"
+                                          } else {
+                                            ""
+                                          })
+    }
 }

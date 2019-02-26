@@ -27,9 +27,12 @@ object MassItemInventory {
   */
 class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
                         var amountStored: Int = 0,
-                        var maxStacks: Int = MassItemInventory.DefaultCapacityStacks,
+                        var maxStacks: Int =
+                          MassItemInventory.DefaultCapacityStacks,
                         var allowNewStackWhenEmpty: Boolean = true,
-                        val onChanged: () => Unit = () => {}) extends SidedInventory with Persistence {
+                        val onChanged: () => Unit = () => {})
+    extends SidedInventory
+    with Persistence {
 
   def stackType: ItemStack = _stackType
 
@@ -49,16 +52,19 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
       val insertableAmount = Math.min(itemStack.getAmount, availableSpace)
       val remainingAmount = itemStack.getAmount - insertableAmount
 
-      setInvStack(MassItemInventory.InputSlotIndex, itemStack.withAmount(insertableAmount))
+      setInvStack(MassItemInventory.InputSlotIndex,
+                  itemStack.withAmount(insertableAmount))
 
       itemStack.withAmount(remainingAmount)
     }
   }
 
-  def isAcceptingNewStackType: Boolean = _stackType.isEmpty || (allowNewStackWhenEmpty && isInvEmpty)
+  def isAcceptingNewStackType: Boolean =
+    _stackType.isEmpty || (allowNewStackWhenEmpty && isInvEmpty)
 
   override def isValidInvStack(slotIndex: Int, stack: ItemStack): Boolean =
-    slotIndex == MassItemInventory.InputSlotIndex && (isAcceptingNewStackType || ItemStack.areEqual(stack.withAmount(1), _stackType))
+    slotIndex == MassItemInventory.InputSlotIndex && (isAcceptingNewStackType || ItemStack
+      .areEqual(stack.withAmount(1), _stackType))
 
   override def getInvSize: Int = 2
 
@@ -137,9 +143,14 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
   override def getInvAvailableSlots(direction: Direction): Array[Int] =
     Array(MassItemInventory.InputSlotIndex, MassItemInventory.OutputSlotIndex)
 
-  override def canInsertInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean = isValidInvStack(i, stack)
+  override def canInsertInvStack(i: Int,
+                                 stack: ItemStack,
+                                 direction: Direction): Boolean =
+    isValidInvStack(i, stack)
 
-  override def canExtractInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
+  override def canExtractInvStack(i: Int,
+                                  stack: ItemStack,
+                                  direction: Direction): Boolean =
     i == MassItemInventory.OutputSlotIndex
 
   override def saveToTag(): CompoundTag = {

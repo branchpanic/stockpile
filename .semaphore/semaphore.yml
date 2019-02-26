@@ -27,6 +27,9 @@ blocks:
   - name: "Test"
     task:
       env_vars:
+        - name: GRADLE_USER_HOME
+            value: "gradle_ci_cache"
+
         - name: GRADLE_OPTS
           value: "-Dorg.gradle.daemon=false"
 

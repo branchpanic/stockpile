@@ -24,15 +24,15 @@ blocks:
             - ./gradlew dependencies
             - cache store gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties) gradle_ci_cache
 
-    - name: "Test"
-      task:
-        env_vars:
-          - name: GRADLE_OPTS
-            value: "-Dorg.gradle.daemon=false"
+  - name: "Test"
+    task:
+      env_vars:
+        - name: GRADLE_OPTS
+          value: "-Dorg.gradle.daemon=false"
 
-      jobs:
-        - name: Lint and run tests
-          commands:
-            - checkout
-            - ./gradlew checkScalafmtAll
-            - ./gradlew check
+    jobs:
+      - name: Lint and run tests
+        commands:
+          - checkout
+          - ./gradlew checkScalafmtAll
+          - ./gradlew check

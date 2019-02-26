@@ -1,7 +1,7 @@
 package notjoe.stockpile.blockentity
 
 import net.minecraft.block.entity.{BlockEntity, BlockEntityType}
-import net.minecraft.entity.ItemEntity
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
@@ -36,7 +36,7 @@ class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.Type) with Sid
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
 
-  override def method_5448(): Unit = {}
+  override def clear(): Unit = {}
 
   override def tick(): Unit = {
     if (world.isClient || !world.getBlockState(pos).get(StockpileProperties.IsOpen)) {
@@ -44,7 +44,7 @@ class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.Type) with Sid
     }
 
     world
-        .getEntities(classOf[ItemEntity], new BoundingBox(pos.up()), EntityPredicates.VALID_ENTITY)
-        .forEach(_.kill())
+      .method_18023(EntityType.ITEM, new BoundingBox(pos.up()), EntityPredicates.VALID_ENTITY)
+      .forEach(_.kill())
   }
 }

@@ -37,7 +37,7 @@ public abstract class AnvilContainerMixin extends Container {
 
     @Shadow
     @Final
-    private Property pos;
+    private Property levelCost;
 
     protected AnvilContainerMixin(@Nullable ContainerType<?> containerType_1, int int_1) {
         super(containerType_1, int_1);
@@ -59,7 +59,7 @@ public abstract class AnvilContainerMixin extends Container {
         }
 
         StockpileBarrelBlockEntity barrelInfo = new StockpileBarrelBlockEntity();
-        barrelInfo.loadPersistentDataFromTag(input.getOrCreateSubCompoundTag(StockpileBarrelBlock.StoredTileTagName()));
+        barrelInfo.loadFromTag(input.getOrCreateSubCompoundTag(StockpileBarrelBlock.StoredTileTagName()));
         int currentStackLimit = barrelInfo.inventory().maxStacks();
 
         if (currentStackLimit + stacksAddedByModifier > MassItemInventory.MaxCapacityStacks()) {
@@ -69,10 +69,10 @@ public abstract class AnvilContainerMixin extends Container {
         barrelInfo.inventory().maxStacks_$eq(currentStackLimit + stacksAddedByModifier);
 
         ItemStack upgradedBarrel = input.copy();
-        upgradedBarrel.setChildTag(StockpileBarrelBlock.StoredTileTagName(), barrelInfo.persistentDataToTag());
+        upgradedBarrel.setChildTag(StockpileBarrelBlock.StoredTileTagName(), barrelInfo.saveToTag());
 
         result.setInvStack(0, upgradedBarrel);
-        pos.set((int) (XP_REQUIRED_PER_STACK * stacksAddedByModifier));
+        levelCost.set((int) (XP_REQUIRED_PER_STACK * stacksAddedByModifier));
         sendContentUpdates();
     }
 

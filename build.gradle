@@ -62,7 +62,7 @@ dependencies {
 
     // Mod dependencies
     modCompile "net.fabricmc:fabric:${project.fabric_version}"
-    modCompile 'net.fabricmc:fabric-language-scala:${project.scala_adapter_version}'
+    modCompile "net.fabricmc:fabric-language-scala:${project.scala_adapter_version}"
 
     // Various Scala kerfluffle
     compile 'org.scala-lang:scala-library:2.12.8'

@@ -30,12 +30,12 @@ blocks:
         - name: GRADLE_OPTS
           value: "-Dorg.gradle.daemon=false"
 
-      jobs:
-        prologue:
-          commands:
-            - checkout
-            - cache restore gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties),gradle-$SEMAPHORE_GIT_BRANCH,gradle-master
+      prologue:
+        commands:
+          - checkout
+          - cache restore gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties),gradle-$SEMAPHORE_GIT_BRANCH,gradle-master
 
+      jobs:
         - name: Lint with scalafmt
           commands:
             - ./gradlew checkScalafmtAll

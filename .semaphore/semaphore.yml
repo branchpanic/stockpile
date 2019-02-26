@@ -7,7 +7,7 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Setup, build, and test"
+  - name: "Setup"
     task:
       env_vars:
         - name: GRADLE_USER_HOME
@@ -17,25 +17,22 @@ blocks:
           value: "-Dorg.gradle.daemon=false"
 
       jobs:
-        - name: Set Java version
-          commands:
-            - sem-version java 8
-
-        - name: Checkout and install dependencies
+        - name: Cache dependencies
           commands:
             - checkout
             - cache restore gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties),gradle-$SEMAPHORE_GIT_BRANCH,gradle-master
             - ./gradlew dependencies
             - cache store gradle-$SEMAPHORE_GIT_BRANCH-$(checksum build.gradle)-$(checksum gradle.properties) gradle_ci_cache
 
-        - name: Run Scalatest tests
-          commands:
-            - ./gradlew check
+    - name: "Test"
+      task:
+        env_vars:
+          - name: GRADLE_OPTS
+            value: "-Dorg.gradle.daemon=false"
 
-        - name: Lint with scalafmt
+      jobs:
+        - name: Lint and run tests
           commands:
+            - checkout
             - ./gradlew checkScalafmtAll
-
-        - name: Build project
-          commands:
-            - ./gradlew build
+            - ./gradlew check

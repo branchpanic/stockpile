@@ -12,7 +12,8 @@ object IntExtensions {
       }
 
       val displayMagnitude = orderOfMagnitude / 3
-      val suffix = Suffixes.charAt(Math.min(displayMagnitude - 1, Suffixes.length))
+      val suffix =
+        Suffixes.charAt(Math.min(displayMagnitude - 1, Suffixes.length))
       val displayNumber = "%.1f".format(i / Math.pow(10, 3 * displayMagnitude))
 
       displayNumber + suffix

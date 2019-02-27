@@ -18,9 +18,13 @@ version = properties.stockpile_version
 def isRelease = project.hasProperty("release")
 
 if (!isRelease) {
-    def ciBuildNumber = System.getenv("CIRCLE_BUILD_NUM") ?: 0
     def currentBranch = grgit.branch.current().name ?: "unknown"
-    version += "-$currentBranch.$ciBuildNumber"
+    version += "-$currentBranch"
+
+    def ciBuildNumber = System.getenv("TRAVIS_BUILD_NUMBER")
+    if (ciBuildNumber != null) {
+        version += ".$ciBuildNumber"
+    }
 }
 
 version += "+${project.minecraft_version}"
@@ -88,3 +92,5 @@ processResources {
         expand 'version': project.version
     }
 }
+
+check.dependsOn(checkScalafmtAll)

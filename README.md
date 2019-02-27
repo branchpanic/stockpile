@@ -1,6 +1,7 @@
 # stockpile
 
 [![Build Status](https://travis-ci.org/notjoe7F/stockpile.svg?branch=master)](https://travis-ci.org/notjoe7F/stockpile)
+[![CurseForge](http://cf.way2muchnoise.eu/versions/jei_latest.svg?style=flat)](https://minecraft.curseforge.com/projects/stockpile)
 
 > A Minecraft mod all about storage.
 

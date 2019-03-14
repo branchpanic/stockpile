@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "notjoe.stockpile.mixin",
+  "package": "me.branchpanic.mods.stockpile.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "AnvilContainerMixin"

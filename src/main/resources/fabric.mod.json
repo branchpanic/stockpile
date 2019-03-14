@@ -5,8 +5,8 @@
   "version": "$version",
   "side": "universal",
   "initializers": [
-    "notjoe.stockpile.StockpileInitializer",
-    "notjoe.stockpile.StockpileClientInitializer"
+    "me.branchpanic.mods.stockpile.StockpileInitializer",
+    "me.branchpanic.mods.stockpile.StockpileClientInitializer"
   ],
   "languageAdapter": "net.fabricmc.language.scala.ScalaLanguageAdapter",
   "requires": {

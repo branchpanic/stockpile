@@ -10,6 +10,5 @@ object StockpileTags {
   def barrelStorageUpgrade: Tag[Item] = _barrelStorageUpgrade
 
   private[stockpile] def initializeAll(): Unit =
-    _barrelStorageUpgrade =
-      new ItemTags.class_3490(new Identifier("stockpile", "barrel_storage_upgrade"))
+    _barrelStorageUpgrade = new ItemTags.class_3490(new Identifier("stockpile", "barrel_storage_upgrade"))
 }

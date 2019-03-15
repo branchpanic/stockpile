@@ -3,18 +3,16 @@ package me.branchpanic.mods.stockpile.blockentity
 import java.text.NumberFormat
 import java.util.UUID
 
-import me.branchpanic.mods.stockpile.inventory.MassItemInventory
+import me.branchpanic.mods.stockpile.inventory.{MassItemInventory, SidedInventoryDelegate}
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.entity.{BlockEntity, BlockEntityType}
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SidedInventory
-import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.{SoundCategory, SoundEvents}
 import net.minecraft.text.TranslatableTextComponent
-import net.minecraft.util.math.Direction
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
@@ -32,15 +30,16 @@ class StockpileBarrelBlockEntity
     extends BlockEntity(StockpileBarrelBlockEntity.TYPE)
     with BlockEntityPersistence
     with BlockEntityClientSerializable
-    with SidedInventory {
+    with SidedInventoryDelegate {
 
-  var inventory = new MassItemInventory(onChanged = () => markDirty())
+  val inventory = new MassItemInventory(onChanged = () => markDirty())
+  override val inventoryImpl: SidedInventory = inventory
+
   private[this] var playerRightClickTimers: Map[UUID, Long] = Map.empty
 
   def handleLeftClick(player: PlayerEntity): Unit = {
     val extractedStack =
-      inventory.takeInvStack(MassItemInventory.OUTPUT_SLOT_INDEX,
-                             if (player.isSneaking) inventory.stackSize else 1)
+      inventory.takeInvStack(MassItemInventory.OUTPUT_SLOT_INDEX, if (player.isSneaking) inventory.stackSize else 1)
 
     if (!extractedStack.isEmpty) {
       player.inventory.insertStack(extractedStack)
@@ -73,27 +72,17 @@ class StockpileBarrelBlockEntity
   }
 
   def toggleEmptyBehavior(player: PlayerEntity): Unit = {
-    inventory.allowNewStackWhenEmpty = !inventory.allowNewStackWhenEmpty
+    inventory.invertEmptyStackBehavior()
 
-    if (inventory.isInvEmpty && inventory.allowNewStackWhenEmpty) {
+    if (inventory.isInvEmpty && inventory.isAcceptingNewStackWhenEmpty) {
       inventory.clear()
     }
 
-    if (inventory.allowNewStackWhenEmpty) {
-      world.playSound(null,
-                      pos,
-                      SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_OFF,
-                      SoundCategory.BLOCK,
-                      0.1f,
-                      0.9f)
+    if (inventory.isAcceptingNewStackWhenEmpty) {
+      world.playSound(null, pos, SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_OFF, SoundCategory.BLOCK, 0.1f, 0.9f)
       player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.just_unlocked"), true)
     } else {
-      world.playSound(null,
-                      pos,
-                      SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON,
-                      SoundCategory.BLOCK,
-                      0.1f,
-                      0.9f)
+      world.playSound(null, pos, SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCK, 0.1f, 0.9f)
       player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.just_locked"), true)
     }
 
@@ -154,8 +143,6 @@ class StockpileBarrelBlockEntity
     }
   }
 
-  override def toString: String = s"barrelBlockEntity{inventory=$inventory,}"
-
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean =
     playerEntity.squaredDistanceTo(pos) < 12 * 12
 
@@ -174,36 +161,6 @@ class StockpileBarrelBlockEntity
     compoundTag.put("PersistentData", saveToTag())
     compoundTag
   }
-
-  // Delegation of SidedInventory to MassItemInventory
-
-  override def getInvSize: Int = inventory.getInvSize
-
-  override def isInvEmpty: Boolean = inventory.isInvEmpty
-
-  override def getInvStack(i: Int): ItemStack = inventory.getInvStack(i)
-
-  override def takeInvStack(i: Int, i1: Int): ItemStack =
-    inventory.takeInvStack(i, i1)
-
-  override def isValidInvStack(int_1: Int, itemStack_1: ItemStack): Boolean =
-    inventory.isValidInvStack(int_1, itemStack_1)
-
-  override def removeInvStack(i: Int): ItemStack = inventory.removeInvStack(i)
-
-  override def setInvStack(i: Int, itemStack: ItemStack): Unit =
-    inventory.setInvStack(i, itemStack)
-
-  override def getInvAvailableSlots(direction: Direction): Array[Int] =
-    inventory.getInvAvailableSlots(direction)
-
-  override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
-    inventory.canInsertInvStack(i, itemStack, direction)
-
-  override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
-    inventory.canExtractInvStack(i, itemStack, direction)
-
-  override def clear(): Unit = inventory.clear()
 
   override def saveToTag(): CompoundTag = {
     val tag = new CompoundTag()

@@ -19,25 +19,28 @@ object MassItemInventory {
  * An Inventory implementation which stores an arbitrary amount of a single ItemStack.
  *
  * @param _stackType             ItemStack type stored, or EMPTY if none is defined.
- * @param amountStored           Amount of the ItemStack currently stored (individual items, not stacks).
+ * @param _amountStored           Amount of the ItemStack currently stored (individual items, not stacks).
  * @param maxStacks              The maximum number of *stacks* that this MassItemInventory can hold. This is affected
  *                               by the maximum stack size of the current _stackType.
- * @param allowNewStackWhenEmpty Whether or not *any* stack will be accepted if this inventory is currently empty.
+ * @param _acceptNewStackWhenEmpty Whether or not *any* stack will be accepted if this inventory is currently empty.
  * @param onChanged              Action to perform when a change has been made.
  */
-class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
-                        var amountStored: Int = 0,
+class MassItemInventory(private[this] var _stackType: ItemStack = ItemStack.EMPTY,
+                        private[this] var _amountStored: Int = 0,
+                        private[this] var _acceptNewStackWhenEmpty: Boolean = true,
                         var maxStacks: Int = MassItemInventory.DEFAULT_CAPACITY_STACKS,
-                        var allowNewStackWhenEmpty: Boolean = true,
                         val onChanged: () => Unit = () => {})
     extends SidedInventory
     with Persistence {
 
   def stackType: ItemStack = _stackType
-
   def stackSize: Int = _stackType.getMaxAmount
+  def availableSpace: Int = (stackSize * maxStacks) - _amountStored
+  def amountStored: Int = _amountStored
+  def isAcceptingNewStackWhenEmpty: Boolean = _acceptNewStackWhenEmpty
 
-  def availableSpace: Int = (stackSize * maxStacks) - amountStored
+  def invertEmptyStackBehavior(): Unit =
+    _acceptNewStackWhenEmpty = !_acceptNewStackWhenEmpty
 
   /**
    * Inserts the largest portion possible of the supplied ItemStack into this MassItemInventory.
@@ -59,7 +62,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
   }
 
   def isAcceptingNewStackType: Boolean =
-    _stackType.isEmpty || (allowNewStackWhenEmpty && isInvEmpty)
+    _stackType.isEmpty || (_acceptNewStackWhenEmpty && isInvEmpty)
 
   override def isValidInvStack(slotIndex: Int, stack: ItemStack): Boolean =
     slotIndex == MassItemInventory.INPUT_SLOT_INDEX && (isAcceptingNewStackType || ItemStack
@@ -67,7 +70,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
 
   override def getInvSize: Int = 2
 
-  override def isInvEmpty: Boolean = amountStored == 0 || _stackType.isEmpty
+  override def isInvEmpty: Boolean = _amountStored == 0 || _stackType.isEmpty
 
   override def setInvStack(slotIndex: Int, itemStack: ItemStack): Unit = {
     if (slotIndex != MassItemInventory.INPUT_SLOT_INDEX || itemStack.isEmpty) {
@@ -78,7 +81,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
       _stackType = itemStack.withAmount(1)
     }
 
-    amountStored += Math.min(availableSpace, itemStack.getAmount)
+    _amountStored += Math.min(availableSpace, itemStack.getAmount)
     markDirty()
   }
 
@@ -90,7 +93,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
     }
 
     val decrementAmount = Math.min(workingStack.getAmount, amount)
-    amountStored -= decrementAmount
+    _amountStored -= decrementAmount
     markDirty()
     workingStack.withAmount(decrementAmount)
   }
@@ -102,14 +105,14 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
       ItemStack.EMPTY
     }
 
-    amountStored -= workingStack.getAmount
+    _amountStored -= workingStack.getAmount
     markDirty()
     workingStack
   }
 
   override def getInvStack(slotIndex: Int): ItemStack = slotIndex match {
     case MassItemInventory.INPUT_SLOT_INDEX =>
-      val overflowStackAmount = amountStored - ((maxStacks - 1) * stackSize)
+      val overflowStackAmount = _amountStored - ((maxStacks - 1) * stackSize)
       if (overflowStackAmount > 0) {
         _stackType.withAmount(overflowStackAmount)
       } else {
@@ -117,7 +120,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
       }
 
     case MassItemInventory.OUTPUT_SLOT_INDEX =>
-      val outputStackAmount = Math.min(amountStored, stackSize)
+      val outputStackAmount = Math.min(_amountStored, stackSize)
       if (outputStackAmount > 0) {
         _stackType.withAmount(outputStackAmount)
       } else {
@@ -135,7 +138,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
 
   override def clear(): Unit = {
     _stackType = ItemStack.EMPTY
-    amountStored = 0
+    _amountStored = 0
   }
 
   override def getInvAvailableSlots(direction: Direction): Array[Int] =
@@ -149,17 +152,17 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
 
   override def saveToTag(): CompoundTag = {
     val tag = new CompoundTag()
-    tag.putBoolean("allowNewStackWhenEmpty", allowNewStackWhenEmpty)
+    tag.putBoolean("allowNewStackWhenEmpty", _acceptNewStackWhenEmpty)
     tag.putInt("maxStacks", maxStacks)
-    tag.putInt("amountStored", amountStored)
+    tag.putInt("amountStored", _amountStored)
     tag.put("_stackType", _stackType.toTag(new CompoundTag))
     tag
   }
 
   override def loadFromTag(tag: CompoundTag): Unit = {
-    allowNewStackWhenEmpty = tag.getBoolean("allowNewStackWhenEmpty")
+    _acceptNewStackWhenEmpty = tag.getBoolean("allowNewStackWhenEmpty")
     maxStacks = tag.getInt("maxStacks")
-    amountStored = tag.getInt("amountStored")
+    _amountStored = tag.getInt("amountStored")
     _stackType = ItemStack.fromTag(tag.getCompound("_stackType"))
   }
 }

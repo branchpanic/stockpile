@@ -17,10 +17,7 @@ object TrashCanBlockEntity {
       .build(null)
 }
 
-class TrashCanBlockEntity
-    extends BlockEntity(TrashCanBlockEntity.TYPE)
-    with SidedInventory
-    with Tickable {
+class TrashCanBlockEntity extends BlockEntity(TrashCanBlockEntity.TYPE) with SidedInventory with Tickable {
 
   override def getInvAvailableSlots(direction: Direction): Array[Int] = Array(1)
 

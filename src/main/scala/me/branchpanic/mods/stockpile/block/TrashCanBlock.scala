@@ -16,9 +16,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.{BlockView, World}
 
-object TrashCanBlock
-    extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PISTON).build())
-    with BlockDescription {
+object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PISTON).build()) with BlockDescription {
 
   override def createBlockEntity(blockView: BlockView): BlockEntity =
     new TrashCanBlockEntity()
@@ -45,12 +43,7 @@ object TrashCanBlock
                         hitResult: BlockHitResult): Boolean = {
     if (!world.isClient) {
       world.setBlockState(pos, state.`with`(IS_OPEN, boolean2Boolean(!state.get(IS_OPEN))), 3)
-      world.playSound(null,
-                      pos,
-                      SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,
-                      SoundCategory.BLOCK,
-                      0.5f,
-                      0.8f)
+      world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCK, 0.5f, 0.8f)
     }
 
     true

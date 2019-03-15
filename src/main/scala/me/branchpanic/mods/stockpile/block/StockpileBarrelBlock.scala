@@ -51,8 +51,7 @@ object StockpileBarrelBlock
     true
   }
 
-  override def getDroppedStacks(state: BlockState,
-                                context: LootContext.Builder): util.List[ItemStack] = {
+  override def getDroppedStacks(state: BlockState, context: LootContext.Builder): util.List[ItemStack] = {
     val barrelEntity = context
       .get(LootContextParameters.BLOCK_ENTITY)
       .asInstanceOf[StockpileBarrelBlockEntity]
@@ -96,10 +95,7 @@ object StockpileBarrelBlock
     }
   }
 
-  override def onBlockBreakStart(state: BlockState,
-                                 world: World,
-                                 pos: BlockPos,
-                                 player: PlayerEntity): Unit = {
+  override def onBlockBreakStart(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity): Unit = {
     if (!world.isClient) {
       val rayTraceStart = player.getCameraPosVec(1)
 
@@ -139,8 +135,7 @@ object StockpileBarrelBlock
     storedBarrel.loadFromTag(stack.getOrCreateSubCompoundTag(BARREL_TAG_NAME))
 
     val capacityDescription =
-      new TranslatableTextComponent("stockpile.barrel.capacity",
-                                    formatter.format(storedBarrel.inventory.maxStacks))
+      new TranslatableTextComponent("stockpile.barrel.capacity", formatter.format(storedBarrel.inventory.maxStacks))
         .setStyle(BlockDescription.DEFAULT_STYLE)
 
     val contentDescription =

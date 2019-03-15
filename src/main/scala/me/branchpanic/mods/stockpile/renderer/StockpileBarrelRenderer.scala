@@ -40,29 +40,23 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
 
   def transformToFace(orientation: Direction, x: Double, y: Double, z: Double): Unit =
     orientation match {
-      case Direction.NORTH => {
+      case Direction.NORTH =>
         GlStateManager.translated(x + 0.75, y + 0.75, z + COFH_TRANSFORM_OFFSET * 145)
-      }
-      case Direction.SOUTH => {
+      case Direction.SOUTH =>
         GlStateManager.translated(x + 0.25, y + 0.75, z + 1 - COFH_TRANSFORM_OFFSET * 145)
         GlStateManager.rotated(180f, 0f, 1f, 0f)
-      }
-      case Direction.WEST => {
+      case Direction.WEST =>
         GlStateManager.translated(x + COFH_TRANSFORM_OFFSET * 145, y + 0.75, z + 0.25)
         GlStateManager.rotated(90f, 0f, 1f, 0f)
-      }
-      case Direction.EAST => {
+      case Direction.EAST =>
         GlStateManager.translated(x + 1 - COFH_TRANSFORM_OFFSET * 145, y + 0.75, z + 0.75)
         GlStateManager.rotated(-90f, 0f, 1f, 0f)
-      }
-      case Direction.UP => {
+      case Direction.UP =>
         GlStateManager.translated(x + 0.75, y + 1 - COFH_TRANSFORM_OFFSET * 145, z + 0.75)
         GlStateManager.rotated(90f, 1f, 0f, 0f)
-      }
-      case Direction.DOWN => {
+      case Direction.DOWN =>
         GlStateManager.translated(x + 0.75, y + COFH_TRANSFORM_OFFSET * 145, z + 0.25)
         GlStateManager.rotated(-90f, 1f, 0f, 0f)
-      }
     }
 
   def renderFillBar(inventory: MassItemInventory, xCenter: Float, yCenter: Float): Unit = {
@@ -124,7 +118,7 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     val stack = barrel.inventory.stackType
 
     GlStateManager.enableRescaleNormal()
-    GlStateManager.alphaFunc(516, 0.1F)
+    GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F)
     GlStateManager.enableBlend()
     GuiLighting.enable()
     GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA,
@@ -167,7 +161,7 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     if (inventory.isInvEmpty) {
       I18n.translate("stockpile.barrel.empty")
     } else {
-      inventory.amountStored.shorthand + (if (inventory.allowNewStackWhenEmpty) {
+      inventory.amountStored.shorthand + (if (inventory.isAcceptingNewStackWhenEmpty) {
                                             "*"
                                           } else {
                                             ""

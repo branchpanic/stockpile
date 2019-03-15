@@ -13,8 +13,7 @@ import net.minecraft.util.registry.Registry
 
 object StockpileInitializer extends ModInitializer {
   val ITEM_GROUP: ItemGroup =
-    FabricItemGroupBuilder.build(new Identifier("stockpile", "all"),
-                                 () => new ItemStack(StockpileBarrelBlock))
+    FabricItemGroupBuilder.build(new Identifier("stockpile", "all"), () => new ItemStack(StockpileBarrelBlock))
 
   private val BLOCKS: Map[String, Block] = Map(
     "barrel" -> StockpileBarrelBlock,
@@ -29,8 +28,7 @@ object StockpileInitializer extends ModInitializer {
   override def onInitialize(): Unit = {
     registerAll(Registry.BLOCK, BLOCKS)
     registerAll(Registry.BLOCK_ENTITY, BLOCK_ENTITY_TYPES)
-    registerAll(Registry.ITEM,
-                BLOCKS.mapValues(new BlockItem(_, new Item.Settings().itemGroup(ITEM_GROUP))))
+    registerAll(Registry.ITEM, BLOCKS.mapValues(new BlockItem(_, new Item.Settings().itemGroup(ITEM_GROUP))))
 
     StockpileTags.initializeAll()
   }

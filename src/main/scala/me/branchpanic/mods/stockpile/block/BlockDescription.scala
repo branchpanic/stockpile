@@ -13,12 +13,12 @@ import net.minecraft.text.{
 }
 import net.minecraft.world.BlockView
 
-object Description {
+object BlockDescription {
   val DefaultStyle: Style = new Style().setColor(TextFormat.GRAY)
 }
 
-trait Description extends Block {
-  val descriptionStyle: Style = Description.DefaultStyle
+trait BlockDescription extends Block {
+  val descriptionStyle: Style = BlockDescription.DefaultStyle
 
   override def buildTooltip(stack: ItemStack,
                             view: BlockView,

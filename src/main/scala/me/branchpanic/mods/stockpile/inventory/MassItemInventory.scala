@@ -1,13 +1,12 @@
 package me.branchpanic.mods.stockpile.inventory
 
 import me.branchpanic.mods.stockpile.blockentity.Persistence
+import me.branchpanic.mods.stockpile.extension.ItemStackExtensions._
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.math.Direction
-import me.branchpanic.mods.stockpile.blockentity.Persistence
-import me.branchpanic.mods.stockpile.extension.ItemStackExtensions._
 
 object MassItemInventory {
   val MaxCapacityStacks = 16777216

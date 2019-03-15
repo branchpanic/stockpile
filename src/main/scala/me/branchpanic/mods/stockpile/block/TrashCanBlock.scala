@@ -1,5 +1,6 @@
 package me.branchpanic.mods.stockpile.block
 
+import me.branchpanic.mods.stockpile.block.StockpileProperties.IsOpen
 import me.branchpanic.mods.stockpile.blockentity.TrashCanBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block._
@@ -14,11 +15,10 @@ import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.{BlockView, World}
-import me.branchpanic.mods.stockpile.block.StockpileProperties.IsOpen
 
 object TrashCanBlock
     extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PISTON).build())
-    with Description {
+    with BlockDescription {
   override def createBlockEntity(blockView: BlockView): BlockEntity =
     new TrashCanBlockEntity()
 

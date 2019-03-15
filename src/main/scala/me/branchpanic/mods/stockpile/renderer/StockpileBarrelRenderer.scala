@@ -5,6 +5,7 @@ import java.awt.Color
 import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.platform.GlStateManager.{DestFactor, SourceFactor}
 import me.branchpanic.mods.stockpile.blockentity.StockpileBarrelBlockEntity
+import me.branchpanic.mods.stockpile.extension.IntExtensions._
 import me.branchpanic.mods.stockpile.inventory.MassItemInventory
 import net.fabricmc.api.{EnvType, Environment}
 import net.minecraft.client.MinecraftClient
@@ -13,8 +14,6 @@ import net.minecraft.client.render.{GuiLighting, Tessellator, VertexFormats}
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.Direction
-import me.branchpanic.mods.stockpile.extension.IntExtensions._
-import me.branchpanic.mods.stockpile.inventory.MassItemInventory
 import org.lwjgl.opengl.GL11
 
 @Environment(EnvType.CLIENT)

@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.{SoundCategory, SoundEvents}
 import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.math.Direction
-import me.branchpanic.mods.stockpile.inventory.MassItemInventory
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions

@@ -3,7 +3,6 @@ package me.branchpanic.mods.stockpile.inventory
 import me.branchpanic.mods.stockpile.test.TestItems
 import net.minecraft.item.{ItemStack, Items}
 import net.minecraft.util.registry.Registry
-import me.branchpanic.mods.stockpile.test.TestItems
 import org.junit.runner.RunWith
 import org.powermock.core.classloader.annotations.{
   PrepareForTest,

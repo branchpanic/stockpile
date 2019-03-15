@@ -144,7 +144,7 @@ object StockpileBarrelBlock
     val capacityDescription = new TranslatableTextComponent(
       "stockpile.barrel.capacity",
       formatter.format(storedEntity.inventory.maxStacks))
-      .setStyle(Description.DefaultStyle)
+      .setStyle(BlockDescription.DefaultStyle)
     val contentDescription = if (storedEntity.isInvEmpty) {
       new TranslatableTextComponent("stockpile.barrel.empty")
         .setStyle(ContentsTextStyle)

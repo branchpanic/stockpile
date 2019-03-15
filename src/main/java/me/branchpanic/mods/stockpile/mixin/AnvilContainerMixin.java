@@ -59,17 +59,17 @@ public abstract class AnvilContainerMixin extends Container {
         }
 
         StockpileBarrelBlockEntity barrelInfo = new StockpileBarrelBlockEntity();
-        barrelInfo.loadFromTag(input.getOrCreateSubCompoundTag(StockpileBarrelBlock.StoredTileTagName()));
+        barrelInfo.loadFromTag(input.getOrCreateSubCompoundTag(StockpileBarrelBlock.BARREL_TAG_NAME()));
         int currentStackLimit = barrelInfo.inventory().maxStacks();
 
-        if (currentStackLimit + stacksAddedByModifier > MassItemInventory.MaxCapacityStacks()) {
+        if (currentStackLimit + stacksAddedByModifier > MassItemInventory.MAX_CAPACITY_STACKS()) {
             return;
         }
 
         barrelInfo.inventory().maxStacks_$eq(currentStackLimit + stacksAddedByModifier);
 
         ItemStack upgradedBarrel = input.copy();
-        upgradedBarrel.setChildTag(StockpileBarrelBlock.StoredTileTagName(), barrelInfo.saveToTag());
+        upgradedBarrel.setChildTag(StockpileBarrelBlock.BARREL_TAG_NAME(), barrelInfo.saveToTag());
 
         result.setInvStack(0, upgradedBarrel);
         levelCost.set((int) (XP_REQUIRED_PER_STACK * stacksAddedByModifier));

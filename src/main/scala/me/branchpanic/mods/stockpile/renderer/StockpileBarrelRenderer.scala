@@ -17,8 +17,7 @@ import net.minecraft.util.math.Direction
 import org.lwjgl.opengl.GL11
 
 @Environment(EnvType.CLIENT)
-object StockpileBarrelRenderer
-    extends BlockEntityRenderer[StockpileBarrelBlockEntity] {
+object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockEntity] {
   val FillBarWidth = 18.0
   val CofhTransformOffset: Double = 1.0 / 512.0
 
@@ -39,50 +38,34 @@ object StockpileBarrelRenderer
     GlStateManager.popMatrix()
   }
 
-  def transformToFace(orientation: Direction,
-                      x: Double,
-                      y: Double,
-                      z: Double): Unit = orientation match {
-    case Direction.NORTH => {
-      GlStateManager.translated(x + 0.75,
-                                y + 0.75,
-                                z + CofhTransformOffset * 145)
+  def transformToFace(orientation: Direction, x: Double, y: Double, z: Double): Unit =
+    orientation match {
+      case Direction.NORTH => {
+        GlStateManager.translated(x + 0.75, y + 0.75, z + CofhTransformOffset * 145)
+      }
+      case Direction.SOUTH => {
+        GlStateManager.translated(x + 0.25, y + 0.75, z + 1 - CofhTransformOffset * 145)
+        GlStateManager.rotated(180f, 0f, 1f, 0f)
+      }
+      case Direction.WEST => {
+        GlStateManager.translated(x + CofhTransformOffset * 145, y + 0.75, z + 0.25)
+        GlStateManager.rotated(90f, 0f, 1f, 0f)
+      }
+      case Direction.EAST => {
+        GlStateManager.translated(x + 1 - CofhTransformOffset * 145, y + 0.75, z + 0.75)
+        GlStateManager.rotated(-90f, 0f, 1f, 0f)
+      }
+      case Direction.UP => {
+        GlStateManager.translated(x + 0.75, y + 1 - CofhTransformOffset * 145, z + 0.75)
+        GlStateManager.rotated(90f, 1f, 0f, 0f)
+      }
+      case Direction.DOWN => {
+        GlStateManager.translated(x + 0.75, y + CofhTransformOffset * 145, z + 0.25)
+        GlStateManager.rotated(-90f, 1f, 0f, 0f)
+      }
     }
-    case Direction.SOUTH => {
-      GlStateManager.translated(x + 0.25,
-                                y + 0.75,
-                                z + 1 - CofhTransformOffset * 145)
-      GlStateManager.rotated(180f, 0f, 1f, 0f)
-    }
-    case Direction.WEST => {
-      GlStateManager.translated(x + CofhTransformOffset * 145,
-                                y + 0.75,
-                                z + 0.25)
-      GlStateManager.rotated(90f, 0f, 1f, 0f)
-    }
-    case Direction.EAST => {
-      GlStateManager.translated(x + 1 - CofhTransformOffset * 145,
-                                y + 0.75,
-                                z + 0.75)
-      GlStateManager.rotated(-90f, 0f, 1f, 0f)
-    }
-    case Direction.UP => {
-      GlStateManager.translated(x + 0.75,
-                                y + 1 - CofhTransformOffset * 145,
-                                z + 0.75)
-      GlStateManager.rotated(90f, 1f, 0f, 0f)
-    }
-    case Direction.DOWN => {
-      GlStateManager.translated(x + 0.75,
-                                y + CofhTransformOffset * 145,
-                                z + 0.25)
-      GlStateManager.rotated(-90f, 1f, 0f, 0f)
-    }
-  }
 
-  def renderFillBar(inventory: MassItemInventory,
-                    xCenter: Float,
-                    yCenter: Float): Unit = {
+  def renderFillBar(inventory: MassItemInventory, xCenter: Float, yCenter: Float): Unit = {
     GlStateManager.translated(0.0, 0.0, 0.3 * 1 / CofhTransformOffset)
     GlStateManager.scaled(0.5, 0.5, 1.0)
 
@@ -163,11 +146,7 @@ object StockpileBarrelRenderer
     GlStateManager.disableBlend()
   }
 
-  def drawRectangle(x1: Double,
-                    y1: Double,
-                    x2: Double,
-                    y2: Double,
-                    color: Color): Unit = {
+  def drawRectangle(x1: Double, y1: Double, x2: Double, y2: Double, color: Color): Unit = {
     val tessellator = Tessellator.getInstance()
     val bufferBuilder = tessellator.getBufferBuilder
 

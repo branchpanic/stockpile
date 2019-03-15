@@ -39,20 +39,14 @@ class StockpileBarrelBlockEntity
   private var playerRightClickTimers: Map[UUID, Long] = Map.empty
 
   def handleLeftClick(player: PlayerEntity): Unit = {
-    val extractedStack = inventory.takeInvStack(
-      MassItemInventory.OutputSlotIndex,
-      if (player.isSneaking) inventory.stackSize else 1)
+    val extractedStack =
+      inventory.takeInvStack(MassItemInventory.OutputSlotIndex,
+                             if (player.isSneaking) inventory.stackSize else 1)
 
     if (!extractedStack.isEmpty) {
       player.inventory.insertStack(extractedStack)
-      world.spawnEntity(
-        new ItemEntity(world, player.x, player.y, player.z, extractedStack))
-      world.playSound(null,
-                      pos,
-                      SoundEvents.ENTITY_ITEM_PICKUP,
-                      SoundCategory.BLOCK,
-                      0.1f,
-                      0.7f)
+      world.spawnEntity(new ItemEntity(world, player.x, player.y, player.z, extractedStack))
+      world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCK, 0.1f, 0.7f)
       displayContentInfo(player)
     }
   }
@@ -93,9 +87,7 @@ class StockpileBarrelBlockEntity
                       SoundCategory.BLOCK,
                       0.1f,
                       0.9f)
-      player.addChatMessage(
-        new TranslatableTextComponent("stockpile.barrel.just_unlocked"),
-        true)
+      player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.just_unlocked"), true)
     } else {
       world.playSound(null,
                       pos,
@@ -103,26 +95,23 @@ class StockpileBarrelBlockEntity
                       SoundCategory.BLOCK,
                       0.1f,
                       0.9f)
-      player.addChatMessage(
-        new TranslatableTextComponent("stockpile.barrel.just_locked"),
-        true)
+      player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.just_locked"), true)
     }
 
     markDirty()
   }
 
-  def recordPlayerInteraction(player: PlayerEntity): Unit = {
+  def recordPlayerInteraction(player: PlayerEntity): Unit =
     playerRightClickTimers += (player.getUuid -> System.currentTimeMillis())
-  }
 
   def playerInteractedTwice(player: PlayerEntity): Boolean =
     playerRightClickTimers.contains(player.getUuid)
 
   /**
-    * Inserts the stack a player is holding, updating it in-place.
-    *
-    * @param player Player to insert held stack from.
-    */
+   * Inserts the stack a player is holding, updating it in-place.
+   *
+   * @param player Player to insert held stack from.
+   */
   def insertActiveStack(player: PlayerEntity): Unit = {
     val activeHand = player.getActiveHand
     val activeStackBeforeInsert = player.getStackInHand(activeHand)
@@ -131,10 +120,10 @@ class StockpileBarrelBlockEntity
   }
 
   /**
-    * Inserts all possible stacks from a player's inventory, updating it in-place.
-    *
-    * @param player Player to insert all stacks from.
-    */
+   * Inserts all possible stacks from a player's inventory, updating it in-place.
+   *
+   * @param player Player to insert all stacks from.
+   */
   def insertAllStacksFromInventory(player: PlayerEntity): Unit = {
     player.inventory.main.replaceAll(inventory.insertStack)
     player.inventory.offHand.replaceAll(inventory.insertStack)
@@ -142,15 +131,13 @@ class StockpileBarrelBlockEntity
   }
 
   /**
-    * Displays information about this barrel to a specified player.
-    *
-    * @param player Player to display information to.
-    */
+   * Displays information about this barrel to a specified player.
+   *
+   * @param player Player to display information to.
+   */
   def displayContentInfo(player: PlayerEntity): Unit = {
     if (inventory.isInvEmpty) {
-      player.addChatMessage(
-        new TranslatableTextComponent("stockpile.barrel.empty"),
-        true)
+      player.addChatMessage(new TranslatableTextComponent("stockpile.barrel.empty"), true)
     } else {
       val formatter = NumberFormat.getInstance()
 
@@ -175,10 +162,7 @@ class StockpileBarrelBlockEntity
 
   override def markDirty(): Unit = {
     super.markDirty()
-    world.updateListeners(pos,
-                          world.getBlockState(pos),
-                          world.getBlockState(pos),
-                          3)
+    world.updateListeners(pos, world.getBlockState(pos), world.getBlockState(pos), 3)
   }
 
   override def fromClientTag(compoundTag: CompoundTag): Unit = {
@@ -213,14 +197,10 @@ class StockpileBarrelBlockEntity
   override def getInvAvailableSlots(direction: Direction): Array[Int] =
     inventory.getInvAvailableSlots(direction)
 
-  override def canInsertInvStack(i: Int,
-                                 itemStack: ItemStack,
-                                 direction: Direction): Boolean =
+  override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
     inventory.canInsertInvStack(i, itemStack, direction)
 
-  override def canExtractInvStack(i: Int,
-                                  itemStack: ItemStack,
-                                  direction: Direction): Boolean =
+  override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
     inventory.canExtractInvStack(i, itemStack, direction)
 
   override def clear(): Unit = inventory.clear()

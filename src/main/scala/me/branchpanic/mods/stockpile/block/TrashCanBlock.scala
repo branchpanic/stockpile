@@ -22,8 +22,7 @@ object TrashCanBlock
   override def createBlockEntity(blockView: BlockView): BlockEntity =
     new TrashCanBlockEntity()
 
-  override def appendProperties(
-      builder: StateFactory.Builder[Block, BlockState]): Unit = {
+  override def appendProperties(builder: StateFactory.Builder[Block, BlockState]): Unit = {
     super.appendProperties(builder)
     builder.`with`(IsOpen)
   }
@@ -44,10 +43,7 @@ object TrashCanBlock
                         hand: Hand,
                         hitResult: BlockHitResult): Boolean = {
     if (!world.isClient) {
-      world.setBlockState(
-        pos,
-        state.`with`(IsOpen, boolean2Boolean(!state.get(IsOpen))),
-        3)
+      world.setBlockState(pos, state.`with`(IsOpen, boolean2Boolean(!state.get(IsOpen))), 3)
       world.playSound(null,
                       pos,
                       SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,
@@ -59,15 +55,11 @@ object TrashCanBlock
     true
   }
 
-  override def isSimpleFullBlock(state: BlockState,
-                                 view: BlockView,
-                                 pos: BlockPos): Boolean = false
+  override def isSimpleFullBlock(state: BlockState, view: BlockView, pos: BlockPos): Boolean = false
 
-  override def getOutlineShape(
-      blockState_1: BlockState,
-      blockView_1: BlockView,
-      blockPos_1: BlockPos,
-      verticalEntityPosition_1: VerticalEntityPosition): VoxelShape = {
+  override def getOutlineShape(blockState_1: BlockState,
+                               blockView_1: BlockView,
+                               blockPos_1: BlockPos,
+                               verticalEntityPosition_1: VerticalEntityPosition): VoxelShape =
     Block.createCuboidShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
-  }
 }

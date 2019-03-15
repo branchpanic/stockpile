@@ -5,12 +5,7 @@ import java.util
 import net.minecraft.block.Block
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.ItemStack
-import net.minecraft.text.{
-  Style,
-  TextComponent,
-  TextFormat,
-  TranslatableTextComponent
-}
+import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextComponent}
 import net.minecraft.world.BlockView
 
 object BlockDescription {

@@ -16,19 +16,18 @@ object MassItemInventory {
 }
 
 /**
-  * An Inventory implementation which stores an arbitrary amount of a single ItemStack.
-  *
-  * @param _stackType              ItemStack type stored, or EMPTY if none is defined.
-  * @param amountStored           Amount of the ItemStack currently stored (individual items, not stacks).
-  * @param maxStacks              The maximum number of *stacks* that this MassItemInventory can hold. This is affected
-  *                               by the maximum stack size of the current _stackType.
-  * @param allowNewStackWhenEmpty Whether or not *any* stack will be accepted if this inventory is currently empty.
-  * @param onChanged              Action to perform when a change has been made.
-  */
+ * An Inventory implementation which stores an arbitrary amount of a single ItemStack.
+ *
+ * @param _stackType             ItemStack type stored, or EMPTY if none is defined.
+ * @param amountStored           Amount of the ItemStack currently stored (individual items, not stacks).
+ * @param maxStacks              The maximum number of *stacks* that this MassItemInventory can hold. This is affected
+ *                               by the maximum stack size of the current _stackType.
+ * @param allowNewStackWhenEmpty Whether or not *any* stack will be accepted if this inventory is currently empty.
+ * @param onChanged              Action to perform when a change has been made.
+ */
 class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
                         var amountStored: Int = 0,
-                        var maxStacks: Int =
-                          MassItemInventory.DefaultCapacityStacks,
+                        var maxStacks: Int = MassItemInventory.DefaultCapacityStacks,
                         var allowNewStackWhenEmpty: Boolean = true,
                         val onChanged: () => Unit = () => {})
     extends SidedInventory
@@ -40,11 +39,11 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
   def availableSpace: Int = (stackSize * maxStacks) - amountStored
 
   /**
-    * Inserts the largest portion possible of the supplied ItemStack into this MassItemInventory.
-    *
-    * @param itemStack ItemStack to insert.
-    * @return The portion of the ItemStack that couldn't be inserted.
-    */
+   * Inserts the largest portion possible of the supplied ItemStack into this MassItemInventory.
+   *
+   * @param itemStack ItemStack to insert.
+   * @return The portion of the ItemStack that couldn't be inserted.
+   */
   def insertStack(itemStack: ItemStack): ItemStack = {
     if (!isValidInvStack(MassItemInventory.InputSlotIndex, itemStack) && !isAcceptingNewStackType) {
       itemStack
@@ -52,8 +51,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
       val insertableAmount = Math.min(itemStack.getAmount, availableSpace)
       val remainingAmount = itemStack.getAmount - insertableAmount
 
-      setInvStack(MassItemInventory.InputSlotIndex,
-                  itemStack.withAmount(insertableAmount))
+      setInvStack(MassItemInventory.InputSlotIndex, itemStack.withAmount(insertableAmount))
 
       itemStack.withAmount(remainingAmount)
     }
@@ -129,9 +127,8 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
     markDirty()
   }
 
-  override def markDirty(): Unit = {
+  override def markDirty(): Unit =
     onChanged()
-  }
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean = true
 
@@ -143,14 +140,10 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
   override def getInvAvailableSlots(direction: Direction): Array[Int] =
     Array(MassItemInventory.InputSlotIndex, MassItemInventory.OutputSlotIndex)
 
-  override def canInsertInvStack(i: Int,
-                                 stack: ItemStack,
-                                 direction: Direction): Boolean =
+  override def canInsertInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
     isValidInvStack(i, stack)
 
-  override def canExtractInvStack(i: Int,
-                                  stack: ItemStack,
-                                  direction: Direction): Boolean =
+  override def canExtractInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
     i == MassItemInventory.OutputSlotIndex
 
   override def saveToTag(): CompoundTag = {

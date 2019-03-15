@@ -12,12 +12,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.state.property.Properties
-import net.minecraft.text.{
-  Style,
-  TextComponent,
-  TextFormat,
-  TranslatableTextComponent
-}
+import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextComponent}
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.{BlockHitResult, HitResult}
 import net.minecraft.util.math.BlockPos
@@ -55,9 +50,8 @@ object StockpileBarrelBlock
     }
   }
 
-  override def getDroppedStacks(
-      state: BlockState,
-      context: LootContext.Builder): util.List[ItemStack] = {
+  override def getDroppedStacks(state: BlockState,
+                                context: LootContext.Builder): util.List[ItemStack] = {
     val barrelEntity = context
       .get(LootContextParameters.BLOCK_ENTITY)
       .asInstanceOf[StockpileBarrelBlockEntity]
@@ -87,9 +81,7 @@ object StockpileBarrelBlock
 
   override def hasComparatorOutput(state: BlockState): Boolean = true
 
-  override def getComparatorOutput(state: BlockState,
-                                   world: World,
-                                   pos: BlockPos): Int = {
+  override def getComparatorOutput(state: BlockState, world: World, pos: BlockPos): Int = {
     val barrel = world
       .getBlockEntity(pos)
       .asInstanceOf[StockpileBarrelBlockEntity]
@@ -120,8 +112,7 @@ object StockpileBarrelBlock
                             RayTraceContext.FluidHandling.NONE,
                             player))
 
-      if (result.getType == HitResult.Type.BLOCK && result.getSide == state.get(
-            Properties.FACING)) {
+      if (result.getType == HitResult.Type.BLOCK && result.getSide == state.get(Properties.FACING)) {
         world
           .getBlockEntity(pos)
           .asInstanceOf[StockpileBarrelBlockEntity]
@@ -135,16 +126,22 @@ object StockpileBarrelBlock
 
   override def getRenderLayer: BlockRenderLayer = BlockRenderLayer.MIPPED_CUTOUT
 
+  override def buildTooltip(stack: ItemStack,
+                            view: BlockView,
+                            tooltip: util.List[TextComponent],
+                            context: TooltipContext): Unit =
+    tooltip.addAll(getTooltipForStack(stack).asJava)
+
   def getTooltipForStack(stack: ItemStack): Seq[TextComponent] = {
     val storedEntity = new StockpileBarrelBlockEntity()
     val formatter = NumberFormat.getInstance()
 
     storedEntity.loadFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
 
-    val capacityDescription = new TranslatableTextComponent(
-      "stockpile.barrel.capacity",
-      formatter.format(storedEntity.inventory.maxStacks))
-      .setStyle(BlockDescription.DefaultStyle)
+    val capacityDescription =
+      new TranslatableTextComponent("stockpile.barrel.capacity",
+                                    formatter.format(storedEntity.inventory.maxStacks))
+        .setStyle(BlockDescription.DefaultStyle)
     val contentDescription = if (storedEntity.isInvEmpty) {
       new TranslatableTextComponent("stockpile.barrel.empty")
         .setStyle(ContentsTextStyle)
@@ -153,18 +150,10 @@ object StockpileBarrelBlock
         "stockpile.barrel.contents_stack",
         storedEntity.inventory.stackType.getDisplayName,
         formatter.format(storedEntity.inventory.amountStored),
-        formatter.format(
-          storedEntity.inventory.amountStored / storedEntity.inventory.stackSize)
+        formatter.format(storedEntity.inventory.amountStored / storedEntity.inventory.stackSize)
       ).setStyle(ContentsTextStyle)
     }
 
     Seq(capacityDescription, contentDescription)
-  }
-
-  override def buildTooltip(stack: ItemStack,
-                            view: BlockView,
-                            tooltip: util.List[TextComponent],
-                            context: TooltipContext): Unit = {
-    tooltip.addAll(getTooltipForStack(stack).asJava)
   }
 }

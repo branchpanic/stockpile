@@ -23,13 +23,10 @@ class TrashCanBlockEntity
     with Tickable {
   override def getInvAvailableSlots(direction: Direction): Array[Int] = Array(1)
 
-  override def canInsertInvStack(i: Int,
-                                 itemStack: ItemStack,
-                                 direction: Direction): Boolean = true
+  override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean = true
 
-  override def canExtractInvStack(i: Int,
-                                  itemStack: ItemStack,
-                                  direction: Direction): Boolean = false
+  override def canExtractInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean =
+    false
 
   override def getInvSize: Int = 1
 
@@ -55,9 +52,7 @@ class TrashCanBlockEntity
     }
 
     world
-      .method_18023(EntityType.ITEM,
-                    new BoundingBox(pos.up()),
-                    EntityPredicates.VALID_ENTITY)
+      .method_18023(EntityType.ITEM, new BoundingBox(pos.up()), EntityPredicates.VALID_ENTITY)
       .forEach(_.kill())
   }
 }

@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier
 
 object StockpileTags {
   private var _barrelStorageUpgrade: Tag[Item] = _
+
   def barrelStorageUpgrade: Tag[Item] = _barrelStorageUpgrade
 
   private[stockpile] def initializeAll(): Unit =

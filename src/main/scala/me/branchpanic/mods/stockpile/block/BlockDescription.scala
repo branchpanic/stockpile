@@ -9,19 +9,18 @@ import net.minecraft.text.{Style, TextComponent, TextFormat, TranslatableTextCom
 import net.minecraft.world.BlockView
 
 object BlockDescription {
-  val DefaultStyle: Style = new Style().setColor(TextFormat.GRAY)
+  val DEFAULT_STYLE: Style = new Style().setColor(TextFormat.GRAY)
 }
 
 trait BlockDescription extends Block {
-  val descriptionStyle: Style = BlockDescription.DefaultStyle
-
   override def buildTooltip(stack: ItemStack,
                             view: BlockView,
                             tooltip: util.List[TextComponent],
                             context: TooltipContext): Unit = {
     tooltip.add(
       new TranslatableTextComponent(stack.getTranslationKey + ".description")
-        .setStyle(descriptionStyle))
+        .setStyle(BlockDescription.DEFAULT_STYLE))
+
     super.buildTooltip(stack, view, tooltip, context)
   }
 }

@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile.block
 
-import me.branchpanic.mods.stockpile.block.StockpileProperties.IsOpen
+import me.branchpanic.mods.stockpile.block.StockpileProperties.IS_OPEN
 import me.branchpanic.mods.stockpile.blockentity.TrashCanBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block._
@@ -19,18 +19,19 @@ import net.minecraft.world.{BlockView, World}
 object TrashCanBlock
     extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PISTON).build())
     with BlockDescription {
+
   override def createBlockEntity(blockView: BlockView): BlockEntity =
     new TrashCanBlockEntity()
 
   override def appendProperties(builder: StateFactory.Builder[Block, BlockState]): Unit = {
     super.appendProperties(builder)
-    builder.`with`(IsOpen)
+    builder.`with`(IS_OPEN)
   }
 
   override def getPlacementState(context: ItemPlacementContext): BlockState = {
     super
       .getPlacementState(context)
-      .`with`(IsOpen, boolean2Boolean(false)) // scala pls
+      .`with`(IS_OPEN, boolean2Boolean(false)) // scala pls
   }
 
   override def getRenderType(blockState_1: BlockState): BlockRenderType =
@@ -43,7 +44,7 @@ object TrashCanBlock
                         hand: Hand,
                         hitResult: BlockHitResult): Boolean = {
     if (!world.isClient) {
-      world.setBlockState(pos, state.`with`(IsOpen, boolean2Boolean(!state.get(IsOpen))), 3)
+      world.setBlockState(pos, state.`with`(IS_OPEN, boolean2Boolean(!state.get(IS_OPEN))), 3)
       world.playSound(null,
                       pos,
                       SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,

@@ -69,7 +69,7 @@ class MassItemInventorySpec extends FlatSpec with Matchers {
                             amountStored = 1,
                             allowNewStackWhenEmpty = true)
 
-    inventory.removeInvStack(MassItemInventory.OutputSlotIndex)
+    inventory.removeInvStack(MassItemInventory.OUTPUT_SLOT_INDEX)
 
     val remainder = inventory.insertStack(new ItemStack(TestItems.Blue, 1))
 
@@ -83,7 +83,7 @@ class MassItemInventorySpec extends FlatSpec with Matchers {
                             amountStored = 1,
                             allowNewStackWhenEmpty = false)
 
-    inventory.removeInvStack(MassItemInventory.OutputSlotIndex)
+    inventory.removeInvStack(MassItemInventory.OUTPUT_SLOT_INDEX)
 
     val remainder = inventory.insertStack(new ItemStack(TestItems.Blue, 1))
 
@@ -94,15 +94,15 @@ class MassItemInventorySpec extends FlatSpec with Matchers {
   it should "never report items as valid for its output slot" in {
     val inventory =
       new MassItemInventory(_stackType = new ItemStack(TestItems.Red), amountStored = 1)
-    inventory.isValidInvStack(MassItemInventory.OutputSlotIndex, new ItemStack(TestItems.Red)) shouldBe false
-    inventory.isValidInvStack(MassItemInventory.OutputSlotIndex, new ItemStack(TestItems.Blue)) shouldBe false
+    inventory.isValidInvStack(MassItemInventory.OUTPUT_SLOT_INDEX, new ItemStack(TestItems.Red)) shouldBe false
+    inventory.isValidInvStack(MassItemInventory.OUTPUT_SLOT_INDEX, new ItemStack(TestItems.Blue)) shouldBe false
   }
 
   it should "report only stacks with the same item type as valid" in {
     val inventory =
       new MassItemInventory(_stackType = new ItemStack(TestItems.Red), amountStored = 1)
-    inventory.isValidInvStack(MassItemInventory.InputSlotIndex, new ItemStack(TestItems.Red)) shouldBe true
-    inventory.isValidInvStack(MassItemInventory.InputSlotIndex, new ItemStack(TestItems.Blue)) shouldBe false
+    inventory.isValidInvStack(MassItemInventory.INPUT_SLOT_INDEX, new ItemStack(TestItems.Red)) shouldBe true
+    inventory.isValidInvStack(MassItemInventory.INPUT_SLOT_INDEX, new ItemStack(TestItems.Blue)) shouldBe false
   }
 
   it should "only start to fill its input slot once it's within the last stack of its capacity" in {
@@ -110,12 +110,12 @@ class MassItemInventorySpec extends FlatSpec with Matchers {
                                           amountStored = 64,
                                           maxStacks = 2)
     inventory
-      .getInvStack(MassItemInventory.InputSlotIndex)
+      .getInvStack(MassItemInventory.INPUT_SLOT_INDEX)
       .isEmpty shouldBe true
 
     inventory.insertStack(new ItemStack(TestItems.Red, 3))
 
-    ItemStack.areEqual(inventory.getInvStack(MassItemInventory.InputSlotIndex),
+    ItemStack.areEqual(inventory.getInvStack(MassItemInventory.INPUT_SLOT_INDEX),
                        new ItemStack(TestItems.Red, 3)) shouldBe true
   }
 
@@ -123,7 +123,7 @@ class MassItemInventorySpec extends FlatSpec with Matchers {
     val inventory =
       new MassItemInventory(_stackType = new ItemStack(TestItems.Red), amountStored = 128)
 
-    inventory.removeInvStack(MassItemInventory.OutputSlotIndex)
+    inventory.removeInvStack(MassItemInventory.OUTPUT_SLOT_INDEX)
 
     inventory.amountStored shouldBe 64
   }

@@ -11,16 +11,17 @@ import net.minecraft.util.Tickable
 import net.minecraft.util.math.{BoundingBox, Direction}
 
 object TrashCanBlockEntity {
-  val Type: BlockEntityType[TrashCanBlockEntity] =
+  val TYPE: BlockEntityType[TrashCanBlockEntity] =
     BlockEntityType.Builder
       .create[TrashCanBlockEntity](() => new TrashCanBlockEntity)
       .build(null)
 }
 
 class TrashCanBlockEntity
-    extends BlockEntity(TrashCanBlockEntity.Type)
+    extends BlockEntity(TrashCanBlockEntity.TYPE)
     with SidedInventory
     with Tickable {
+
   override def getInvAvailableSlots(direction: Direction): Array[Int] = Array(1)
 
   override def canInsertInvStack(i: Int, itemStack: ItemStack, direction: Direction): Boolean = true
@@ -47,7 +48,7 @@ class TrashCanBlockEntity
   override def tick(): Unit = {
     if (world.isClient || !world
           .getBlockState(pos)
-          .get(StockpileProperties.IsOpen)) {
+          .get(StockpileProperties.IS_OPEN)) {
       return
     }
 

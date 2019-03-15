@@ -12,31 +12,30 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
 object StockpileInitializer extends ModInitializer {
-
-  val ItemGroup: ItemGroup =
+  val ITEM_GROUP: ItemGroup =
     FabricItemGroupBuilder.build(new Identifier("stockpile", "all"),
                                  () => new ItemStack(StockpileBarrelBlock))
 
-  private implicit val Blocks: Map[String, Block] = Map(
+  private val BLOCKS: Map[String, Block] = Map(
     "barrel" -> StockpileBarrelBlock,
     "trash_can" -> TrashCanBlock
   )
 
-  private implicit val BlockEntityTypes: Map[String, BlockEntityType[_ <: BlockEntity]] = Map(
-    "barrel" -> StockpileBarrelBlockEntity.Type,
-    "trash_can" -> TrashCanBlockEntity.Type
+  private val BLOCK_ENTITY_TYPES: Map[String, BlockEntityType[_ <: BlockEntity]] = Map(
+    "barrel" -> StockpileBarrelBlockEntity.TYPE,
+    "trash_can" -> TrashCanBlockEntity.TYPE
   )
 
   override def onInitialize(): Unit = {
-    registerAll(Registry.BLOCK)
-    registerAll(Registry.BLOCK_ENTITY)
-    registerAll(Registry.ITEM)(
-      Blocks.mapValues(new BlockItem(_, new Item.Settings().itemGroup(ItemGroup))))
+    registerAll(Registry.BLOCK, BLOCKS)
+    registerAll(Registry.BLOCK_ENTITY, BLOCK_ENTITY_TYPES)
+    registerAll(Registry.ITEM,
+                BLOCKS.mapValues(new BlockItem(_, new Item.Settings().itemGroup(ITEM_GROUP))))
 
     StockpileTags.initializeAll()
   }
 
-  private def registerAll[T](registryType: Registry[T])(implicit contents: Map[String, T]): Unit = {
+  private def registerAll[T](registryType: Registry[T], contents: Map[String, T]): Unit = {
     contents
       .map { case (name, o) => (new Identifier("stockpile", name), o) }
       .foreach { case (id, o) => Registry.register(registryType, id, o) }

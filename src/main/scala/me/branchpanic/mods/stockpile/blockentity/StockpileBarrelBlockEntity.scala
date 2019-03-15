@@ -20,27 +20,26 @@ import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
 object StockpileBarrelBlockEntity {
-  val Type: BlockEntityType[StockpileBarrelBlockEntity] =
+  val TYPE: BlockEntityType[StockpileBarrelBlockEntity] =
     BlockEntityType.Builder
       .create[StockpileBarrelBlockEntity](() => new StockpileBarrelBlockEntity)
       .build(null)
 
-  val DoubleClickPeriodMs = 500
+  val DOUBLE_CLICK_PERIOD_MS = 500
 }
 
 class StockpileBarrelBlockEntity
-    extends BlockEntity(StockpileBarrelBlockEntity.Type)
+    extends BlockEntity(StockpileBarrelBlockEntity.TYPE)
     with BlockEntityPersistence
     with BlockEntityClientSerializable
     with SidedInventory {
 
   var inventory = new MassItemInventory(onChanged = () => markDirty())
-
-  private var playerRightClickTimers: Map[UUID, Long] = Map.empty
+  private[this] var playerRightClickTimers: Map[UUID, Long] = Map.empty
 
   def handleLeftClick(player: PlayerEntity): Unit = {
     val extractedStack =
-      inventory.takeInvStack(MassItemInventory.OutputSlotIndex,
+      inventory.takeInvStack(MassItemInventory.OUTPUT_SLOT_INDEX,
                              if (player.isSneaking) inventory.stackSize else 1)
 
     if (!extractedStack.isEmpty) {
@@ -55,7 +54,7 @@ class StockpileBarrelBlockEntity
     playerRightClickTimers = playerRightClickTimers
       .filter {
         case (_, time) =>
-          System.currentTimeMillis() - time <= StockpileBarrelBlockEntity.DoubleClickPeriodMs
+          System.currentTimeMillis() - time <= StockpileBarrelBlockEntity.DOUBLE_CLICK_PERIOD_MS
       }
 
     if (player.isSneaking) {
@@ -170,6 +169,7 @@ class StockpileBarrelBlockEntity
       loadFromTag(compoundTag.getCompound("PersistentData"))
     }
   }
+
   override def toClientTag(compoundTag: CompoundTag): CompoundTag = {
     compoundTag.put("PersistentData", saveToTag())
     compoundTag

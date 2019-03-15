@@ -9,10 +9,10 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.math.Direction
 
 object MassItemInventory {
-  val MaxCapacityStacks = 16777216
-  val DefaultCapacityStacks = 32
-  val OutputSlotIndex = 0
-  val InputSlotIndex = 1
+  val MAX_CAPACITY_STACKS = 16777216
+  val DEFAULT_CAPACITY_STACKS = 32
+  val OUTPUT_SLOT_INDEX = 0
+  val INPUT_SLOT_INDEX = 1
 }
 
 /**
@@ -27,7 +27,7 @@ object MassItemInventory {
  */
 class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
                         var amountStored: Int = 0,
-                        var maxStacks: Int = MassItemInventory.DefaultCapacityStacks,
+                        var maxStacks: Int = MassItemInventory.DEFAULT_CAPACITY_STACKS,
                         var allowNewStackWhenEmpty: Boolean = true,
                         val onChanged: () => Unit = () => {})
     extends SidedInventory
@@ -36,6 +36,7 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
   def stackType: ItemStack = _stackType
 
   def stackSize: Int = _stackType.getMaxAmount
+
   def availableSpace: Int = (stackSize * maxStacks) - amountStored
 
   /**
@@ -45,77 +46,31 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
    * @return The portion of the ItemStack that couldn't be inserted.
    */
   def insertStack(itemStack: ItemStack): ItemStack = {
-    if (!isValidInvStack(MassItemInventory.InputSlotIndex, itemStack) && !isAcceptingNewStackType) {
-      itemStack
-    } else {
-      val insertableAmount = Math.min(itemStack.getAmount, availableSpace)
-      val remainingAmount = itemStack.getAmount - insertableAmount
-
-      setInvStack(MassItemInventory.InputSlotIndex, itemStack.withAmount(insertableAmount))
-
-      itemStack.withAmount(remainingAmount)
+    if (!isValidInvStack(MassItemInventory.INPUT_SLOT_INDEX, itemStack) && !isAcceptingNewStackType) {
+      return itemStack
     }
+
+    val insertableAmount = Math.min(itemStack.getAmount, availableSpace)
+    val remainingAmount = itemStack.getAmount - insertableAmount
+
+    setInvStack(MassItemInventory.INPUT_SLOT_INDEX, itemStack.withAmount(insertableAmount))
+
+    itemStack.withAmount(remainingAmount)
   }
 
   def isAcceptingNewStackType: Boolean =
     _stackType.isEmpty || (allowNewStackWhenEmpty && isInvEmpty)
 
   override def isValidInvStack(slotIndex: Int, stack: ItemStack): Boolean =
-    slotIndex == MassItemInventory.InputSlotIndex && (isAcceptingNewStackType || ItemStack
+    slotIndex == MassItemInventory.INPUT_SLOT_INDEX && (isAcceptingNewStackType || ItemStack
       .areEqual(stack.withAmount(1), _stackType))
 
   override def getInvSize: Int = 2
 
   override def isInvEmpty: Boolean = amountStored == 0 || _stackType.isEmpty
 
-  override def getInvStack(slotIndex: Int): ItemStack = slotIndex match {
-    case MassItemInventory.InputSlotIndex =>
-      val overflowStackAmount = amountStored - ((maxStacks - 1) * stackSize)
-      if (overflowStackAmount > 0) {
-        _stackType.withAmount(overflowStackAmount)
-      } else {
-        ItemStack.EMPTY
-      }
-
-    case MassItemInventory.OutputSlotIndex =>
-      val outputStackAmount = Math.min(amountStored, stackSize)
-      if (outputStackAmount > 0) {
-        _stackType.withAmount(outputStackAmount)
-      } else {
-        ItemStack.EMPTY
-      }
-
-    case _ =>
-      ItemStack.EMPTY
-  }
-
-  override def takeInvStack(slotIndex: Int, amount: Int): ItemStack = {
-    val workingStack = getInvStack(slotIndex)
-
-    if (workingStack.isEmpty) {
-      ItemStack.EMPTY
-    } else {
-      val decrementAmount = Math.min(workingStack.getAmount, amount)
-      amountStored -= decrementAmount
-      markDirty()
-      workingStack.withAmount(decrementAmount)
-    }
-  }
-
-  override def removeInvStack(slotIndex: Int): ItemStack = {
-    val workingStack = getInvStack(slotIndex)
-
-    if (workingStack.isEmpty) {
-      ItemStack.EMPTY
-    } else {
-      amountStored -= workingStack.getAmount
-      markDirty()
-      workingStack
-    }
-  }
-
   override def setInvStack(slotIndex: Int, itemStack: ItemStack): Unit = {
-    if (slotIndex != MassItemInventory.InputSlotIndex || itemStack.isEmpty) {
+    if (slotIndex != MassItemInventory.INPUT_SLOT_INDEX || itemStack.isEmpty) {
       return
     }
 
@@ -125,6 +80,52 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
 
     amountStored += Math.min(availableSpace, itemStack.getAmount)
     markDirty()
+  }
+
+  override def takeInvStack(slotIndex: Int, amount: Int): ItemStack = {
+    val workingStack = getInvStack(slotIndex)
+
+    if (workingStack.isEmpty) {
+      return ItemStack.EMPTY
+    }
+
+    val decrementAmount = Math.min(workingStack.getAmount, amount)
+    amountStored -= decrementAmount
+    markDirty()
+    workingStack.withAmount(decrementAmount)
+  }
+
+  override def removeInvStack(slotIndex: Int): ItemStack = {
+    val workingStack = getInvStack(slotIndex)
+
+    if (workingStack.isEmpty) {
+      ItemStack.EMPTY
+    }
+
+    amountStored -= workingStack.getAmount
+    markDirty()
+    workingStack
+  }
+
+  override def getInvStack(slotIndex: Int): ItemStack = slotIndex match {
+    case MassItemInventory.INPUT_SLOT_INDEX =>
+      val overflowStackAmount = amountStored - ((maxStacks - 1) * stackSize)
+      if (overflowStackAmount > 0) {
+        _stackType.withAmount(overflowStackAmount)
+      } else {
+        ItemStack.EMPTY
+      }
+
+    case MassItemInventory.OUTPUT_SLOT_INDEX =>
+      val outputStackAmount = Math.min(amountStored, stackSize)
+      if (outputStackAmount > 0) {
+        _stackType.withAmount(outputStackAmount)
+      } else {
+        ItemStack.EMPTY
+      }
+
+    case _ =>
+      ItemStack.EMPTY
   }
 
   override def markDirty(): Unit =
@@ -138,16 +139,16 @@ class MassItemInventory(private var _stackType: ItemStack = ItemStack.EMPTY,
   }
 
   override def getInvAvailableSlots(direction: Direction): Array[Int] =
-    Array(MassItemInventory.InputSlotIndex, MassItemInventory.OutputSlotIndex)
+    Array(MassItemInventory.INPUT_SLOT_INDEX, MassItemInventory.OUTPUT_SLOT_INDEX)
 
   override def canInsertInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
     isValidInvStack(i, stack)
 
   override def canExtractInvStack(i: Int, stack: ItemStack, direction: Direction): Boolean =
-    i == MassItemInventory.OutputSlotIndex
+    i == MassItemInventory.OUTPUT_SLOT_INDEX
 
   override def saveToTag(): CompoundTag = {
-    val tag = new CompoundTag
+    val tag = new CompoundTag()
     tag.putBoolean("allowNewStackWhenEmpty", allowNewStackWhenEmpty)
     tag.putInt("maxStacks", maxStacks)
     tag.putInt("amountStored", amountStored)

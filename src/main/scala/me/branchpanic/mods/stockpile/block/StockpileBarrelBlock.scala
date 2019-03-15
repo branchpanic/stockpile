@@ -25,8 +25,8 @@ object StockpileBarrelBlock
     extends BlockWithEntity(FabricBlockSettings.copy(Blocks.CHEST).build())
     with FacingDirection {
 
-  val StoredTileTagName = "barrelData"
-  val ContentsTextStyle: Style = new Style().setColor(TextFormat.DARK_GRAY)
+  val BARREL_TAG_NAME = "barrelData"
+  val CONTENTS_TOOLTIP_STYLE: Style = new Style().setColor(TextFormat.DARK_GRAY)
 
   override def createBlockEntity(blockView: BlockView): BlockEntity =
     new StockpileBarrelBlockEntity()
@@ -38,16 +38,17 @@ object StockpileBarrelBlock
                         hand: Hand,
                         hitResult: BlockHitResult): Boolean = {
     if (hitResult.getSide != state.get(Properties.FACING)) {
-      false
-    } else {
-      if (!world.isClient) {
-        world
-          .getBlockEntity(pos)
-          .asInstanceOf[StockpileBarrelBlockEntity]
-          .handleRightClick(player)
-      }
-      true
+      return false
     }
+
+    if (!world.isClient) {
+      world
+        .getBlockEntity(pos)
+        .asInstanceOf[StockpileBarrelBlockEntity]
+        .handleRightClick(player)
+    }
+
+    true
   }
 
   override def getDroppedStacks(state: BlockState,
@@ -62,7 +63,7 @@ object StockpileBarrelBlock
       barrelEntity.clear()
     }
 
-    stack.setChildTag(StoredTileTagName, barrelEntity.saveToTag())
+    stack.setChildTag(BARREL_TAG_NAME, barrelEntity.saveToTag())
     List(stack).asJava
   }
 
@@ -75,7 +76,7 @@ object StockpileBarrelBlock
       world
         .getBlockEntity(pos)
         .asInstanceOf[StockpileBarrelBlockEntity]
-        .loadFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
+        .loadFromTag(stack.getOrCreateSubCompoundTag(BARREL_TAG_NAME))
     }
   }
 
@@ -121,8 +122,7 @@ object StockpileBarrelBlock
     }
   }
 
-  override def getRenderType(state: BlockState): BlockRenderType =
-    BlockRenderType.MODEL
+  override def getRenderType(state: BlockState): BlockRenderType = BlockRenderType.MODEL
 
   override def getRenderLayer: BlockRenderLayer = BlockRenderLayer.MIPPED_CUTOUT
 
@@ -133,26 +133,27 @@ object StockpileBarrelBlock
     tooltip.addAll(getTooltipForStack(stack).asJava)
 
   def getTooltipForStack(stack: ItemStack): Seq[TextComponent] = {
-    val storedEntity = new StockpileBarrelBlockEntity()
+    val storedBarrel = new StockpileBarrelBlockEntity()
     val formatter = NumberFormat.getInstance()
 
-    storedEntity.loadFromTag(stack.getOrCreateSubCompoundTag(StoredTileTagName))
+    storedBarrel.loadFromTag(stack.getOrCreateSubCompoundTag(BARREL_TAG_NAME))
 
     val capacityDescription =
       new TranslatableTextComponent("stockpile.barrel.capacity",
-                                    formatter.format(storedEntity.inventory.maxStacks))
-        .setStyle(BlockDescription.DefaultStyle)
-    val contentDescription = if (storedEntity.isInvEmpty) {
-      new TranslatableTextComponent("stockpile.barrel.empty")
-        .setStyle(ContentsTextStyle)
-    } else {
-      new TranslatableTextComponent(
-        "stockpile.barrel.contents_stack",
-        storedEntity.inventory.stackType.getDisplayName,
-        formatter.format(storedEntity.inventory.amountStored),
-        formatter.format(storedEntity.inventory.amountStored / storedEntity.inventory.stackSize)
-      ).setStyle(ContentsTextStyle)
-    }
+                                    formatter.format(storedBarrel.inventory.maxStacks))
+        .setStyle(BlockDescription.DEFAULT_STYLE)
+
+    val contentDescription =
+      if (storedBarrel.isInvEmpty) {
+        new TranslatableTextComponent("stockpile.barrel.empty").setStyle(CONTENTS_TOOLTIP_STYLE)
+      } else {
+        new TranslatableTextComponent(
+          "stockpile.barrel.contents_stack",
+          storedBarrel.inventory.stackType.getDisplayName,
+          formatter.format(storedBarrel.inventory.amountStored),
+          formatter.format(storedBarrel.inventory.amountStored / storedBarrel.inventory.stackSize)
+        ).setStyle(CONTENTS_TOOLTIP_STYLE)
+      }
 
     Seq(capacityDescription, contentDescription)
   }

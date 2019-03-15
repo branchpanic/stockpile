@@ -3,14 +3,13 @@ package me.branchpanic.mods.stockpile.renderer
 import java.awt.Color
 
 import com.mojang.blaze3d.platform.GlStateManager
-import com.mojang.blaze3d.platform.GlStateManager.{DestFactor, SourceFactor}
 import me.branchpanic.mods.stockpile.blockentity.StockpileBarrelBlockEntity
 import me.branchpanic.mods.stockpile.extension.IntExtensions._
 import me.branchpanic.mods.stockpile.inventory.MassItemInventory
 import net.fabricmc.api.{EnvType, Environment}
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
-import net.minecraft.client.render.{GuiLighting, Tessellator, VertexFormats}
+import net.minecraft.client.render.{Tessellator, VertexFormats}
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.Direction
@@ -33,9 +32,11 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
 
     val frontFaceDirection = barrel.getCachedState.get(Properties.FACING)
 
-    GlStateManager.pushMatrix()
-    renderFrontDisplay(barrel, frontFaceDirection, x, y, z)
-    GlStateManager.popMatrix()
+    if (getWorld.getBlockState(barrel.getPos.offset(frontFaceDirection)).isFullOpaque(getWorld, barrel.getPos)) {
+      return
+    }
+
+    renderBarrelDisplay(barrel, frontFaceDirection, x, y, z)
   }
 
   def transformToFace(orientation: Direction, x: Double, y: Double, z: Double): Unit =
@@ -110,21 +111,13 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     getFontRenderer.draw(displayText, textCenterX, textCenterY, textColor)
   }
 
-  def renderFrontDisplay(barrel: StockpileBarrelBlockEntity,
-                         orientation: Direction,
-                         x: Double,
-                         y: Double,
-                         z: Double): Unit = {
+  def renderBarrelDisplay(barrel: StockpileBarrelBlockEntity,
+                          orientation: Direction,
+                          x: Double,
+                          y: Double,
+                          z: Double): Unit = {
     val stack = barrel.inventory.stackType
 
-    GlStateManager.enableRescaleNormal()
-    GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F)
-    GlStateManager.enableBlend()
-    GuiLighting.enable()
-    GlStateManager.blendFuncSeparate(SourceFactor.SRC_ALPHA,
-                                     DestFactor.ONE_MINUS_SRC_ALPHA,
-                                     SourceFactor.ONE,
-                                     DestFactor.ZERO)
     GlStateManager.pushMatrix()
 
     transformToFace(orientation, x, y, z)
@@ -136,8 +129,6 @@ object StockpileBarrelRenderer extends BlockEntityRenderer[StockpileBarrelBlockE
     renderFillBar(barrel.inventory, 8f, 16f)
 
     GlStateManager.popMatrix()
-    GlStateManager.disableRescaleNormal()
-    GlStateManager.disableBlend()
   }
 
   def drawRectangle(x1: Double, y1: Double, x2: Double, y2: Double, color: Color): Unit = {

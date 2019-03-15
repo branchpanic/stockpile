@@ -8,7 +8,7 @@ cache:
     - "$HOME/.gradle/wrapper/"
 
 before_deploy:
-  - ./gradlew clean cleanLoomMappings
+  - ./gradlew cleanLoomMappings clean
   - ./gradlew buildNeeded -Prelease
 
 deploy:

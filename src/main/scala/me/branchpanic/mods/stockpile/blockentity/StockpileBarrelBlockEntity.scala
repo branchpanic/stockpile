@@ -144,7 +144,7 @@ class StockpileBarrelBlockEntity
   }
 
   override def canPlayerUseInv(playerEntity: PlayerEntity): Boolean =
-    playerEntity.squaredDistanceTo(pos) < 12 * 12
+    playerEntity.squaredDistanceTo(pos.getX, pos.getY, pos.getZ) < 12 * 12
 
   override def markDirty(): Unit = {
     super.markDirty()

@@ -70,7 +70,7 @@ dependencies {
     modCompile "net.fabricmc:fabric-language-scala:${project.scala_adapter_version}"
 
     // Dev environment
-    modCompile "com.jamieswhiteshirt:developer-mode:1.0.5"
+    // modCompile "com.jamieswhiteshirt:developer-mode:1.0.10"
 
     // Various Scala kerfluffle
     compile 'org.scala-lang:scala-library:2.12.8'

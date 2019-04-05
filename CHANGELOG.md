@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 ### Changed
- - Cleaned up a lot of internal stuff, including simplifying barrel rendering
+ - Dependency from Scala to Kotlin language adapter
 
 ## [0.5.2] - 2019-03-14
 

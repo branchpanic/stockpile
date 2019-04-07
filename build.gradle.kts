@@ -11,12 +11,19 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+repositories {
+    maven(url = "https://maven.fabricmc.net/") {
+        name = "Fabric"
+    }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:19w14b")
     mappings("net.fabricmc:yarn:19w14b.1")
     modCompile("net.fabricmc:fabric-loader:0.3.7.109")
 
     modCompile("net.fabricmc:fabric:0.2.6.119")
+    modCompile("io.github.prospector.silk:SilkAPI:1.2.3-38")
     modCompile("net.fabricmc:fabric-language-kotlin:1.3.21-SNAPSHOT")
     compileOnly("net.fabricmc:fabric-language-kotlin:1.3.21-SNAPSHOT")
 

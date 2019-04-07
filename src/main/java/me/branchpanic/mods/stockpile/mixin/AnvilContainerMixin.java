@@ -43,8 +43,8 @@ public abstract class AnvilContainerMixin extends Container {
         super(containerType_1, int_1);
     }
 
-    @Inject(method = "method_7628()V", at = @At("RETURN"))
-    private void method_7628(CallbackInfo ci) {
+    @Inject(method = "setLevelCost()V", at = @At("RETURN"))
+    private void onLevelCostSet(CallbackInfo ci) {
         ItemStack input = inventory.getInvStack(0);
         ItemStack modifier = inventory.getInvStack(1);
 

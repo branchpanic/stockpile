@@ -17,7 +17,6 @@ import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.{BlockView, World}
 
 object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PISTON).build()) with BlockDescription {
-
   override def createBlockEntity(blockView: BlockView): BlockEntity =
     new TrashCanBlockEntity()
 
@@ -26,11 +25,8 @@ object TrashCanBlock extends BlockWithEntity(FabricBlockSettings.copy(Blocks.PIS
     builder.`with`(IS_OPEN)
   }
 
-  override def getPlacementState(context: ItemPlacementContext): BlockState = {
-    super
-      .getPlacementState(context)
-      .`with`(IS_OPEN, boolean2Boolean(false)) // scala pls
-  }
+  override def getPlacementState(context: ItemPlacementContext): BlockState =
+    super.getPlacementState(context).`with`(IS_OPEN, boolean2Boolean(false)) // scala pls
 
   override def getRenderType(blockState_1: BlockState): BlockRenderType =
     BlockRenderType.MODEL

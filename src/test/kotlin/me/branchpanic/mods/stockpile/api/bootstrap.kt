@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.api.storage
+package me.branchpanic.mods.stockpile.api
 
 import net.minecraft.item.Item
 import net.minecraft.item.Items

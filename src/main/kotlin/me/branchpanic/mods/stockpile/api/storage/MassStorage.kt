@@ -7,6 +7,7 @@ package me.branchpanic.mods.stockpile.api.storage
  * have an `amount` field), it is always respected.
  */
 interface MassStorage<T> {
+
     /**
      * The stored quantity associated with this MassStorage. This must never exceed [capacity].
      */
@@ -66,20 +67,21 @@ interface MassStorage<T> {
     /**
      * Decrements the stored amount by at most the given amount.
      *
-     * If the entirety of the given amount could not be removed, then the remainder is returned. Otherwise, zero will
-     * be returned.
+     * If the entirety of the given amount could not be removed, then the amount that was actually removed is returned.
+     * Otherwise, zero is returned.
      */
-    fun remove(amount: Long)
+    fun remove(amount: Long): Long
 
     /**
      * Attempts to insert the given list of [T]s into this MassStorage. If [T] has its own concept of quantity, it will
      * be respected and used to check against this MassStorage's capacity.
      *
-     * The portion of the given T that could not be accepted is returned.
+     * The portion of the given [T]s that could not be accepted is returned. The original elements of the list will not
+     * be altered.
      */
     fun offer(ts: List<T>): List<T>
 
-    fun offerOne(t: T): T? {
+    fun offer(t: T): T? {
         val remainder = offer(listOf(t))
 
         return if (remainder.isNotEmpty()) {

@@ -4,6 +4,7 @@ import io.kotlintest.matchers.collections.shouldHaveSize
 import io.kotlintest.runner.junit4.KotlinTestRunner
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
+import me.branchpanic.mods.stockpile.api.TestItems
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.util.registry.Registry
@@ -12,7 +13,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor
 import org.powermock.modules.junit4.PowerMockRunner
 import org.powermock.modules.junit4.PowerMockRunnerDelegate
-
 
 @RunWith(PowerMockRunner::class)
 @PowerMockRunnerDelegate(KotlinTestRunner::class)
@@ -52,7 +52,7 @@ class MassItemStorageSpec : WordSpec({
             m.instanceIsSet shouldBe false
             m.currentInstance shouldBe ItemStack.EMPTY
 
-            m.offerOne(ItemStack(TestItems.StandardItemA))
+            m.offer(ItemStack(TestItems.StandardItemA))
 
             m.instanceIsSet shouldBe true
             m.currentInstance.item shouldBe TestItems.StandardItemA
@@ -106,10 +106,10 @@ class MassItemStorageSpec : WordSpec({
                 1,
                 storedItems = 0L,
                 storedStack = ItemStack(TestItems.StandardItemA),
-                clearInstanceWhenEmpty = false
+                clearWhenEmpty = false
             )
 
-            m.offerOne(ItemStack(TestItems.StandardItemA, 64)) shouldBe null
+            m.offer(ItemStack(TestItems.StandardItemA, 64)) shouldBe null
             m.amountStored shouldBe 64L
         }
 
@@ -118,7 +118,7 @@ class MassItemStorageSpec : WordSpec({
                 3,
                 storedItems = 0L,
                 storedStack = ItemStack(TestItems.StandardItemA),
-                clearInstanceWhenEmpty = false
+                clearWhenEmpty = false
             )
 
             m.offer(
@@ -137,10 +137,10 @@ class MassItemStorageSpec : WordSpec({
                 1,
                 storedItems = 32L,
                 storedStack = ItemStack(TestItems.StandardItemA),
-                clearInstanceWhenEmpty = false
+                clearWhenEmpty = false
             )
 
-            val remainder = m.offerOne(ItemStack(TestItems.StandardItemA, 64))
+            val remainder = m.offer(ItemStack(TestItems.StandardItemA, 64))
 
             remainder?.amount shouldBe 32
             remainder?.item shouldBe TestItems.StandardItemA
@@ -151,7 +151,7 @@ class MassItemStorageSpec : WordSpec({
                 3,
                 storedItems = 32L,
                 storedStack = ItemStack(TestItems.StandardItemA),
-                clearInstanceWhenEmpty = false
+                clearWhenEmpty = false
             )
 
             val remainder = m.offer(
@@ -172,7 +172,7 @@ class MassItemStorageSpec : WordSpec({
                 1,
                 storedItems = 64L,
                 storedStack = ItemStack(TestItems.StandardItemA),
-                clearInstanceWhenEmpty = false
+                clearWhenEmpty = false
             )
 
             val taken = m.take(64)
@@ -187,10 +187,25 @@ class MassItemStorageSpec : WordSpec({
                 3,
                 storedItems = 64L * 3L,
                 storedStack = ItemStack(TestItems.StandardItemA),
-                clearInstanceWhenEmpty = false
+                clearWhenEmpty = false
             )
 
             val taken = m.take(64L * 3L)
+
+            taken shouldHaveSize 3
+            taken.forEach { s -> s.amount shouldBe 64 }
+            m.amountStored shouldBe 0
+        }
+
+        "yield all of its remaining contents when an amount greater than that of its contents is specified" {
+            val m = MassItemStorage(
+                3,
+                storedItems = 64L * 3L,
+                storedStack = ItemStack(TestItems.StandardItemA),
+                clearWhenEmpty = false
+            )
+
+            val taken = m.take(64L * 10L)
 
             taken shouldHaveSize 3
             taken.forEach { s -> s.amount shouldBe 64 }
@@ -202,7 +217,7 @@ class MassItemStorageSpec : WordSpec({
                 0,
                 storedItems = 0L,
                 storedStack = ItemStack(TestItems.StandardItemA),
-                clearInstanceWhenEmpty = false
+                clearWhenEmpty = false
             )
 
             val taken = m.take(64L * 3L)

@@ -8,8 +8,9 @@ class MassItemStorage(
     private val maxStacks: Int,
     private var storedItems: Long = 0L,
     private var storedStack: ItemStack = ItemStack.EMPTY,
-    var clearInstanceWhenEmpty: Boolean = true
+    var clearWhenEmpty: Boolean = true
 ) : MassStorage<ItemStack> {
+
     override val amountStored: Long
         get() = storedItems
 
@@ -28,7 +29,7 @@ class MassItemStorage(
     }
 
     override fun clearInstanceWhenEmpty() {
-        clearInstanceWhenEmpty = true
+        clearWhenEmpty = true
 
         if (isEmpty) {
             clear()
@@ -36,7 +37,7 @@ class MassItemStorage(
     }
 
     override fun retainInstanceWhenEmpty() {
-        clearInstanceWhenEmpty = false
+        clearWhenEmpty = false
     }
 
     override fun accepts(t: ItemStack): Boolean = storedStack.isEmpty || t.itemEquals(storedStack)
@@ -53,15 +54,19 @@ class MassItemStorage(
         return 0
     }
 
-    override fun remove(amount: Long) {
-        if (amount >= storedItems) {
+    override fun remove(amount: Long): Long {
+        return if (amount >= storedItems) {
+            val amountRemoved = storedItems
             storedItems = 0
 
-            if (clearInstanceWhenEmpty) {
+            if (clearWhenEmpty) {
                 clear()
             }
+
+            amountRemoved
         } else {
             storedItems -= amount
+            amount
         }
     }
 
@@ -88,10 +93,10 @@ class MassItemStorage(
             return emptyList()
         }
 
-        val removableFullStacks = amount / storedStack.maxAmount
-        val removableRemainingStack = (amount % storedStack.maxAmount).toInt()
+        val removableAmount = remove(amount)
 
-        remove(amount)
+        val removableFullStacks = removableAmount / storedStack.maxAmount
+        val removableRemainingStack = (removableAmount % storedStack.maxAmount).toInt()
 
         val fullStacks = (0 until removableFullStacks).map { storedStack.copy().withAmount(storedStack.maxAmount) }
         val remainderStack = storedStack.copy().withAmount(removableRemainingStack)

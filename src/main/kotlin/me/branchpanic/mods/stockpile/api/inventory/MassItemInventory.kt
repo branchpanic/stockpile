@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.util.math.Direction
 import kotlin.math.min
 
-class MassItemInventory(val storage: MassStorage<ItemStack>, private val onChanged: () -> Unit = {}) : SidedInventory {
+class MassItemInventory(var storage: MassStorage<ItemStack>) : SidedInventory {
     companion object {
         const val INPUT_SLOT = 0
         const val OUTPUT_SLOT = 1
@@ -48,11 +48,11 @@ class MassItemInventory(val storage: MassStorage<ItemStack>, private val onChang
     }
 
     override fun markDirty() {
-        onChanged()
     }
 
     override fun clear() {
         storage.remove(storage.amountStored)
+        markDirty()
     }
 
     override fun setInvStack(slot: Int, stack: ItemStack?) {

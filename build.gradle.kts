@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.3.21"
     id("fabric-loom") version "0.2.1-SNAPSHOT"
@@ -17,7 +19,7 @@ repositories {
     }
 
     maven(url = "https://maven.jamieswhiteshirt.com/libs-release/") {
-        name = "JamiesWhiteShirt Maven"
+        name = "JamiesWhiteShirt"
     }
 }
 
@@ -39,7 +41,6 @@ dependencies {
 
     include("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
-    compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")
@@ -53,8 +54,12 @@ task("sourcesJar", Jar::class) {
     dependsOn(tasks.getByName("classes"))
 }
 
-tasks.withType<ProcessResources> {
+tasks.withType<ProcessResources>().all {
     filesMatching("fabric.mod.json") {
         expand(Pair("version", project.version))
     }
+}
+
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions.jvmTarget = "1.8"
 }

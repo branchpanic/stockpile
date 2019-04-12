@@ -14,7 +14,8 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 object Stockpile : ModInitializer {
-    
+    internal val LOGGER: Logger = LogManager.getLogger("stockpile")
+
     private val BLOCKS: Map<Identifier, Block> = mapOf(
         id("item_barrel") to ItemBarrelBlock
     )
@@ -22,8 +23,6 @@ object Stockpile : ModInitializer {
     private val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
         id("item_barrel") to ItemBarrelBlockEntity.TYPE
     )
-
-    val LOGGER: Logger = LogManager.getLogger("stockpile")
 
     private fun id(path: String): Identifier = Identifier("stockpile", path)
 

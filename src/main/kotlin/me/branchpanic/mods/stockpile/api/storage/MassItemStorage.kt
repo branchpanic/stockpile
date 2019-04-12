@@ -93,13 +93,14 @@ class MassItemStorage(
             return emptyList()
         }
 
+        val resultingStack = storedStack.copy()
         val removableAmount = remove(amount)
 
-        val removableFullStacks = removableAmount / storedStack.maxAmount
-        val removableRemainingStack = (removableAmount % storedStack.maxAmount).toInt()
+        val removableFullStacks = removableAmount / resultingStack.maxAmount
+        val removableRemainingStack = removableAmount - (resultingStack.maxAmount * removableFullStacks)
 
-        val fullStacks = (0 until removableFullStacks).map { storedStack.copy().withAmount(storedStack.maxAmount) }
-        val remainderStack = storedStack.copy().withAmount(removableRemainingStack)
+        val fullStacks = (0 until removableFullStacks).map { resultingStack.withAmount(resultingStack.maxAmount) }
+        val remainderStack = resultingStack.copy().withAmount(removableRemainingStack.toInt())
 
         return (fullStacks + remainderStack).filterNot { s -> s.isEmpty }
     }

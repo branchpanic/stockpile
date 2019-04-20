@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.3.21"
     id("fabric-loom") version "0.2.1-SNAPSHOT"
@@ -24,12 +22,12 @@ repositories {
 }
 
 object Versions {
-    const val MINECRAFT = "1.14 Pre-Release 1"
-    const val YARN = "$MINECRAFT+build.3"
-    const val LOADER = "0.4.0+build.119"
+    const val MINECRAFT = "1.14 Pre-Release 5"
+    const val YARN = "$MINECRAFT+build.2"
+    const val LOADER = "0.4.1+build.126"
 
-    const val FABRIC = "0.2.7+build.122"
-    const val FABRIC_KT = "1.3.21-SNAPSHOT"
+    const val FABRIC = "0.2.7+build.123"
+    const val FABRIC_KT = "1.3.30+build.1"
 }
 
 dependencies {
@@ -41,6 +39,7 @@ dependencies {
 
     include("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
+    compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

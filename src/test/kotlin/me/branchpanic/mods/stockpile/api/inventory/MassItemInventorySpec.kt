@@ -51,7 +51,11 @@ class MassItemInventorySpec : WordSpec({
             inv.canInsertInvStack(MassItemInventory.INPUT_SLOT, ItemStack(TestItems.StandardItemA), null) shouldBe true
 
             inv.isValidInvStack(MassItemInventory.OUTPUT_SLOT, ItemStack(TestItems.StandardItemA)) shouldBe false
-            inv.canInsertInvStack(MassItemInventory.OUTPUT_SLOT, ItemStack(TestItems.StandardItemA), null) shouldBe false
+            inv.canInsertInvStack(
+                MassItemInventory.OUTPUT_SLOT,
+                ItemStack(TestItems.StandardItemA),
+                null
+            ) shouldBe false
         }
 
         "update the MassStorage's stored item through insertion" {

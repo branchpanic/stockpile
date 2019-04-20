@@ -5,9 +5,9 @@ import me.branchpanic.mods.stockpile.api.withAmount
 import net.minecraft.item.ItemStack
 
 class MassItemStorage(
-    private val maxStacks: Int,
+    val maxStacks: Int,
     private var storedItems: Long = 0L,
-    private var storedStack: ItemStack = ItemStack.EMPTY,
+    var storedStack: ItemStack = ItemStack.EMPTY,
     var clearWhenEmpty: Boolean = true
 ) : MassStorage<ItemStack> {
 

@@ -6,6 +6,7 @@
   "ui.stockpile.barrel.active_upgrades": "Upgrades:",
   "ui.stockpile.barrel.contents_stack": "%s x%s (%s full stacks)",
   "ui.stockpile.barrel.contents_world": "Contents: %s/%s %s (%s/%s stacks)",
+  "upgrade.stockpile.capacity": "Increased capacity (+%d stacks)",
   "block.stockpile.item_barrel": "Barrel (Items)",
   "block.stockpile.trash_can": "Trash Can",
   "block.stockpile.trash_can.description": "Destroys thrown items! Right-click to open/close",

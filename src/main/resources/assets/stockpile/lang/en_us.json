@@ -1,14 +1,19 @@
 {
-  "stockpile.barrel.capacity": "Holds up to %s stacks",
+  "ui.stockpile.barrel.capacity": "Holds up to %s stacks",
   "ui.stockpile.barrel.just_locked": "Locked: this barrel will only accept the current item, even when empty.",
   "ui.stockpile.barrel.just_unlocked": "Unlocked: this barrel will accept any item when empty.",
   "ui.stockpile.empty": "Empty",
-  "ui.stockpile.barrel.active_upgrades": "Upgrades:",
+  "ui.stockpile.upgrades": "Upgrades:",
+  "ui.stockpile.upgrade_application": "Right-click on a block to apply",
   "ui.stockpile.barrel.contents_stack": "%s x%s (%s full stacks)",
   "ui.stockpile.barrel.contents_world": "Contents: %s/%s %s (%s/%s stacks)",
+  "ui.stockpile.cant_apply_upgrade": "Can't apply upgrade!",
+  "ui.stockpile.upgrade_applied": "Upgrade applied!",
+  "ui.stockpile.upgrade_conflicts": "Conflicting upgrades present!",
   "upgrade.stockpile.capacity": "Increased capacity (+%d stacks)",
   "block.stockpile.item_barrel": "Barrel (Items)",
   "block.stockpile.trash_can": "Trash Can",
   "block.stockpile.trash_can.description": "Destroys thrown items! Right-click to open/close",
+  "item.stockpile.capacity_upgrade": "Capacity Upgrade",
   "itemGroup.stockpile.all": "Stockpile"
 }

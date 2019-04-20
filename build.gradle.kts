@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.3.21"
     id("fabric-loom") version "0.2.1-SNAPSHOT"
@@ -28,6 +30,7 @@ object Versions {
 
     const val FABRIC = "0.2.7+build.123"
     const val FABRIC_KT = "1.3.30+build.1"
+    const val MOD_MENU = "1.4.0-72"
 }
 
 dependencies {
@@ -36,6 +39,7 @@ dependencies {
     modCompile("net.fabricmc:fabric-loader:${Versions.LOADER}")
 
     modCompile("net.fabricmc:fabric:${Versions.FABRIC}")
+    modCompile("io.github.prospector.modmenu:ModMenu:${Versions.MOD_MENU}")
 
     include("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")

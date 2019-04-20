@@ -3,8 +3,8 @@ package me.branchpanic.mods.stockpile.content.blockentity
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory
 import me.branchpanic.mods.stockpile.api.storage.MassItemStorage
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
@@ -19,6 +19,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.text.TextComponent
 import net.minecraft.text.TranslatableTextComponent
 import java.text.NumberFormat
 import java.util.*
@@ -34,20 +35,7 @@ class ItemBarrelBlockEntity(
     UpgradeApplier,
     SidedInventory by invWrapper {
 
-    override fun canApplyUpgrade(u: Upgrade): Boolean = appliedUpgrades.size < MAX_UPGRADES && u is ItemBarrelUpgrade
-
-    override fun applyUpgrade(u: Upgrade) {
-        if (u !is ItemBarrelUpgrade) {
-            Stockpile.LOGGER.warn("attempted to apply an invalid upgrade (type ${u.id}) to an item barrel")
-            Stockpile.LOGGER.debug("this is a bug! was canApplyUpgrade checked?")
-            return
-        }
-
-        appliedUpgrades += u
-
-        fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag()))
-        markDirty()
-    }
+    override val maxUpgrades: Int = MAX_UPGRADES
 
     constructor(tag: CompoundTag) : this() {
         fromTag(tag)
@@ -134,22 +122,7 @@ class ItemBarrelBlockEntity(
     }
 
     private fun showContents(player: PlayerEntity) {
-        val message = if (storage.isEmpty) {
-            TranslatableTextComponent("ui.stockpile.empty")
-        } else {
-            val f = NumberFormat.getInstance()
-
-            TranslatableTextComponent(
-                "ui.stockpile.barrel.contents_world",
-                f.format(storage.amountStored),
-                f.format(storage.capacity),
-                storage.currentInstance.displayName.formattedText,
-                f.format(storage.amountStored / storage.currentInstance.maxAmount),
-                f.format(storage.capacity / storage.currentInstance.maxAmount)
-            )
-        }
-
-        player.addChatMessage(message, true)
+        player.addChatMessage(getContentDescription(), true)
     }
 
     override fun markDirty() {
@@ -214,12 +187,44 @@ class ItemBarrelBlockEntity(
 
     override fun fromClientTag(tag: CompoundTag?) = fromTag(tag ?: CompoundTag())
 
+    override fun canApplyUpgrade(u: Upgrade): Boolean = u is ItemBarrelUpgrade
+
+    override fun applyUpgrade(u: Upgrade) {
+        if (u !is ItemBarrelUpgrade) {
+            Stockpile.LOGGER.warn("attempted to apply an invalid upgrade (type ${u.id}) to an item barrel")
+            Stockpile.LOGGER.debug("this is a bug! was canApplyUpgrade checked?")
+            return
+        }
+
+        appliedUpgrades += u
+
+        fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag()))
+        markDirty()
+    }
+
     fun toStack(stack: ItemStack) {
         toTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
     }
 
     fun fromStack(stack: ItemStack) {
         fromTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+    }
+
+    fun getContentDescription(): TextComponent {
+        val f = NumberFormat.getInstance()
+
+        return if (storage.isEmpty) {
+            TranslatableTextComponent("ui.stockpile.barrel.contents_empty", f.format(storage.maxStacks))
+        } else {
+            TranslatableTextComponent(
+                "ui.stockpile.barrel.contents",
+                f.format(storage.amountStored),
+                f.format(storage.capacity),
+                storage.currentInstance.displayName.formattedText,
+                f.format(storage.amountStored / storage.currentInstance.maxAmount),
+                f.format(storage.maxStacks)
+            )
+        }
     }
 }
 

@@ -8,6 +8,9 @@ import net.minecraft.text.TextFormat
 import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.Identifier
 
+/**
+ * The UpgradeRegistry holds a map of Identifiers to UpgradeTypes, and is used for persisting Upgrades.
+ */
 object UpgradeRegistry {
     private const val ID_TAG = "ID"
     private const val DATA_TAG = "Data"
@@ -17,14 +20,15 @@ object UpgradeRegistry {
 
     private var upgrades = emptyMap<Identifier, UpgradeType>()
 
+    /**
+     * Registers the given UpgradeType to the UpgradeRegistry.
+     */
     fun register(id: Identifier, type: UpgradeType) {
         upgrades = upgrades + (id to type)
     }
 
     fun readUpgrade(tag: CompoundTag): Upgrade? = upgrades[Identifier(tag.getString(ID_TAG))]?.reader?.invoke(
-        tag.getCompound(
-            DATA_TAG
-        )
+        tag.getCompound(DATA_TAG)
     )
 
     fun writeUpgrade(upgrade: Upgrade): CompoundTag? {
@@ -45,12 +49,19 @@ object UpgradeRegistry {
         }
     }
 
-    fun createTooltip(upgrades: List<Upgrade>): List<TextComponent> {
+    fun createTooltip(applier: UpgradeApplier): List<TextComponent> {
+        val upgrades = applier.appliedUpgrades
+
         if (upgrades.isEmpty()) {
             return emptyList()
         }
 
-        return listOf(TranslatableTextComponent("ui.stockpile.upgrades").setStyle(UPGRADE_HEADER_STYLE)) +
-                upgrades.map { u -> u.description.setStyle(UPGRADE_TOOLTIP_STYLE) }
+        return listOf(
+            TranslatableTextComponent(
+                "ui.stockpile.upgrades",
+                applier.appliedUpgrades.size,
+                applier.maxUpgrades
+            ).setStyle(UPGRADE_HEADER_STYLE)
+        ) + upgrades.map { u -> u.description.setStyle(UPGRADE_TOOLTIP_STYLE) }
     }
 }

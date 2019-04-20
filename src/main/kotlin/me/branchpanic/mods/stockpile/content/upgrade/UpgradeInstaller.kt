@@ -22,15 +22,25 @@ object UpgradeInstaller : UseBlockCallback {
 
         val blockEntity = (world.getBlockEntity(hit.blockPos) as? UpgradeApplier) ?: return ActionResult.PASS
 
+        if (blockEntity.appliedUpgrades.size >= blockEntity.maxUpgrades) {
+            player.addChatMessage(
+                TranslatableTextComponent("ui.stockpile.too_many_upgrades", blockEntity.maxUpgrades),
+                true
+            )
+
+            return ActionResult.FAIL
+        }
+
         if (!blockEntity.canApplyUpgrade(upgrade)) {
             player.addChatMessage(TranslatableTextComponent("ui.stockpile.cant_apply_upgrade"), true)
-            return ActionResult.PASS
+            return ActionResult.FAIL
         }
 
         val conflicts = upgrade.getConflictingUpgrades(blockEntity.appliedUpgrades)
 
         if (conflicts.isNotEmpty()) {
             player.addChatMessage(TranslatableTextComponent("ui.stockpile.upgrade_conflicts"), true)
+            return ActionResult.FAIL
         }
 
         if (world.isClient) {

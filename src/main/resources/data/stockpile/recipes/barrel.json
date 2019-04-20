@@ -20,7 +20,7 @@
     }
   },
   "result": {
-    "item": "stockpile:barrel",
+    "item": "stockpile:item_barrel",
     "count": 2
   }
 }

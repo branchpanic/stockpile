@@ -15,7 +15,6 @@ import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
 import net.minecraft.text.TextComponent
 import net.minecraft.text.TextFormat
-import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.Hand
 import net.minecraft.util.Mirror
 import net.minecraft.util.Rotation
@@ -28,7 +27,6 @@ import net.minecraft.world.RayTraceContext
 import net.minecraft.world.World
 import net.minecraft.world.loot.context.LootContext
 import net.minecraft.world.loot.context.LootContextParameters
-import java.text.NumberFormat
 
 object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider {
     private const val PLAYER_REACH = 5
@@ -183,28 +181,8 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         if (stack == null || lines == null) return
 
         val barrel = ItemBarrelBlockEntity.loadFromStack(stack)
-        val f = NumberFormat.getInstance()
 
-        if (barrel.backingStorage.isEmpty) {
-            lines.add(TranslatableTextComponent("ui.stockpile.empty").setStyle(CONTENTS_STYLE))
-        } else {
-            lines.add(
-                TranslatableTextComponent(
-                    "ui.stockpile.barrel.contents_stack",
-                    barrel.backingStorage.currentInstance.displayName.formattedText,
-                    f.format(barrel.backingStorage.amountStored),
-                    f.format(barrel.backingStorage.amountStored / barrel.backingStorage.currentInstance.maxAmount)
-                ).setStyle(CONTENTS_STYLE)
-            )
-        }
-
-        lines.add(
-            TranslatableTextComponent(
-                "ui.stockpile.barrel.capacity",
-                f.format(barrel.backingStorage.maxStacks)
-            ).setStyle(CONTENTS_STYLE)
-        )
-
-        lines.addAll(UpgradeRegistry.createTooltip(barrel.appliedUpgrades))
+        lines.add(barrel.getContentDescription().setStyle(CONTENTS_STYLE))
+        lines.addAll(UpgradeRegistry.createTooltip(barrel))
     }
 }

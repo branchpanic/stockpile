@@ -1,5 +1,6 @@
 package me.branchpanic.mods.stockpile.content.block
 
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.*
@@ -145,9 +146,11 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         val barrel = context[LootContextParameters.BLOCK_ENTITY] as? ItemBarrelBlockEntity ?: return mutableListOf()
         val stack = ItemStack(this)
 
-        if (!barrel.backingStorage.isEmpty) {
-            barrel.toStack(stack)
+        if (barrel.backingStorage.isEmpty) {
+            barrel.backingStorage.clearInstanceWhenEmpty()
         }
+
+        barrel.toStack(stack)
 
         return mutableListOf(stack)
     }
@@ -180,25 +183,28 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         if (stack == null || lines == null) return
 
         val barrel = ItemBarrelBlockEntity.loadFromStack(stack)
+        val f = NumberFormat.getInstance()
 
         if (barrel.backingStorage.isEmpty) {
             lines.add(TranslatableTextComponent("ui.stockpile.empty").setStyle(CONTENTS_STYLE))
-            return
+        } else {
+            lines.add(
+                TranslatableTextComponent(
+                    "ui.stockpile.barrel.contents_stack",
+                    barrel.backingStorage.currentInstance.displayName.formattedText,
+                    f.format(barrel.backingStorage.amountStored),
+                    f.format(barrel.backingStorage.amountStored / barrel.backingStorage.currentInstance.maxAmount)
+                ).setStyle(CONTENTS_STYLE)
+            )
         }
 
-        val f = NumberFormat.getInstance()
         lines.add(
             TranslatableTextComponent(
-                "ui.stockpile.barrel.contents_stack",
-                barrel.backingStorage.currentInstance.displayName.formattedText,
-                f.format(barrel.backingStorage.amountStored),
-                f.format(barrel.backingStorage.amountStored / barrel.backingStorage.currentInstance.maxAmount)
+                "ui.stockpile.barrel.capacity",
+                f.format(barrel.backingStorage.maxStacks)
             ).setStyle(CONTENTS_STYLE)
         )
 
-        if (barrel.upgrades.isNotEmpty()) {
-            lines.add(TranslatableTextComponent("ui.stockpile.barrel.active_upgrades"))
-            lines.addAll(barrel.upgrades.map { u -> u.description })
-        }
+        lines.addAll(UpgradeRegistry.createTooltip(barrel.appliedUpgrades))
     }
 }

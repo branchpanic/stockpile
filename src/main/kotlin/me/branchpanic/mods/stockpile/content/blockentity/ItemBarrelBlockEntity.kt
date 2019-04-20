@@ -3,9 +3,8 @@ package me.branchpanic.mods.stockpile.content.blockentity
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory
 import me.branchpanic.mods.stockpile.api.storage.MassItemStorage
-import me.branchpanic.mods.stockpile.api.upgrade.Upgradable
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
@@ -27,23 +26,27 @@ import kotlin.math.min
 
 class ItemBarrelBlockEntity(
     private var storage: MassItemStorage = MassItemStorage(DEFAULT_CAPACITY_STACKS),
-    internal var upgrades: List<ItemBarrelUpgrade> = emptyList(),
+    override var appliedUpgrades: List<ItemBarrelUpgrade> = emptyList(),
     private val invWrapper: MassItemInventory = MassItemInventory(storage)
 ) :
     BlockEntity(TYPE),
     BlockEntityClientSerializable,
-    Upgradable,
+    UpgradeApplier,
     SidedInventory by invWrapper {
-    override fun canAcceptUpgrade(u: Upgrade): Boolean = u is ItemBarrelUpgrade
+
+    override fun canApplyUpgrade(u: Upgrade): Boolean = appliedUpgrades.size < MAX_UPGRADES && u is ItemBarrelUpgrade
 
     override fun applyUpgrade(u: Upgrade) {
         if (u !is ItemBarrelUpgrade) {
             Stockpile.LOGGER.warn("attempted to apply an invalid upgrade (type ${u.id}) to an item barrel")
+            Stockpile.LOGGER.debug("this is a bug! was canApplyUpgrade checked?")
             return
         }
 
-        upgrades += u
+        appliedUpgrades += u
+
         fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag()))
+        markDirty()
     }
 
     constructor(tag: CompoundTag) : this() {
@@ -52,11 +55,11 @@ class ItemBarrelBlockEntity(
 
     companion object {
         const val DEFAULT_CAPACITY_STACKS = 32
+        const val MAX_UPGRADES = 6
 
         const val STORED_ITEM_TAG = "StoredItem"
         const val AMOUNT_STORED_TAG = "AmountStored"
         const val CLEAR_WHEN_EMPTY_TAG = "ClearWhenEmpty"
-        const val UPGRADE_COUNT_TAG = "UpgradeCount"
         const val UPGRADE_TAG = "Upgrades"
 
         const val RIGHT_CLICK_PERIOD_MS = 500
@@ -90,23 +93,6 @@ class ItemBarrelBlockEntity(
 
     fun onActivated(player: PlayerEntity) {
         if (world?.isClient != false) {
-            return
-        }
-
-        val heldStack = player.getStackInHand(player.activeHand)
-
-        if (heldStack.item is UpgradeItem) {
-            val upgrade = (heldStack.item as UpgradeItem).getUpgrade(heldStack)
-
-            if (!canAcceptUpgrade(upgrade)) {
-                return
-            }
-
-            applyUpgrade(upgrade)
-            markDirty()
-            heldStack.subtractAmount(1)
-            player.inventory.markDirty()
-            showContents(player)
             return
         }
 
@@ -184,10 +170,9 @@ class ItemBarrelBlockEntity(
         tag.putBoolean(CLEAR_WHEN_EMPTY_TAG, storage.clearWhenEmpty)
 
         val upgradeTags = ListTag()
-        upgrades.forEach { u -> upgradeTags.add(UpgradeRegistry.writeUpgrade(u)) }
+        appliedUpgrades.forEach { u -> upgradeTags.add(UpgradeRegistry.writeUpgrade(u)) }
 
         tag.put(UPGRADE_TAG, upgradeTags)
-        tag.putInt(UPGRADE_COUNT_TAG, upgrades.size)
 
         return tag
     }
@@ -208,12 +193,12 @@ class ItemBarrelBlockEntity(
         val amountStored = tag.getLong(AMOUNT_STORED_TAG)
         val clearWhenEmpty = tag.getBoolean(CLEAR_WHEN_EMPTY_TAG)
 
-        val upgradeTags = tag.getList(UPGRADE_TAG, NbtType.COMPOUND)
+        val upgradeTags = tag.getList(UPGRADE_TAG, NbtType.COMPOUND).take(MAX_UPGRADES)
 
-        upgrades =
+        appliedUpgrades =
             upgradeTags.mapNotNull { t -> (t as? CompoundTag)?.let { c -> UpgradeRegistry.readUpgrade(c) as ItemBarrelUpgrade } }
 
-        val capacityStacks = upgrades.fold(DEFAULT_CAPACITY_STACKS) { i, u -> u.upgradeMaxStacks(i) }
+        val capacityStacks = appliedUpgrades.fold(DEFAULT_CAPACITY_STACKS) { i, u -> u.upgradeMaxStacks(i) }
 
         storage = MassItemStorage(
             capacityStacks,

@@ -2,7 +2,7 @@ package me.branchpanic.mods.stockpile.content.upgrade
 
 import com.google.common.base.MoreObjects
 import me.branchpanic.mods.stockpile.Stockpile
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeDefinition
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.text.TextComponent
@@ -12,7 +12,7 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
     companion object {
         private const val AMOUNT_KEY = "Amount"
 
-        val ENTRY = UpgradeDefinition({ t -> fromTag(t) }, { u -> (u as CapacityUpgrade).toTag() })
+        val TYPE = UpgradeType({ t -> fromTag(t) }, { u -> (u as CapacityUpgrade).toTag() })
 
         private fun fromTag(tag: CompoundTag): CapacityUpgrade = CapacityUpgrade(tag.getInt(AMOUNT_KEY))
     }

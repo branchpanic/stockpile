@@ -1,12 +1,14 @@
 package me.branchpanic.mods.stockpile
 
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeDefinition
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.content.item.CapacityUpgradeItem
+import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
 import me.branchpanic.mods.stockpile.content.upgrade.CapacityUpgrade
+import me.branchpanic.mods.stockpile.content.upgrade.UpgradeInstaller
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.block.Block
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
@@ -25,15 +27,15 @@ object Stockpile : ModInitializer {
     )
 
     private val ITEMS: Map<Identifier, Item> = mapOf(
-        id("capacity_upgrade") to CapacityUpgradeItem()
+        id("capacity_upgrade") to BasicUpgradeItem({ CapacityUpgrade(32) }, Item.Settings())
     )
 
     private val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
         id("item_barrel") to ItemBarrelBlockEntity.TYPE
     )
 
-    private val UPGRADES: Map<Identifier, UpgradeDefinition> = mapOf(
-        id("capacity") to CapacityUpgrade.ENTRY
+    private val UPGRADES: Map<Identifier, UpgradeType> = mapOf(
+        id("capacity") to CapacityUpgrade.TYPE
     )
 
     fun id(path: String): Identifier = Identifier("stockpile", path)
@@ -58,5 +60,7 @@ object Stockpile : ModInitializer {
         UPGRADES.forEach { (id, upgradeEntry) ->
             UpgradeRegistry.register(id, upgradeEntry)
         }
+
+        UseBlockCallback.EVENT.register(UpgradeInstaller)
     }
 }

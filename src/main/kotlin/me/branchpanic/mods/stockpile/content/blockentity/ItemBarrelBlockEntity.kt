@@ -1,11 +1,15 @@
 package me.branchpanic.mods.stockpile.content.blockentity
 
 import me.branchpanic.mods.stockpile.Stockpile
-import me.branchpanic.mods.stockpile.api.barrel.BarrelUpgrade
-import me.branchpanic.mods.stockpile.api.barrel.BarrelUpgrades
 import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory
 import me.branchpanic.mods.stockpile.api.storage.MassItemStorage
+import me.branchpanic.mods.stockpile.api.upgrade.Upgradable
+import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
+import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
+import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.ItemEntity
@@ -19,15 +23,28 @@ import net.minecraft.sound.SoundEvents
 import net.minecraft.text.TranslatableTextComponent
 import java.text.NumberFormat
 import java.util.*
+import kotlin.math.min
 
 class ItemBarrelBlockEntity(
     private var storage: MassItemStorage = MassItemStorage(DEFAULT_CAPACITY_STACKS),
-    var upgrades: List<BarrelUpgrade> = emptyList(),
+    internal var upgrades: List<ItemBarrelUpgrade> = emptyList(),
     private val invWrapper: MassItemInventory = MassItemInventory(storage)
 ) :
     BlockEntity(TYPE),
     BlockEntityClientSerializable,
+    Upgradable,
     SidedInventory by invWrapper {
+    override fun canAcceptUpgrade(u: Upgrade): Boolean = u is ItemBarrelUpgrade
+
+    override fun applyUpgrade(u: Upgrade) {
+        if (u !is ItemBarrelUpgrade) {
+            Stockpile.LOGGER.warn("attempted to apply an invalid upgrade (type ${u.id}) to an item barrel")
+            return
+        }
+
+        upgrades += u
+        fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag()))
+    }
 
     constructor(tag: CompoundTag) : this() {
         fromTag(tag)
@@ -45,6 +62,11 @@ class ItemBarrelBlockEntity(
         const val RIGHT_CLICK_PERIOD_MS = 500
 
         val TYPE: BlockEntityType<ItemBarrelBlockEntity> = BlockEntityType({ ItemBarrelBlockEntity() }, null)
+
+        const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
+
+        fun loadFromStack(stack: ItemStack): ItemBarrelBlockEntity =
+            ItemBarrelBlockEntity(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
     }
 
     val backingStorage get() = storage
@@ -68,6 +90,23 @@ class ItemBarrelBlockEntity(
 
     fun onActivated(player: PlayerEntity) {
         if (world?.isClient != false) {
+            return
+        }
+
+        val heldStack = player.getStackInHand(player.activeHand)
+
+        if (heldStack.item is UpgradeItem) {
+            val upgrade = (heldStack.item as UpgradeItem).getUpgrade(heldStack)
+
+            if (!canAcceptUpgrade(upgrade)) {
+                return
+            }
+
+            applyUpgrade(upgrade)
+            markDirty()
+            heldStack.subtractAmount(1)
+            player.inventory.markDirty()
+            showContents(player)
             return
         }
 
@@ -139,13 +178,14 @@ class ItemBarrelBlockEntity(
         return toTagWithoutWorldInfo(super.toTag(tag))
     }
 
-    fun toTagWithoutWorldInfo(tag: CompoundTag): CompoundTag {
+    private fun toTagWithoutWorldInfo(tag: CompoundTag): CompoundTag {
         tag.put(STORED_ITEM_TAG, storage.currentInstance.toTag(CompoundTag()))
         tag.putLong(AMOUNT_STORED_TAG, storage.amountStored)
         tag.putBoolean(CLEAR_WHEN_EMPTY_TAG, storage.clearWhenEmpty)
 
         val upgradeTags = ListTag()
-        upgrades.forEach { u -> upgradeTags.add(BarrelUpgrades.toTag(u)) }
+        upgrades.forEach { u -> upgradeTags.add(UpgradeRegistry.writeUpgrade(u)) }
+
         tag.put(UPGRADE_TAG, upgradeTags)
         tag.putInt(UPGRADE_COUNT_TAG, upgrades.size)
 
@@ -163,17 +203,21 @@ class ItemBarrelBlockEntity(
         fromTagWithoutWorldInfo(tag)
     }
 
-    fun fromTagWithoutWorldInfo(tag: CompoundTag) {
+    private fun fromTagWithoutWorldInfo(tag: CompoundTag) {
         val storedItem = ItemStack.fromTag(tag.getCompound(STORED_ITEM_TAG))
         val amountStored = tag.getLong(AMOUNT_STORED_TAG)
         val clearWhenEmpty = tag.getBoolean(CLEAR_WHEN_EMPTY_TAG)
 
-        val upgradeTags = tag.getList(UPGRADE_TAG, tag.getInt(UPGRADE_COUNT_TAG))
+        val upgradeTags = tag.getList(UPGRADE_TAG, NbtType.COMPOUND)
 
-        upgrades = upgradeTags.mapNotNull { t -> (t as? CompoundTag)?.let { c -> BarrelUpgrades.fromTag(c) } }
+        upgrades =
+            upgradeTags.mapNotNull { t -> (t as? CompoundTag)?.let { c -> UpgradeRegistry.readUpgrade(c) as ItemBarrelUpgrade } }
+
+        val capacityStacks = upgrades.fold(DEFAULT_CAPACITY_STACKS) { i, u -> u.upgradeMaxStacks(i) }
+
         storage = MassItemStorage(
-            upgrades.fold(DEFAULT_CAPACITY_STACKS) { i, u -> u.upgradeCapacity(i) },
-            amountStored,
+            capacityStacks,
+            min(amountStored, capacityStacks.toLong() * storedItem.maxAmount),
             storedItem,
             clearWhenEmpty
         )
@@ -184,6 +228,14 @@ class ItemBarrelBlockEntity(
     override fun toClientTag(tag: CompoundTag?): CompoundTag = toTag(tag ?: CompoundTag())
 
     override fun fromClientTag(tag: CompoundTag?) = fromTag(tag ?: CompoundTag())
+
+    fun toStack(stack: ItemStack) {
+        toTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+    }
+
+    fun fromStack(stack: ItemStack) {
+        fromTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+    }
 }
 
 private fun ItemStack.giveTo(player: PlayerEntity) {

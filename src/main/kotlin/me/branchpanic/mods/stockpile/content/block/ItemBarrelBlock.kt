@@ -9,7 +9,6 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
@@ -31,7 +30,6 @@ import net.minecraft.world.loot.context.LootContextParameters
 import java.text.NumberFormat
 
 object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider {
-    private const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
     private const val PLAYER_REACH = 5
 
     private val CONTENTS_STYLE = Style().setColor(TextFormat.GRAY)
@@ -67,7 +65,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         }
 
         (world.getBlockEntity(pos) as ItemBarrelBlockEntity).apply {
-            fromTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+            fromStack(stack)
             markDirty()
         }
     }
@@ -148,7 +146,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         val stack = ItemStack(this)
 
         if (!barrel.backingStorage.isEmpty) {
-            stack.setChildTag(STORED_BLOCK_ENTITY_TAG, barrel.toTagWithoutWorldInfo(CompoundTag()))
+            barrel.toStack(stack)
         }
 
         return mutableListOf(stack)
@@ -181,7 +179,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
 
         if (stack == null || lines == null) return
 
-        val barrel = ItemBarrelBlockEntity(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+        val barrel = ItemBarrelBlockEntity.loadFromStack(stack)
 
         if (barrel.backingStorage.isEmpty) {
             lines.add(TranslatableTextComponent("ui.stockpile.empty").setStyle(CONTENTS_STYLE))

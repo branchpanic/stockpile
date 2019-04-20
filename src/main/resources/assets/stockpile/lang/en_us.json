@@ -9,6 +9,10 @@
   "ui.stockpile.cant_apply_upgrade": "Can't apply this upgrade!",
   "ui.stockpile.upgrade_conflicts": "Conflicting upgrades present!",
   "ui.stockpile.upgrade_applied": "Upgrade applied!",
+  "ui.stockpile.barrel_hat": "Interacts with Item Barrels in your inventory",
+  "ui.stockpile.barrel_hat_push": "[%s]: insert all stacks into barrels",
+  "ui.stockpile.barrel_hat_pull": "Sneak + [%s]: top off all stacks from barrels",
+  "controls.stockpile": "Stockpile",
   "upgrade.stockpile.capacity": "Increased capacity (+%d stacks)",
   "upgrade.stockpile.multiplier": "Increased capacity (x%d stacks)",
   "block.stockpile.item_barrel": "Barrel (Items)",
@@ -18,5 +22,6 @@
   "item.stockpile.double_capacity_upgrade": "Double Capacity Upgrade",
   "item.stockpile.multiplier_upgrade": "Multiplier Upgrade",
   "item.stockpile.double_multiplier_upgrade": "Double Multiplier Upgrade",
+  "item.stockpile.barrel_hat": "Barrel Hat",
   "itemGroup.stockpile.all": "Stockpile"
 }

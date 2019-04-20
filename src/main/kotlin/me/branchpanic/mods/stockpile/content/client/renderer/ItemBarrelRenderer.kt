@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.renderer
+package me.branchpanic.mods.stockpile.content.client.renderer
 
 import com.mojang.blaze3d.platform.GlStateManager
 import me.branchpanic.mods.stockpile.api.storage.MassItemStorage

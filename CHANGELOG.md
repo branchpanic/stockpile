@@ -7,8 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+This is a total rewrite of Stockpile, so some changes won't be listed.
+**This is a breaking upgrade -- your old worlds will no longer work!**
+
 ### Changed
  - Dependency from Scala to Kotlin language adapter
+ - Fabric and Minecraft versions to 1.14 Prerelease 5
+ - Internal structure to accommodate for an API 
+ 
+### Added
+ - Proper upgrade system
+   - Right-click on a Barrel with an upgrade to apply it
+   - Upgrade removal is currently not implemented
+ - Barrel Hat
+   - Allows for barrel interaction from inventory
 
 ## [0.5.2] - 2019-03-14
 

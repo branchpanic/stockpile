@@ -9,7 +9,7 @@
   "ui.stockpile.cant_apply_upgrade": "Can't apply this upgrade!",
   "ui.stockpile.upgrade_conflicts": "Conflicting upgrades present!",
   "ui.stockpile.upgrade_applied": "Upgrade applied!",
-  "ui.stockpile.barrel_hat": "Interacts with Item Barrels in your inventory",
+  "ui.stockpile.barrel_hat": "When worn, interacts with Item Barrels in inventory",
   "ui.stockpile.barrel_hat_push": "[%s]: insert all stacks into barrels",
   "ui.stockpile.barrel_hat_pull": "Sneak + [%s]: top off all stacks from barrels",
   "controls.stockpile": "Stockpile",

@@ -5,8 +5,31 @@ plugins {
     id("fabric-loom") version "0.2.1-SNAPSHOT"
 }
 
+object Versions {
+    // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
+    // added.
+    const val STOCKPILE = "1.0.0"
+
+    // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
+    // be empty for full releases.
+    const val STOCKPILE_TAG = ""
+
+    const val MINECRAFT = "1.14 Pre-Release 5"
+    const val YARN = "$MINECRAFT+build.2"
+    const val LOADER = "0.4.1+build.126"
+
+    const val FABRIC = "0.2.7+build.123"
+    const val FABRIC_KT = "1.3.30+build.1"
+    const val MOD_MENU = "1.4.0-72"
+    const val REI = "2.7.11.97"
+    const val CLOTH_CONFIG = "0.1.3.7"
+    const val CLOTH_EVENTS = "0.3.1.23"
+}
+
 group = "me.branchpanic.mods"
-version = "1.0.0-alpha.0"
+version = Versions.STOCKPILE +
+        if (Versions.STOCKPILE_TAG.isNotBlank()) { "-${Versions.STOCKPILE_TAG}" } else { "" } +
+        "+" + Versions.MINECRAFT.replace(" Pre-Release ", "-Pre")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -21,16 +44,10 @@ repositories {
     maven(url = "https://maven.jamieswhiteshirt.com/libs-release/") {
         name = "JamiesWhiteShirt"
     }
-}
 
-object Versions {
-    const val MINECRAFT = "1.14 Pre-Release 5"
-    const val YARN = "$MINECRAFT+build.2"
-    const val LOADER = "0.4.1+build.126"
-
-    const val FABRIC = "0.2.7+build.123"
-    const val FABRIC_KT = "1.3.30+build.1"
-    const val MOD_MENU = "1.4.0-72"
+    maven(url = "https://minecraft.curseforge.com/api/maven") {
+        name = "CurseForge"
+    }
 }
 
 dependencies {
@@ -40,6 +57,9 @@ dependencies {
 
     modCompile("net.fabricmc:fabric:${Versions.FABRIC}")
     modCompile("io.github.prospector.modmenu:ModMenu:${Versions.MOD_MENU}")
+    modCompile("roughly-enough-items:RoughlyEnoughItems:${Versions.REI}")
+    modCompile("cloth-config:ClothConfig:${Versions.CLOTH_CONFIG}")
+    modCompile("cloth:ClothEvents:${Versions.CLOTH_EVENTS}")
 
     include("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")

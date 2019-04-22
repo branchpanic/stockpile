@@ -1,0 +1,23 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "WHW",
+    "B B",
+    "   "
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:planks"
+    },
+    "H": {
+      "item": "minecraft:leather_helmet"
+    },
+    "B": {
+      "item": "stockpile:item_barrel"
+    }
+  },
+  "result": {
+    "item": "stockpile:barrel_hat",
+    "count": 1
+  }
+}

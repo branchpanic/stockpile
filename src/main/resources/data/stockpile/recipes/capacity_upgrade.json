@@ -1,0 +1,23 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "SIS",
+    "IBI",
+    "SBS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "tag": "stockpile:chest_like"
+    }
+  },
+  "result": {
+    "item": "stockpile:capacity_upgrade",
+    "count": 2
+  }
+}

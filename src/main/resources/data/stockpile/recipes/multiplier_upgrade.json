@@ -1,0 +1,23 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "SDS",
+    "DCD",
+    "SCS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "stockpile:double_capacity_upgrade"
+    }
+  },
+  "result": {
+    "item": "stockpile:multiplier_upgrade",
+    "count": 2
+  }
+}

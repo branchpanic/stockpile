@@ -23,7 +23,6 @@
       }
     ]
   },
-  "languageAdapter": "net.fabricmc.language.kotlin.KotlinLanguageAdapter",
   "requires": {
     "fabric": "*",
     "fabricloader": ">=0.4.0",

@@ -15,8 +15,8 @@ object UpgradeRegistry {
     private const val ID_TAG = "ID"
     private const val DATA_TAG = "Data"
 
-    val UPGRADE_HEADER_STYLE = Style().setColor(TextFormat.GREEN)
-    val UPGRADE_TOOLTIP_STYLE = Style().setColor(TextFormat.GRAY)
+    val UPGRADE_HEADER_STYLE: Style = Style().setColor(TextFormat.GREEN)
+    val UPGRADE_TOOLTIP_STYLE: Style = Style().setColor(TextFormat.GRAY)
 
     private var upgrades = emptyMap<Identifier, UpgradeType>()
 
@@ -27,10 +27,16 @@ object UpgradeRegistry {
         upgrades = upgrades + (id to type)
     }
 
+    /**
+     * Reads a registered Upgrade from the given CompoundTag or returns null if it does not exist.
+     */
     fun readUpgrade(tag: CompoundTag): Upgrade? = upgrades[Identifier(tag.getString(ID_TAG))]?.reader?.invoke(
         tag.getCompound(DATA_TAG)
     )
 
+    /**
+     * Writes the given registered Upgrade to a new CompoundTag.
+     */
     fun writeUpgrade(upgrade: Upgrade): CompoundTag? {
         if (upgrade.id !in upgrades) {
             return null
@@ -49,6 +55,9 @@ object UpgradeRegistry {
         }
     }
 
+    /**
+     * Creates a tooltip of TextComponents describing all the upgrades present on the given UpgradeApplier.
+     */
     fun createTooltip(applier: UpgradeApplier): List<TextComponent> {
         val upgrades = applier.appliedUpgrades
 

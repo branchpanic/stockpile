@@ -4,6 +4,9 @@ import me.branchpanic.mods.stockpile.api.itemEquals
 import me.branchpanic.mods.stockpile.api.withAmount
 import net.minecraft.item.ItemStack
 
+/**
+ * A MassItemStorage is an implementation of a [MassStorage] for storing ItemStacks.
+ */
 class MassItemStorage(
     val maxStacks: Int,
     private var storedItems: Long = 0L,

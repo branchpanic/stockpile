@@ -12,6 +12,7 @@
   "ui.stockpile.barrel_hat": "When worn, interacts with Item Barrels in inventory",
   "ui.stockpile.barrel_hat_push": "[%s]: insert all stacks into barrels",
   "ui.stockpile.barrel_hat_pull": "Sneak + [%s]: top off all stacks from barrels",
+  "ui.stockpile.empty": "Empty",
   "controls.stockpile": "Stockpile",
   "upgrade.stockpile.capacity": "Increased capacity (+%d stacks)",
   "upgrade.stockpile.multiplier": "Increased capacity (x%d stacks)",

@@ -1,0 +1,23 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "SGS",
+    "GCG",
+    "SCS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "C": {
+      "item": "stockpile:capacity_upgrade"
+    }
+  },
+  "result": {
+    "item": "stockpile:double_capacity_upgrade",
+    "count": 2
+  }
+}

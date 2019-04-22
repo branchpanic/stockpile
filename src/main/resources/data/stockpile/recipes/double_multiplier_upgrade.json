@@ -1,0 +1,23 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "SES",
+    "ECE",
+    "SCS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "E": {
+      "item": "minecraft:emerald"
+    },
+    "C": {
+      "item": "stockpile:multiplier_upgrade"
+    }
+  },
+  "result": {
+    "item": "stockpile:double_multiplier_upgrade",
+    "count": 2
+  }
+}

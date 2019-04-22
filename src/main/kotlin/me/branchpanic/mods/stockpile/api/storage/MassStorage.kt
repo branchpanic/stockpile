@@ -1,7 +1,7 @@
 package me.branchpanic.mods.stockpile.api.storage
 
 /**
- * A MassStorage tracks a large quantity (one unsigned long's worth) of a given instance.
+ * A MassStorage tracks a large quantity (one long's worth) of a given instance.
  *
  * The type, T, represents the type of object being stored. When T has its own concept of quantity (i.e. ItemStacks
  * have an `amount` field), it is always respected.

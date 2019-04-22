@@ -3,7 +3,9 @@ package me.branchpanic.mods.stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import me.branchpanic.mods.stockpile.content.item.BarrelHatItem
 import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
 import me.branchpanic.mods.stockpile.content.upgrade.CapacityUpgrade
@@ -32,7 +34,8 @@ object Stockpile : ModInitializer {
     private val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.build(id("all")) { ItemStack(ItemBarrelBlock) }
 
     private val BLOCKS: Map<Identifier, Block> = mapOf(
-        id("item_barrel") to ItemBarrelBlock
+        id("item_barrel") to ItemBarrelBlock,
+        id("trash_can") to TrashCanBlock
     )
 
     internal val ITEM_SETTINGS = Item.Settings().itemGroup(ITEM_GROUP)
@@ -45,7 +48,8 @@ object Stockpile : ModInitializer {
     )
 
     private val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
-        id("item_barrel") to ItemBarrelBlockEntity.TYPE
+        id("item_barrel") to ItemBarrelBlockEntity.TYPE,
+        id("trash_can") to TrashCanBlockEntity.TYPE
     )
 
     private val UPGRADES: Map<Identifier, UpgradeType> = mapOf(

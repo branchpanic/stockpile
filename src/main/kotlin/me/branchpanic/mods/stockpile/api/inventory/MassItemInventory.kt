@@ -8,6 +8,9 @@ import net.minecraft.item.ItemStack
 import net.minecraft.util.math.Direction
 import kotlin.math.min
 
+/**
+ * A MassItemInventory wraps a MassStorage of ItemStacks into a SidedInventory.
+ */
 class MassItemInventory(var storage: MassStorage<ItemStack>) : SidedInventory {
     companion object {
         const val INPUT_SLOT = 0

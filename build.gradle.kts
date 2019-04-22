@@ -79,7 +79,7 @@ task("sourcesJar", Jar::class) {
 
 tasks.withType<ProcessResources>().all {
     filesMatching("fabric.mod.json") {
-        expand(Pair("version", project.version))
+        expand("version" to project.version)
     }
 }
 

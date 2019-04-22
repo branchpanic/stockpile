@@ -1,5 +1,6 @@
 package me.branchpanic.mods.stockpile.content.block
 
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.Block
@@ -7,6 +8,7 @@ import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.BlockEntity
+import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.VerticalEntityPosition
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
@@ -15,6 +17,8 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.BooleanProperty
+import net.minecraft.text.TextComponent
+import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
@@ -77,4 +81,13 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
     }
 
     override fun createBlockEntity(world: BlockView?): BlockEntity? = TrashCanBlockEntity()
+
+    override fun buildTooltip(
+        stack: ItemStack?,
+        world: BlockView?,
+        tooltip: MutableList<TextComponent>?,
+        context: TooltipContext?
+    ) {
+        tooltip?.add(TranslatableTextComponent("block.stockpile.trash_can.desc").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
+    }
 }

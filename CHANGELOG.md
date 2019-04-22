@@ -5,22 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).  
 
-## [Unreleased]
+## [1.0.0] - 2019-04-22
 
 This is a total rewrite of Stockpile, so some changes won't be listed.
-**This is a breaking upgrade -- your old worlds will no longer work!**
+**This is a breaking upgrade -- your old worlds will no longer work!** Old
+barrels will disappear, as their IDs have changed.
 
 ### Changed
  - Dependency from Scala to Kotlin language adapter
- - Fabric and Minecraft versions to 1.14 Prerelease 5
+ - Fabric and Minecraft versions to 1.14 Pre-Release 5
  - Internal structure to accommodate for an API 
+ - Default barrel behavior to being locked
  
 ### Added
  - Proper upgrade system
    - Right-click on a Barrel with an upgrade to apply it
-   - Upgrade removal is currently not implemented
+   - Upgrade removal is currently not implemented but will be added in the future
  - Barrel Hat
    - Allows for barrel interaction from inventory
+   
+### Fixed
+ - Trash can now drops properly
 
 ## [0.5.2] - 2019-03-14
 

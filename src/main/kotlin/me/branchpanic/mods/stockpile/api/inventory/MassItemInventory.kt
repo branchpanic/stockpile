@@ -11,14 +11,22 @@ import kotlin.math.min
 /**
  * A MassItemInventory wraps a MassStorage of ItemStacks into a SidedInventory.
  */
-class MassItemInventory(var storage: MassStorage<ItemStack>) : SidedInventory {
+class MassItemInventory(
+    var storage: MassStorage<ItemStack>,
+    val onChanged: () -> Unit
+) : SidedInventory {
+
+    override fun markDirty() {
+    }
+
     companion object {
         const val INPUT_SLOT = 0
         const val OUTPUT_SLOT = 1
     }
 
-    override fun isValidInvStack(int_1: Int, itemStack_1: ItemStack?): Boolean =
-        int_1 == INPUT_SLOT && itemStack_1 != null && storage.accepts(itemStack_1)
+    override fun isValidInvStack(slot: Int, stack: ItemStack?): Boolean {
+        return slot == INPUT_SLOT && stack != null && storage.accepts(stack)
+    }
 
     override fun getInvStack(slot: Int): ItemStack {
         if (storage.isEmpty || !storage.instanceIsSet) {
@@ -50,28 +58,25 @@ class MassItemInventory(var storage: MassStorage<ItemStack>) : SidedInventory {
         }
     }
 
-    override fun markDirty() {
-    }
-
     override fun clear() {
         storage.remove(storage.amountStored)
-        markDirty()
+        onChanged()
     }
 
     override fun setInvStack(slot: Int, stack: ItemStack?) {
-        if (slot != INPUT_SLOT || stack == null || !storage.accepts(stack)) {
+        if (stack == null || !isValidInvStack(slot, stack)) {
             return
         }
 
         storage.offer(stack)
-        markDirty()
+        onChanged()
     }
 
     override fun removeInvStack(slot: Int): ItemStack {
         if (slot != OUTPUT_SLOT) return ItemStack.EMPTY
 
         val result = storage.take(storage.currentInstance.maxAmount.toLong()).getOrElse(0) { ItemStack.EMPTY }
-        markDirty()
+        onChanged()
 
         return result
     }
@@ -82,7 +87,7 @@ class MassItemInventory(var storage: MassStorage<ItemStack>) : SidedInventory {
 
     override fun takeInvStack(slot: Int, amount: Int): ItemStack {
         val result = storage.take(amount.toLong()).getOrElse(0) { ItemStack.EMPTY }
-        markDirty()
+        onChanged()
 
         return result
     }
@@ -94,7 +99,7 @@ class MassItemInventory(var storage: MassStorage<ItemStack>) : SidedInventory {
     }
 
     override fun canExtractInvStack(slot: Int, stack: ItemStack?, side: Direction?): Boolean {
-        return slot == OUTPUT_SLOT && stack != null && storage.accepts(stack)
+        return slot == OUTPUT_SLOT && stack != null && !storage.isEmpty && storage.accepts(stack)
     }
 
     override fun canInsertInvStack(slot: Int, stack: ItemStack?, side: Direction?): Boolean {

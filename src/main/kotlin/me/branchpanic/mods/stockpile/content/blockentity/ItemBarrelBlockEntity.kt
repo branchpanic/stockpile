@@ -21,19 +21,51 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.TextComponent
 import net.minecraft.text.TranslatableTextComponent
+import net.minecraft.util.math.Direction
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.min
 
 class ItemBarrelBlockEntity(
     private var storage: MassItemStorage = MassItemStorage(DEFAULT_CAPACITY_STACKS),
-    override var appliedUpgrades: List<ItemBarrelUpgrade> = emptyList(),
-    private val invWrapper: MassItemInventory = MassItemInventory(storage)
+    override var appliedUpgrades: List<ItemBarrelUpgrade> = emptyList()
 ) :
     BlockEntity(TYPE),
     BlockEntityClientSerializable,
     UpgradeApplier,
-    SidedInventory by invWrapper {
+    SidedInventory {
+
+    // --- Begin lame hotfix hack ---
+
+    // TODO: Implementation by delegation isn't working properly in this context (it's definitely my fault, and not
+    //       Kotlin's). This will prevent Simple Pipes from deleting items for the time being, but isn't a pretty
+    //       solution.
+
+    private var invWrapper: MassItemInventory = MassItemInventory(storage, onChanged = { markDirty() })
+
+    override fun getInvStack(p0: Int): ItemStack = invWrapper.getInvStack(p0)
+
+    override fun clear() = invWrapper.clear()
+
+    override fun setInvStack(p0: Int, p1: ItemStack?) = invWrapper.setInvStack(p0, p1)
+
+    override fun removeInvStack(p0: Int): ItemStack = invWrapper.removeInvStack(p0)
+
+    override fun canPlayerUseInv(p0: PlayerEntity?): Boolean = invWrapper.canPlayerUseInv(p0)
+
+    override fun getInvAvailableSlots(p0: Direction?): IntArray = invWrapper.getInvAvailableSlots(p0)
+
+    override fun getInvSize(): Int = invWrapper.invSize
+
+    override fun canExtractInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean = invWrapper.canExtractInvStack(p0, p1, p2)
+
+    override fun takeInvStack(p0: Int, p1: Int): ItemStack = invWrapper.takeInvStack(p0, p1)
+
+    override fun isInvEmpty(): Boolean = invWrapper.isInvEmpty
+
+    override fun canInsertInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean = invWrapper.canInsertInvStack(p0, p1, p2)
+
+    // --- End lame hotfix hack ---
 
     override val maxUpgrades: Int = MAX_UPGRADES
 
@@ -61,6 +93,8 @@ class ItemBarrelBlockEntity(
     }
 
     val backingStorage get() = storage
+
+    override fun isValidInvStack(slot: Int, stack: ItemStack?): Boolean = invWrapper.isValidInvStack(slot, stack)
 
     private var recentUsers: Map<UUID, Long> = mapOf()
 

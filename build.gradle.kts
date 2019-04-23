@@ -8,11 +8,11 @@ plugins {
 object Versions {
     // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
     // added.
-    const val STOCKPILE = "1.0.1"
+    const val STOCKPILE = "1.0.2"
 
     // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
     // be empty for full releases.
-    const val STOCKPILE_TAG = ""
+    const val STOCKPILE_TAG = "various-patches"
 
     const val MINECRAFT = "1.14 Pre-Release 5"
     const val YARN = "$MINECRAFT+build.2"

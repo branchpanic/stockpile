@@ -30,13 +30,13 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         }
     }
 
-    private fun getBarrelStacks(stacks: List<ItemStack>): List<ItemStack> {
-        return stacks.filter { s -> s.item == Registry.ITEM[Stockpile.id("item_barrel")] }
+    private fun getUsableBarrelStacks(stacks: List<ItemStack>): List<ItemStack> {
+        return stacks.filter { s -> s.amount == 1 && s.item == Registry.ITEM[Stockpile.id("item_barrel")] }
     }
 
     fun pushInventoryToBarrels(player: PlayerEntity) {
         val invStacks = getInventoryStacks(player)
-        val barrelStacks = getBarrelStacks(invStacks)
+        val barrelStacks = getUsableBarrelStacks(invStacks)
 
         if (barrelStacks.isEmpty()) {
             return
@@ -61,7 +61,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
 
     fun pullInventoryFromBarrels(player: PlayerEntity) {
         val invStacks = getInventoryStacks(player)
-        val barrelStacks = getBarrelStacks(invStacks)
+        val barrelStacks = getUsableBarrelStacks(invStacks)
 
         if (barrelStacks.isEmpty()) {
             return

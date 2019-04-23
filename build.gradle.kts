@@ -55,15 +55,16 @@ dependencies {
     mappings("net.fabricmc:yarn:${Versions.YARN}")
     modCompile("net.fabricmc:fabric-loader:${Versions.LOADER}")
 
+    // Mod dependencies
     modCompile("net.fabricmc:fabric:${Versions.FABRIC}")
+    modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
+    compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
+
+    // Additional dev environment mods
     modCompile("io.github.prospector.modmenu:ModMenu:${Versions.MOD_MENU}")
     modCompile("roughly-enough-items:RoughlyEnoughItems:${Versions.REI}")
     modCompile("cloth-config:ClothConfig:${Versions.CLOTH_CONFIG}")
     modCompile("cloth:ClothEvents:${Versions.CLOTH_EVENTS}")
-
-    include("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
-    modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
-    compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

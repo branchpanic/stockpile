@@ -15,9 +15,9 @@ import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
 import net.minecraft.text.TextComponent
 import net.minecraft.text.TextFormat
+import net.minecraft.util.BlockMirror
+import net.minecraft.util.BlockRotation
 import net.minecraft.util.Hand
-import net.minecraft.util.Mirror
-import net.minecraft.util.Rotation
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
@@ -42,11 +42,11 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         super.getPlacementState(context)
             ?.with(Properties.FACING, context?.playerFacing?.opposite ?: Direction.NORTH)
 
-    override fun rotate(state: BlockState?, rotation: Rotation?): BlockState =
+    override fun rotate(state: BlockState?, rotation: BlockRotation?): BlockState =
         state?.with(Properties.FACING, rotation?.rotate(state.get(Properties.FACING)) ?: Direction.NORTH)
             ?: throw NullPointerException("attempted to rotate null item barrel")
 
-    override fun mirror(state: BlockState?, mirror: Mirror?): BlockState =
+    override fun mirror(state: BlockState?, mirror: BlockMirror?): BlockState =
         state?.with(Properties.FACING, mirror?.apply(state.get(Properties.FACING)) ?: Direction.NORTH)
             ?: throw NullPointerException("attempted to mirror null item barrel")
 

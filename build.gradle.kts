@@ -12,13 +12,13 @@ object Versions {
 
     // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
     // be empty for full releases.
-    const val STOCKPILE_TAG = "various-patches"
+    const val STOCKPILE_TAG = ""
 
-    const val MINECRAFT = "1.14 Pre-Release 5"
-    const val YARN = "$MINECRAFT+build.2"
-    const val LOADER = "0.4.1+build.126"
+    const val MINECRAFT = "1.14"
+    const val YARN = "$MINECRAFT+build.3"
+    const val LOADER = "0.4.4+build.138"
 
-    const val FABRIC = "0.2.7+build.123"
+    const val FABRIC = "0.2.7+build.127"
     const val FABRIC_KT = "1.3.30+build.1"
     const val MOD_MENU = "1.4.0-72"
     const val REI = "2.7.11.97"

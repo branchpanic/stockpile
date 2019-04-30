@@ -12,7 +12,7 @@ object Versions {
 
     // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
     // be empty for full releases.
-    const val STOCKPILE_TAG = "server-npe-test"
+    const val STOCKPILE_TAG = ""
 
     const val MINECRAFT = "1.14"
     const val YARN = "$MINECRAFT+build.3"

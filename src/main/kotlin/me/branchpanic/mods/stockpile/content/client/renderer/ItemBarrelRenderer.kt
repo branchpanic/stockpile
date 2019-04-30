@@ -152,6 +152,16 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
     ) {
         val stack = storage.currentInstance
 
+        GlStateManager.enableRescaleNormal()
+        GlStateManager.alphaFunc(516, 0.1F)
+        GlStateManager.enableBlend()
+        GuiLighting.enable()
+        GlStateManager.blendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO
+        )
         GlStateManager.pushMatrix()
 
         transformToFace(orientation, x, y, z)
@@ -159,11 +169,12 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
         GlStateManager.scaled(0.03125, 0.03125, -COFH_TRANSFORM_OFFSET)
         GlStateManager.rotated(180.0, 0.0, 0.0, 1.0)
 
-        GuiLighting.enable()
         MinecraftClient.getInstance().itemRenderer.renderGuiItem(stack, 0, -3)
         renderFillBar(storage, 8.0, 16.0)
 
         GlStateManager.popMatrix()
+        GlStateManager.disableRescaleNormal()
+        GlStateManager.disableBlend()
     }
 
     private fun getDisplayText(storage: MassItemStorage): String {

@@ -8,17 +8,17 @@ plugins {
 object Versions {
     // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
     // added.
-    const val STOCKPILE = "1.0.1"
+    const val STOCKPILE = "1.0.2"
 
     // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
     // be empty for full releases.
-    const val STOCKPILE_TAG = ""
+    const val STOCKPILE_TAG = "server-npe-test"
 
-    const val MINECRAFT = "1.14 Pre-Release 5"
-    const val YARN = "$MINECRAFT+build.2"
-    const val LOADER = "0.4.1+build.126"
+    const val MINECRAFT = "1.14"
+    const val YARN = "$MINECRAFT+build.3"
+    const val LOADER = "0.4.4+build.138"
 
-    const val FABRIC = "0.2.7+build.123"
+    const val FABRIC = "0.2.7+build.127"
     const val FABRIC_KT = "1.3.30+build.1"
     const val MOD_MENU = "1.4.0-72"
     const val REI = "2.7.11.97"
@@ -55,15 +55,16 @@ dependencies {
     mappings("net.fabricmc:yarn:${Versions.YARN}")
     modCompile("net.fabricmc:fabric-loader:${Versions.LOADER}")
 
+    // Mod dependencies
     modCompile("net.fabricmc:fabric:${Versions.FABRIC}")
+    modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
+    compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
+
+    // Additional dev environment mods
     modCompile("io.github.prospector.modmenu:ModMenu:${Versions.MOD_MENU}")
     modCompile("roughly-enough-items:RoughlyEnoughItems:${Versions.REI}")
     modCompile("cloth-config:ClothConfig:${Versions.CLOTH_CONFIG}")
     modCompile("cloth:ClothEvents:${Versions.CLOTH_EVENTS}")
-
-    include("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
-    modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
-    compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

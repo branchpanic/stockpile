@@ -135,7 +135,7 @@ class ItemBarrelBlockEntity(
             return
         }
 
-        recentUsers = if (player.uuid in recentUsers && !storage.isEmpty) {
+        recentUsers = if (player.uuid in recentUsers && storage.instanceIsSet) {
             player.inventory.main.replaceAll { s -> storage.offer(s) ?: ItemStack.EMPTY }
             player.inventory.offHand.replaceAll { s -> storage.offer(s) ?: ItemStack.EMPTY }
             player.inventory.markDirty()

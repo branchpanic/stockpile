@@ -83,7 +83,7 @@ object Stockpile : ModInitializer {
         UseBlockCallback.EVENT.register(UpgradeInstaller)
 
         ServerSidePacketRegistry.INSTANCE.register(id("barrel_hat_restock")) { ctx, _ ->
-            if (ctx.player.getEquippedStack(EquipmentSlot.HEAD).item != BarrelHatItem) {
+            if (ctx.player?.getEquippedStack(EquipmentSlot.HEAD)?.item != BarrelHatItem) {
                 return@register
             }
 

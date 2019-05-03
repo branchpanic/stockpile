@@ -15,20 +15,20 @@ import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
 import net.minecraft.text.TextComponent
 import net.minecraft.text.TextFormat
+import net.minecraft.util.ActionResult
 import net.minecraft.util.BlockMirror
 import net.minecraft.util.BlockRotation
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
-import net.minecraft.util.hit.HitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.BlockView
-import net.minecraft.world.RayTraceContext
 import net.minecraft.world.World
 import net.minecraft.world.loot.context.LootContext
 import net.minecraft.world.loot.context.LootContextParameters
 
-object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider {
+object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider,
+    AttackableBlock {
     private const val PLAYER_REACH = 5
 
     private val CONTENTS_STYLE = Style().setColor(TextFormat.GRAY)
@@ -69,33 +69,25 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         }
     }
 
-    override fun onBlockBreakStart(
-        state: BlockState?,
-        world: World?,
-        pos: BlockPos?,
-        player: PlayerEntity?
-    ) {
-        if (world == null || player == null || pos == null || world.isClient || player.activeHand != Hand.MAIN) {
-            return
+    override fun onBlockAttacked(
+        player: PlayerEntity,
+        world: World,
+        hand: Hand,
+        pos: BlockPos,
+        direction: Direction
+    ): ActionResult {
+        if (world.isClient) {
+            return ActionResult.PASS
         }
 
-        val rayTraceStart = player.getCameraPosVec(1f)
-        val rayTraceEnd = rayTraceStart.add(player.getRotationVec(1f).multiply(PLAYER_REACH.toDouble()))
-        val result = world.rayTrace(
-            RayTraceContext(
-                rayTraceStart,
-                rayTraceEnd,
-                RayTraceContext.ShapeType.OUTLINE,
-                RayTraceContext.FluidHandling.NONE,
-                player
-            )
-        )
+        val state = world.getBlockState(pos) ?: return ActionResult.PASS
 
-        if (result.type != HitResult.Type.BLOCK || result.side != state?.get(Properties.FACING)) {
-            return
+        if (direction != state.get(Properties.FACING)) {
+            return ActionResult.PASS
         }
 
         (world.getBlockEntity(pos) as ItemBarrelBlockEntity).onPunched(player)
+        return ActionResult.SUCCESS
     }
 
     override fun onBlockRemoved(

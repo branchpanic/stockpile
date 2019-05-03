@@ -10,7 +10,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.world.World
 
-object UpgradeInstaller : UseBlockCallback {
+object UpgradeInstallerCallback : UseBlockCallback {
     override fun interact(player: PlayerEntity?, world: World?, hand: Hand?, hit: BlockHitResult?): ActionResult {
         if (player == null || world == null || hand == null || hit == null || player.isSpectator) {
             return ActionResult.PASS

@@ -3,43 +3,54 @@ package me.branchpanic.mods.stockpile.content.block
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
-import net.minecraft.block.Block
-import net.minecraft.block.BlockEntityProvider
-import net.minecraft.block.BlockState
-import net.minecraft.block.Blocks
+import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.VerticalEntityPosition
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.fluid.FluidState
+import net.minecraft.fluid.Fluids
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.BooleanProperty
+import net.minecraft.state.property.Properties
+import net.minecraft.tag.FluidTags
 import net.minecraft.text.TextComponent
 import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
+import net.minecraft.world.IWorld
 import net.minecraft.world.World
 import net.minecraft.world.loot.context.LootContext
 
 val IS_OPEN: BooleanProperty = BooleanProperty.create("is_open")
 
-object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()), BlockEntityProvider {
+object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()), BlockEntityProvider, Waterloggable {
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
         if (builder == null) {
             return
         }
 
-        builder.with(IS_OPEN)
+        builder.with(IS_OPEN, Properties.WATERLOGGED)
     }
 
-    override fun getPlacementState(context: ItemPlacementContext?): BlockState? =
-        super.getPlacementState(context)?.with(IS_OPEN, false)
+    override fun getPlacementState(context: ItemPlacementContext?): BlockState? {
+        if (context == null) {
+            return null
+        }
+
+        val fluid = context.world.getFluidState(context.blockPos)
+
+        return super.getPlacementState(context)?.with(IS_OPEN, false)
+            ?.with(Properties.WATERLOGGED, fluid.matches(FluidTags.WATER) && fluid.level == 8)
+    }
 
     override fun isSimpleFullBlock(state: BlockState?, world: BlockView?, pos: BlockPos?): Boolean = false
 
@@ -82,6 +93,28 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
 
     override fun createBlockEntity(world: BlockView?): BlockEntity? = TrashCanBlockEntity()
 
+    override fun getStateForNeighborUpdate(
+        state: BlockState?,
+        side: Direction?,
+        neighborState: BlockState?,
+        world: IWorld?,
+        pos: BlockPos?,
+        neighborPos: BlockPos?
+    ): BlockState {
+        if (state?.get<Boolean>(Properties.WATERLOGGED) as Boolean) {
+            world?.fluidTickScheduler?.schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world))
+        }
+
+        return super.getStateForNeighborUpdate(
+            state,
+            side,
+            neighborState,
+            world,
+            pos,
+            neighborPos
+        )
+    }
+
     override fun buildTooltip(
         stack: ItemStack?,
         world: BlockView?,
@@ -89,5 +122,14 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         context: TooltipContext?
     ) {
         tooltip?.add(TranslatableTextComponent("block.stockpile.trash_can.desc").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
+    }
+
+    override fun getFluidState(state: BlockState): FluidState {
+        @Suppress("DEPRECATION")
+        return if (state[Properties.WATERLOGGED] == true) {
+            Fluids.WATER.getStill(false)
+        } else {
+            super.getFluidState(state)
+        }
     }
 }

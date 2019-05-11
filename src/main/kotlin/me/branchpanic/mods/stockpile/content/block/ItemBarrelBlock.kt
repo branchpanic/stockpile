@@ -29,8 +29,6 @@ import net.minecraft.world.loot.context.LootContextParameters
 
 object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider,
     AttackableBlock {
-    private const val PLAYER_REACH = 5
-
     private val CONTENTS_STYLE = Style().setColor(TextFormat.GRAY)
 
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
@@ -87,7 +85,8 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         }
 
         (world.getBlockEntity(pos) as ItemBarrelBlockEntity).onPunched(player)
-        return ActionResult.SUCCESS
+
+        return ActionResult.PASS
     }
 
     override fun onBlockRemoved(

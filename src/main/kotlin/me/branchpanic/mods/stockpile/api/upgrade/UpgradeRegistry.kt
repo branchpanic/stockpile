@@ -1,11 +1,11 @@
 package me.branchpanic.mods.stockpile.api.upgrade
 
 import me.branchpanic.mods.stockpile.Stockpile
+import net.minecraft.ChatFormat
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.text.Style
-import net.minecraft.text.TextComponent
-import net.minecraft.text.TextFormat
-import net.minecraft.text.TranslatableTextComponent
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
+import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.util.Identifier
 
 /**
@@ -15,8 +15,8 @@ object UpgradeRegistry {
     private const val ID_TAG = "ID"
     private const val DATA_TAG = "Data"
 
-    val UPGRADE_HEADER_STYLE: Style = Style().setColor(TextFormat.GREEN)
-    val UPGRADE_TOOLTIP_STYLE: Style = Style().setColor(TextFormat.GRAY)
+    val UPGRADE_HEADER_STYLE: Style = Style().setColor(ChatFormat.GREEN)
+    val UPGRADE_TOOLTIP_STYLE: Style = Style().setColor(ChatFormat.GRAY)
 
     private var upgrades = emptyMap<Identifier, UpgradeType>()
 
@@ -58,7 +58,7 @@ object UpgradeRegistry {
     /**
      * Creates a tooltip of TextComponents describing all the upgrades present on the given UpgradeApplier.
      */
-    fun createTooltip(applier: UpgradeApplier): List<TextComponent> {
+    fun createTooltip(applier: UpgradeApplier): List<Component> {
         val upgrades = applier.appliedUpgrades
 
         if (upgrades.isEmpty()) {
@@ -66,7 +66,7 @@ object UpgradeRegistry {
         }
 
         return listOf(
-            TranslatableTextComponent(
+            TranslatableComponent(
                 "ui.stockpile.upgrades",
                 applier.appliedUpgrades.size,
                 applier.maxUpgrades

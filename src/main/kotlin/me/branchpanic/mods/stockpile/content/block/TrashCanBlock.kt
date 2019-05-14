@@ -6,20 +6,20 @@ import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
-import net.minecraft.entity.VerticalEntityPosition
+import net.minecraft.entity.EntityContext
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.FluidState
 import net.minecraft.fluid.Fluids
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.BooleanProperty
 import net.minecraft.state.property.Properties
 import net.minecraft.tag.FluidTags
-import net.minecraft.text.TextComponent
-import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
@@ -38,7 +38,7 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
             return
         }
 
-        builder.with(IS_OPEN, Properties.WATERLOGGED)
+        builder.add(IS_OPEN, Properties.WATERLOGGED)
     }
 
     override fun getPlacementState(context: ItemPlacementContext?): BlockState? {
@@ -58,11 +58,11 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         state: BlockState?,
         world: BlockView?,
         pos: BlockPos?,
-        verticalEntityPos: VerticalEntityPosition?
+        context: EntityContext
     ): VoxelShape = createCuboidShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
 
     override fun getDroppedStacks(state: BlockState?, context: LootContext.Builder?): MutableList<ItemStack> {
-        return mutableListOf(ItemStack(item))
+        return mutableListOf(ItemStack(asItem()))
     }
 
     override fun onBlockRemoved(
@@ -118,10 +118,10 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
     override fun buildTooltip(
         stack: ItemStack?,
         world: BlockView?,
-        tooltip: MutableList<TextComponent>?,
+        tooltip: MutableList<Component>?,
         context: TooltipContext?
     ) {
-        tooltip?.add(TranslatableTextComponent("block.stockpile.trash_can.desc").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
+        tooltip?.add(TranslatableComponent("block.stockpile.trash_can.desc").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
     }
 
     override fun getFluidState(state: BlockState): FluidState {

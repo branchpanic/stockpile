@@ -1,7 +1,9 @@
 package me.branchpanic.mods.stockpile.content.blockentity
 
 import me.branchpanic.mods.stockpile.content.block.IS_OPEN
+import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
+import net.minecraft.block.Block
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.EntityType
@@ -12,10 +14,12 @@ import net.minecraft.predicate.entity.EntityPredicates
 import net.minecraft.util.Tickable
 import net.minecraft.util.math.BoundingBox
 import net.minecraft.util.math.Direction
+import java.util.function.Supplier
 
 class TrashCanBlockEntity : BlockEntity(TYPE), SidedInventory, Tickable {
     companion object {
-        val TYPE: BlockEntityType<TrashCanBlockEntity> = BlockEntityType({ TrashCanBlockEntity() }, null)
+        val TYPE: BlockEntityType<TrashCanBlockEntity> =
+            BlockEntityType.Builder.create(Supplier { TrashCanBlockEntity() }, TrashCanBlock).build(null)
     }
 
     override fun tick() {

@@ -7,6 +7,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
+import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.entity.BlockEntity
@@ -17,13 +18,14 @@ import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.text.TextComponent
-import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.math.Direction
 import java.text.NumberFormat
 import java.util.*
+import java.util.function.Supplier
 import kotlin.math.min
 
 class ItemBarrelBlockEntity(
@@ -57,13 +59,15 @@ class ItemBarrelBlockEntity(
 
     override fun getInvSize(): Int = invWrapper.invSize
 
-    override fun canExtractInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean = invWrapper.canExtractInvStack(p0, p1, p2)
+    override fun canExtractInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean =
+        invWrapper.canExtractInvStack(p0, p1, p2)
 
     override fun takeInvStack(p0: Int, p1: Int): ItemStack = invWrapper.takeInvStack(p0, p1)
 
     override fun isInvEmpty(): Boolean = invWrapper.isInvEmpty
 
-    override fun canInsertInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean = invWrapper.canInsertInvStack(p0, p1, p2)
+    override fun canInsertInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean =
+        invWrapper.canInsertInvStack(p0, p1, p2)
 
     // --- End lame hotfix hack ---
 
@@ -84,7 +88,8 @@ class ItemBarrelBlockEntity(
 
         const val RIGHT_CLICK_PERIOD_MS = 500
 
-        val TYPE: BlockEntityType<ItemBarrelBlockEntity> = BlockEntityType({ ItemBarrelBlockEntity() }, null)
+        val TYPE: BlockEntityType<ItemBarrelBlockEntity> =
+            BlockEntityType.Builder.create(Supplier { ItemBarrelBlockEntity() }, ItemBarrelBlock).build(null)
 
         const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
 
@@ -123,11 +128,11 @@ class ItemBarrelBlockEntity(
         if (player.isSneaking) {
             if (storage.clearWhenEmpty) {
                 storage.retainInstanceWhenEmpty()
-                player.addChatMessage(TranslatableTextComponent("ui.stockpile.barrel.just_locked"), true)
+                player.addChatMessage(TranslatableComponent("ui.stockpile.barrel.just_locked"), true)
                 player.playSound(SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCKS, 0.1f, 0.9f)
             } else {
                 storage.clearInstanceWhenEmpty()
-                player.addChatMessage(TranslatableTextComponent("ui.stockpile.barrel.just_unlocked"), true)
+                player.addChatMessage(TranslatableComponent("ui.stockpile.barrel.just_unlocked"), true)
                 player.playSound(SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_OFF, SoundCategory.BLOCKS, 0.1f, 0.9f)
             }
 
@@ -244,13 +249,13 @@ class ItemBarrelBlockEntity(
         fromTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
     }
 
-    fun getContentDescription(): TextComponent {
+    fun getContentDescription(): Component {
         val f = NumberFormat.getInstance()
 
         return if (storage.isEmpty) {
-            TranslatableTextComponent("ui.stockpile.barrel.contents_empty", f.format(storage.maxStacks))
+            TranslatableComponent("ui.stockpile.barrel.contents_empty", f.format(storage.maxStacks))
         } else {
-            TranslatableTextComponent(
+            TranslatableComponent(
                 "ui.stockpile.barrel.contents",
                 f.format(storage.amountStored),
                 f.format(storage.capacity),

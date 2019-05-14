@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile.api.upgrade
 
-import net.minecraft.text.TextComponent
+import net.minecraft.network.chat.Component
 import net.minecraft.util.Identifier
 
 /**
@@ -21,7 +21,7 @@ interface Upgrade {
     /**
      * The description of this Upgrade, often used in tooltips.
      */
-    val description: TextComponent
+    val description: Component
 
     /**
      * Determines which upgrades in a given list conflict with this Upgrade.

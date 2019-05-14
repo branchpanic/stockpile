@@ -12,10 +12,10 @@ import net.minecraft.item.ArmorItem
 import net.minecraft.item.ArmorMaterial
 import net.minecraft.item.ArmorMaterials
 import net.minecraft.item.ItemStack
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.text.TextComponent
-import net.minecraft.text.TranslatableTextComponent
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
@@ -90,22 +90,22 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
     override fun buildTooltip(
         stack: ItemStack?,
         world: World?,
-        tooltip: MutableList<TextComponent>?,
+        tooltip: MutableList<Component>?,
         context: TooltipContext?
     ) {
         val keyName = StockpileClient.BARREL_HAT_KEY.localizedName.toUpperCase()
 
-        tooltip?.add(TranslatableTextComponent("ui.stockpile.barrel_hat").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
+        tooltip?.add(TranslatableComponent("ui.stockpile.barrel_hat").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
 
         tooltip?.add(
-            TranslatableTextComponent(
+            TranslatableComponent(
                 "ui.stockpile.barrel_hat_push",
                 keyName
             ).setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE)
         )
 
         tooltip?.add(
-            TranslatableTextComponent(
+            TranslatableComponent(
                 "ui.stockpile.barrel_hat_pull",
                 keyName
             ).setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE)

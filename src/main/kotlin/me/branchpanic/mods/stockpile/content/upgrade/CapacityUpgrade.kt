@@ -5,8 +5,8 @@ import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.text.TextComponent
-import net.minecraft.text.TranslatableTextComponent
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.TranslatableComponent
 
 class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
     companion object {
@@ -18,7 +18,7 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
     }
 
     override val id = Stockpile.id("capacity")
-    override val description: TextComponent = TranslatableTextComponent("upgrade.stockpile.capacity", amount)
+    override val description: Component = TranslatableComponent("upgrade.stockpile.capacity", amount)
 
     override fun upgradeMaxStacks(currentMaxStacks: Int): Int = currentMaxStacks + amount
 

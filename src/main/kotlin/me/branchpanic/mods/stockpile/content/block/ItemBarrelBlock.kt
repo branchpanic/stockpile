@@ -3,6 +3,7 @@ package me.branchpanic.mods.stockpile.content.block
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
+import net.minecraft.ChatFormat
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
@@ -10,11 +11,10 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.Style
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.Properties
-import net.minecraft.text.Style
-import net.minecraft.text.TextComponent
-import net.minecraft.text.TextFormat
 import net.minecraft.util.ActionResult
 import net.minecraft.util.BlockMirror
 import net.minecraft.util.BlockRotation
@@ -29,11 +29,11 @@ import net.minecraft.world.loot.context.LootContextParameters
 
 object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider,
     AttackableBlock {
-    private val CONTENTS_STYLE = Style().setColor(TextFormat.GRAY)
+    private val CONTENTS_STYLE = Style().setColor(ChatFormat.GRAY)
 
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
         super.appendProperties(builder)
-        builder?.with(Properties.FACING)
+        builder?.add(Properties.FACING)
     }
 
     override fun getPlacementState(context: ItemPlacementContext?): BlockState? =
@@ -112,7 +112,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             pos == null ||
             hit == null ||
             state == null ||
-            hand != Hand.MAIN ||
+            hand != Hand.MAIN_HAND ||
             hit.side != state[Properties.FACING]
         ) {
             return false
@@ -159,12 +159,12 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
 
     override fun getRenderType(state: BlockState?): BlockRenderType = BlockRenderType.MODEL
 
-    override fun getRenderLayer(): BlockRenderLayer = BlockRenderLayer.MIPPED_CUTOUT
+    override fun getRenderLayer(): BlockRenderLayer = BlockRenderLayer.CUTOUT_MIPPED
 
     override fun buildTooltip(
         stack: ItemStack?,
         world: BlockView?,
-        lines: MutableList<TextComponent>?,
+        lines: MutableList<Component>?,
         context: TooltipContext?
     ) {
         super.buildTooltip(stack, world, lines, context)

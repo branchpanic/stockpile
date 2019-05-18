@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.util.Hand
 import net.minecraft.util.math.Direction
 import java.text.NumberFormat
 import java.util.*
@@ -147,10 +148,10 @@ class ItemBarrelBlockEntity(
 
             recentUsers - player.uuid
         } else {
-            val activeStack = player.getStackInHand(player.activeHand)
+            val activeStack = player.getStackInHand(Hand.MAIN_HAND)
             val resultingStack = storage.offer(activeStack) ?: ItemStack.EMPTY
 
-            player.setStackInHand(player.activeHand, resultingStack)
+            player.setStackInHand(Hand.MAIN_HAND, resultingStack)
             player.inventory.markDirty()
 
             recentUsers + (player.uuid to System.currentTimeMillis())

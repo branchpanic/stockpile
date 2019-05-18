@@ -168,8 +168,11 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
 
         GlStateManager.scaled(0.03125, 0.03125, -COFH_TRANSFORM_OFFSET)
         GlStateManager.rotated(180.0, 0.0, 0.0, 1.0)
+        GlStateManager.translated(0.0, 0.0, 6.0)
 
         MinecraftClient.getInstance().itemRenderer.renderGuiItem(stack, 0, -3)
+
+        GlStateManager.translated(0.0, 0.0, -6.0)
         renderFillBar(storage, 8.0, 16.0)
 
         GlStateManager.popMatrix()

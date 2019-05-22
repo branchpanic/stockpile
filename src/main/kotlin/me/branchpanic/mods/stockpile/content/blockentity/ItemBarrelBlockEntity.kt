@@ -2,6 +2,8 @@ package me.branchpanic.mods.stockpile.content.blockentity
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory
+import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory.Companion.INPUT_SLOT
+import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory.Companion.OUTPUT_SLOT
 import me.branchpanic.mods.stockpile.api.storage.MassItemStorage
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier

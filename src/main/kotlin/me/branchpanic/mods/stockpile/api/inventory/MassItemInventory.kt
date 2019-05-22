@@ -15,8 +15,35 @@ class MassItemInventory(
     var storage: MassStorage<ItemStack>,
     val onChanged: () -> Unit
 ) : SidedInventory {
+    private var lastKnownInput: ItemStack = ItemStack.EMPTY
+
+    private fun getExpectedInputSlotAmount(): Int {
+        val amount = storage.amountStored
+        val capacity = storage.capacity
+        val maxStackAmount = storage.currentInstance.maxAmount
+
+        if (amount < maxStackAmount) {
+            return 0
+        }
+
+        val overflowThreshold = capacity - maxStackAmount
+
+        return if (storage.amountStored < overflowThreshold) {
+            0
+        } else {
+            (amount - overflowThreshold).toInt()
+        }
+    }
+
+    private fun acknowledgeInputSlotChanges() {
+        val expectedAmount = getExpectedInputSlotAmount()
+        val newlyInsertedItems = lastKnownInput.amount
+        storage.add(newlyInsertedItems.toLong())
+        lastKnownInput.amount = expectedAmount
+    }
 
     override fun markDirty() {
+        acknowledgeInputSlotChanges()
     }
 
     companion object {
@@ -35,21 +62,8 @@ class MassItemInventory(
 
         return when (slot) {
             INPUT_SLOT -> {
-                val amount = storage.amountStored
-                val capacity = storage.capacity
-                val maxStackAmount = storage.currentInstance.maxAmount
-
-                if (amount < maxStackAmount) {
-                    return ItemStack.EMPTY
-                }
-
-                val overflowThreshold = capacity - maxStackAmount
-
-                return if (storage.amountStored < overflowThreshold) {
-                    ItemStack.EMPTY
-                } else {
-                    storage.currentInstance.withAmount((amount - overflowThreshold).toInt())
-                }
+                acknowledgeInputSlotChanges()
+                lastKnownInput
             }
 
             OUTPUT_SLOT -> storage.currentInstance.withAmount(min(64, storage.amountStored).toInt())

@@ -3,8 +3,8 @@ package me.branchpanic.mods.stockpile.content.item
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.StockpileClient
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity

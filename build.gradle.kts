@@ -28,7 +28,11 @@ object Versions {
 
 group = "me.branchpanic.mods"
 version = Versions.STOCKPILE +
-        if (Versions.STOCKPILE_TAG.isNotBlank()) { "-${Versions.STOCKPILE_TAG}" } else { "" } +
+        if (Versions.STOCKPILE_TAG.isNotBlank()) {
+            "-${Versions.STOCKPILE_TAG}"
+        } else {
+            ""
+        } +
         "+" + Versions.MINECRAFT.replace(" Pre-Release ", "-Pre")
 
 java {
@@ -47,6 +51,10 @@ repositories {
 
     maven(url = "https://minecraft.curseforge.com/api/maven") {
         name = "CurseForge"
+    }
+
+    maven(url = "https://mod-buildcraft.com/maven") {
+        name = "BuildCraft"
     }
 }
 

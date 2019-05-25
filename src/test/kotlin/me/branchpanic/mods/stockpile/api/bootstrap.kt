@@ -1,6 +1,7 @@
 package me.branchpanic.mods.stockpile.api
 
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import org.powermock.reflect.Whitebox
 
@@ -14,3 +15,5 @@ object TestItems {
 
     val QuarterStackingItem = Item(Item.Settings().stackSize(16))
 }
+
+infix operator fun Item.times(amount: Int) = ItemStack(this, amount)

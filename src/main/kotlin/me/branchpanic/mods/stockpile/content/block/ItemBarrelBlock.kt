@@ -1,7 +1,7 @@
 package me.branchpanic.mods.stockpile.content.block
 
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.ChatFormat
 import net.minecraft.block.*
@@ -27,8 +27,7 @@ import net.minecraft.world.World
 import net.minecraft.world.loot.context.LootContext
 import net.minecraft.world.loot.context.LootContextParameters
 
-object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider,
-    AttackableBlock {
+object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider, AttackableBlock {
     private val CONTENTS_STYLE = Style().setColor(ChatFormat.GRAY)
 
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {

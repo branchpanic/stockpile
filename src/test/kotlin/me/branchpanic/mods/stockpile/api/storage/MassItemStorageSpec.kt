@@ -5,6 +5,7 @@ import io.kotlintest.runner.junit4.KotlinTestRunner
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import me.branchpanic.mods.stockpile.api.TestItems
+import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.util.registry.Registry
@@ -37,7 +38,10 @@ class MassItemStorageSpec : WordSpec({
         }
 
         "accept only stacks of the same item and data when not empty" {
-            val m = MassItemStorage(1, storedStack = ItemStack(TestItems.StandardItemA))
+            val m = MassItemStorage(
+                1,
+                storedStack = ItemStack(TestItems.StandardItemA)
+            )
 
             m.accepts(ItemStack(TestItems.StandardItemA)) shouldBe true
             m.accepts(ItemStack(TestItems.StandardItemA, 5)) shouldBe true

@@ -3,9 +3,13 @@
   "id": "stockpile",
   "name": "Stockpile",
   "description": "A mod all about storage.",
+  "contact": {
+    "issues": "https://github.com/branchpanic/stockpile/issues"
+  },
   "authors": [
     "branchpanic"
   ],
+  "license": "MIT",
   "version": "$version",
   "icon": "assets/stockpile/icon.png",
   "environment": "*",
@@ -26,6 +30,7 @@
   "requires": {
     "fabric": ">=0.3.0",
     "fabricloader": ">=0.4.0",
-    "fabric-language-kotlin": ">=1.3.30"
+    "fabric-language-kotlin": ">=1.3.30",
+    "libblockattributes": ">=0.4.2"
   }
 }

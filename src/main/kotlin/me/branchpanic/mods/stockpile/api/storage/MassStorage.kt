@@ -37,6 +37,12 @@ interface MassStorage<T> {
         get() = amountStored == 0L
 
     /**
+     * Determines whether or not this MassStorage is full.
+     */
+    val isFull: Boolean
+        get() = amountStored == capacity
+
+    /**
      * Tells this MassStorage to clear its [currentInstance] when [isEmpty] becomes true.
      *
      * If this is called when [isEmpty] is already true, [currentInstance] should be immediately cleared.
@@ -62,7 +68,7 @@ interface MassStorage<T> {
      * If the entirety of the given amount could not be inserted, then the remainder is returned. Otherwise, zero will
      * be returned.
      */
-    fun add(amount: Long): Long
+    fun add(amount: Long, simulate: Boolean = false): Long
 
     /**
      * Decrements the stored amount by at most the given amount.
@@ -70,7 +76,7 @@ interface MassStorage<T> {
      * If the entirety of the given amount could not be removed, then the amount that was actually removed is returned.
      * Otherwise, zero is returned.
      */
-    fun remove(amount: Long): Long
+    fun remove(amount: Long, simulate: Boolean = false): Long
 
     /**
      * Attempts to insert the given list of [T]s into this MassStorage. If [T] has its own concept of quantity, it will
@@ -79,17 +85,16 @@ interface MassStorage<T> {
      * The portion of the given [T]s that could not be accepted is returned. The original elements of the list will not
      * be altered.
      */
-    fun offer(ts: List<T>): List<T>
+    fun offer(ts: List<T>, simulate: Boolean = false): List<T>
 
-    fun offer(t: T): T? {
-        val remainder = offer(listOf(t))
-
-        return if (remainder.isNotEmpty()) {
-            remainder[0]
-        } else {
-            null
-        }
-    }
+    /**
+     * Attempts to insert one [T] into this MassStorage. If [T] has its own concept of quantity, it will
+     * be respected and used to check against this MassStorage's capacity.
+     *
+     * The portion of the given [T] that could not be accepted is returned. This method will not alter the input,
+     * however it may return the same reference.
+     */
+    fun offer(t: T, simulate: Boolean = false): T
 
     /**
      * Attempts to remove and return a given quantity of [T] from this MassStorage. If [T] has its own concept of
@@ -101,5 +106,5 @@ interface MassStorage<T> {
      * Conversely, if [T] is a type with no concept of quantity like a String, calling take(amount = 30) will return a
      * list of at most 30 Strings.
      */
-    fun take(amount: Long): List<T>
+    fun take(amount: Long, simulate: Boolean = false): List<T>
 }

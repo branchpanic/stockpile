@@ -1,22 +1,21 @@
 package me.branchpanic.mods.stockpile.content.blockentity
 
 import me.branchpanic.mods.stockpile.Stockpile
-import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory
-import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory.Companion.INPUT_SLOT
-import me.branchpanic.mods.stockpile.api.inventory.MassItemInventory.Companion.OUTPUT_SLOT
-import me.branchpanic.mods.stockpile.api.storage.MassItemStorage
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
+import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
+import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
+import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.inventory.SidedInventory
+import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
@@ -25,30 +24,30 @@ import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Hand
-import net.minecraft.util.math.Direction
 import java.text.NumberFormat
 import java.util.*
 import java.util.function.Supplier
 import kotlin.math.min
 
 class ItemBarrelBlockEntity(
-    private var storage: MassItemStorage = MassItemStorage(DEFAULT_CAPACITY_STACKS),
+    private var storage: MassItemStorage = MassItemStorage(
+        DEFAULT_CAPACITY_STACKS
+    ),
     override var appliedUpgrades: List<ItemBarrelUpgrade> = emptyList()
 ) :
     BlockEntity(TYPE),
     BlockEntityClientSerializable,
     UpgradeApplier,
-    SidedInventory {
+    Inventory {
 
-    // --- Begin lame hotfix hack ---
+    val invAttribute: FixedMassItemInv = FixedMassItemInv(storage)
+    private val invWrapper = UnrestrictedInventoryFixedWrapper(invAttribute)
 
-    // TODO: Implementation by delegation isn't working properly in this context (it's definitely my fault, and not
-    //       Kotlin's). This will prevent Simple Pipes from deleting items for the time being, but isn't a pretty
-    //       solution.
+    init {
+        invAttribute.addListener({ _, _, _, _ -> markDirty() }, {})
+    }
 
-    private var invWrapper: MassItemInventory = MassItemInventory(storage, onChanged = { markDirty() })
-
-    override fun getInvStack(p0: Int): ItemStack = invWrapper.getInvStack(p0)
+    override fun getInvStack(slot: Int): ItemStack = invWrapper.getInvStack(slot)
 
     override fun clear() = invWrapper.clear()
 
@@ -58,21 +57,14 @@ class ItemBarrelBlockEntity(
 
     override fun canPlayerUseInv(p0: PlayerEntity?): Boolean = invWrapper.canPlayerUseInv(p0)
 
-    override fun getInvAvailableSlots(p0: Direction?): IntArray = invWrapper.getInvAvailableSlots(p0)
-
     override fun getInvSize(): Int = invWrapper.invSize
-
-    override fun canExtractInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean =
-        invWrapper.canExtractInvStack(p0, p1, p2)
 
     override fun takeInvStack(p0: Int, p1: Int): ItemStack = invWrapper.takeInvStack(p0, p1)
 
     override fun isInvEmpty(): Boolean = invWrapper.isInvEmpty
 
-    override fun canInsertInvStack(p0: Int, p1: ItemStack?, p2: Direction?): Boolean =
-        invWrapper.canInsertInvStack(p0, p1, p2)
-
-    // --- End lame hotfix hack ---
+    override fun isValidInvStack(int_1: Int, itemStack_1: ItemStack?): Boolean =
+        invWrapper.isValidInvStack(int_1, itemStack_1)
 
     override val maxUpgrades: Int = MAX_UPGRADES
 
@@ -101,8 +93,6 @@ class ItemBarrelBlockEntity(
     }
 
     val backingStorage get() = storage
-
-    override fun isValidInvStack(slot: Int, stack: ItemStack?): Boolean = invWrapper.isValidInvStack(slot, stack)
 
     private var recentUsers: Map<UUID, Long> = mapOf()
 
@@ -144,14 +134,14 @@ class ItemBarrelBlockEntity(
         }
 
         recentUsers = if (player.uuid in recentUsers && storage.instanceIsSet) {
-            player.inventory.main.replaceAll { s -> storage.offer(s) ?: ItemStack.EMPTY }
-            player.inventory.offHand.replaceAll { s -> storage.offer(s) ?: ItemStack.EMPTY }
+            player.inventory.main.replaceAll { s -> storage.offer(s) }
+            player.inventory.offHand.replaceAll { s -> storage.offer(s) }
             player.inventory.markDirty()
 
             recentUsers - player.uuid
         } else {
             val activeStack = player.getStackInHand(Hand.MAIN_HAND)
-            val resultingStack = storage.offer(activeStack) ?: ItemStack.EMPTY
+            val resultingStack = storage.offer(activeStack)
 
             player.setStackInHand(Hand.MAIN_HAND, resultingStack)
             player.inventory.markDirty()
@@ -169,6 +159,7 @@ class ItemBarrelBlockEntity(
 
     override fun markDirty() {
         super.markDirty()
+        invWrapper.markDirty()
 
         world?.apply {
             updateListeners(pos, getBlockState(pos), getBlockState(pos), 3)
@@ -222,7 +213,7 @@ class ItemBarrelBlockEntity(
             clearWhenEmpty
         )
 
-        invWrapper.storage = storage
+        invAttribute.storage = storage
     }
 
     override fun toClientTag(tag: CompoundTag?): CompoundTag = toTag(tag ?: CompoundTag())

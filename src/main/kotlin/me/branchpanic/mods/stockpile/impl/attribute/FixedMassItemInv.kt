@@ -5,6 +5,8 @@ import alexiil.mc.lib.attributes.ListenerToken
 import alexiil.mc.lib.attributes.Simulation
 import alexiil.mc.lib.attributes.item.FixedItemInv
 import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener
+import alexiil.mc.lib.attributes.item.ItemTransferable
+import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
 import me.branchpanic.mods.stockpile.itemEquals
 import net.minecraft.item.ItemStack
@@ -15,13 +17,16 @@ import kotlin.math.min
 /**
  * A FixedMassItemInv wraps a MassItemStorage into a FixedItemInv.
  */
-class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv {
+class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv, ItemTransferable {
     companion object {
         const val INBOUND_SLOT = 0
         const val OUTBOUND_SLOT = 1
     }
 
     private var listeners: List<ItemInvSlotChangeListener> = emptyList()
+
+    private fun fireListeners(slot: Int, before: ItemStack, after: ItemStack) =
+        listeners.forEach { l -> l.onChange(this, slot, before, after) }
 
     override fun getInvStack(slot: Int): ItemStack =
         when (slot) {
@@ -55,6 +60,7 @@ class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv {
             change < 0 -> storage.remove(abs(change).toLong())
         }
 
+        fireListeners(slot, before, getInvStack(slot))
         return true
     }
 
@@ -98,5 +104,21 @@ class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv {
             OUTBOUND_SLOT -> min(storage.storedStack.amount.toLong(), storage.amountStored).toInt()
             else -> throw IllegalArgumentException("slot index out of bounds")
         }
+    }
+
+    override fun getTransferable(): ItemTransferable = this
+
+    override fun attemptInsertion(stack: ItemStack?, simulation: Simulation?): ItemStack {
+        if (stack == null) return ItemStack.EMPTY
+
+        fireListeners(-1, ItemStack.EMPTY, ItemStack.EMPTY)
+        return storage.offer(stack, simulation == Simulation.SIMULATE)
+    }
+
+    override fun attemptExtraction(filter: ItemFilter?, amount: Int, simulation: Simulation?): ItemStack {
+        if (filter == null || !filter.matches(storage.storedStack)) return ItemStack.EMPTY
+
+        fireListeners(-1, ItemStack.EMPTY, ItemStack.EMPTY)
+        return storage.take(amount.toLong(), simulation == Simulation.SIMULATE).getOrElse(0) { ItemStack.EMPTY }
     }
 }

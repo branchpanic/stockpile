@@ -43,6 +43,10 @@ class ItemBarrelBlockEntity(
     val invAttribute: FixedMassItemInv = FixedMassItemInv(storage)
     private val invWrapper = UnrestrictedInventoryFixedWrapper(invAttribute)
 
+    init {
+        invAttribute.addListener({ _, _, _, _ -> markDirty() }, {})
+    }
+
     override fun getInvStack(slot: Int): ItemStack = invWrapper.getInvStack(slot)
 
     override fun clear() = invWrapper.clear()

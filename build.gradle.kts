@@ -20,10 +20,9 @@ object Versions {
 
     const val FABRIC = "0.3.0-pre+build.156"
     const val FABRIC_KT = "1.3.30+build.2"
-    const val MOD_MENU = "1.4.0-72"
-    const val REI = "2.7.11.97"
-    const val CLOTH_CONFIG = "0.1.3.7"
-    const val CLOTH_EVENTS = "0.3.1.23"
+    const val LBA = "0.4.2"
+
+    const val SIMPLE_PIPES = "0.1.5"
 }
 
 group = "me.branchpanic.mods"
@@ -67,15 +66,11 @@ dependencies {
     modCompile("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
     compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
+    modCompile("alexiil.mc.lib:libblockattributes:${Versions.LBA}") { isTransitive = false }
+    include("alexiil.mc.lib:libblockattributes:${Versions.LBA}")
 
-    modCompile("alexiil.mc.lib:libblockattributes:0.4.2") { isTransitive = false }
-    include("alexiil.mc.lib:libblockattributes:0.4.2")
-
-    // Additional dev environment mods (rip)
-    // modCompile("io.github.prospector.modmenu:ModMenu:${Versions.MOD_MENU}")
-    // modCompile("roughly-enough-items:RoughlyEnoughItems:${Versions.REI}")
-    // modCompile("cloth-config:ClothConfig:${Versions.CLOTH_CONFIG}")
-    // modCompile("cloth:ClothEvents:${Versions.CLOTH_EVENTS}")
+    // Additional dev environment mods
+    modCompile("alexiil.mc.mod:simple_pipes:${Versions.SIMPLE_PIPES}") { isTransitive = false }
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

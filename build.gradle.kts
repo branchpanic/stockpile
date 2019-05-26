@@ -68,6 +68,10 @@ dependencies {
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
     compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
+    modCompile("alexiil.mc.lib:libblockattributes:0.4.2") {
+        isTransitive = false // Otherwise, Fabric API 0.2.7 will be brought in.
+    }
+
     // Additional dev environment mods (rip)
     // modCompile("io.github.prospector.modmenu:ModMenu:${Versions.MOD_MENU}")
     // modCompile("roughly-enough-items:RoughlyEnoughItems:${Versions.REI}")

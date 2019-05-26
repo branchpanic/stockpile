@@ -5,6 +5,8 @@ import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.impl.attribute.MassItemInv
+import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
@@ -13,6 +15,7 @@ import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
@@ -34,7 +37,34 @@ class ItemBarrelBlockEntity(
 ) :
     BlockEntity(TYPE),
     BlockEntityClientSerializable,
-    UpgradeApplier {
+    UpgradeApplier,
+    Inventory {
+
+    private val inv: MassItemInv = MassItemInv(storage)
+    private val invWrapper = UnrestrictedInventoryFixedWrapper(inv)
+
+    init {
+        inv.addListener({ _, _, _, _ -> markDirty() }, {})
+    }
+
+    override fun getInvStack(slot: Int): ItemStack = invWrapper.getInvStack(slot)
+
+    override fun clear() = invWrapper.clear()
+
+    override fun setInvStack(p0: Int, p1: ItemStack?) = invWrapper.setInvStack(p0, p1)
+
+    override fun removeInvStack(p0: Int): ItemStack = invWrapper.removeInvStack(p0)
+
+    override fun canPlayerUseInv(p0: PlayerEntity?): Boolean = invWrapper.canPlayerUseInv(p0)
+
+    override fun getInvSize(): Int = invWrapper.invSize
+
+    override fun takeInvStack(p0: Int, p1: Int): ItemStack = invWrapper.takeInvStack(p0, p1)
+
+    override fun isInvEmpty(): Boolean = invWrapper.isInvEmpty
+
+    override fun isValidInvStack(int_1: Int, itemStack_1: ItemStack?): Boolean =
+        invWrapper.isValidInvStack(int_1, itemStack_1)
 
     override val maxUpgrades: Int = MAX_UPGRADES
 
@@ -77,6 +107,7 @@ class ItemBarrelBlockEntity(
             storage.take(1)[0].giveTo(player)
         }
 
+        inv.recalculateSlots()
         markDirty()
         showContents(player)
     }
@@ -119,6 +150,7 @@ class ItemBarrelBlockEntity(
             recentUsers + (player.uuid to System.currentTimeMillis())
         }
 
+        inv.recalculateSlots()
         markDirty()
         showContents(player)
     }
@@ -129,6 +161,7 @@ class ItemBarrelBlockEntity(
 
     override fun markDirty() {
         super.markDirty()
+        invWrapper.markDirty()
 
         world?.apply {
             updateListeners(pos, getBlockState(pos), getBlockState(pos), 3)
@@ -181,6 +214,9 @@ class ItemBarrelBlockEntity(
             storedItem,
             clearWhenEmpty
         )
+
+        inv.storage = storage
+        inv.recalculateSlots()
     }
 
     override fun toClientTag(tag: CompoundTag?): CompoundTag = toTag(tag ?: CompoundTag())
@@ -199,6 +235,7 @@ class ItemBarrelBlockEntity(
         appliedUpgrades += u
 
         fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag()))
+        inv.recalculateSlots()
         markDirty()
     }
 

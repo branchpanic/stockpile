@@ -36,6 +36,9 @@ interface MassStorage<T> {
     val isEmpty: Boolean
         get() = amountStored == 0L
 
+    /**
+     * Determines whether or not this MassStorage is full.
+     */
     val isFull: Boolean
         get() = amountStored == capacity
 
@@ -84,6 +87,13 @@ interface MassStorage<T> {
      */
     fun offer(ts: List<T>, simulate: Boolean = false): List<T>
 
+    /**
+     * Attempts to insert one [T] into this MassStorage. If [T] has its own concept of quantity, it will
+     * be respected and used to check against this MassStorage's capacity.
+     *
+     * The portion of the given [T] that could not be accepted is returned. This method will not alter the input,
+     * however it may return the same reference.
+     */
     fun offer(t: T, simulate: Boolean = false): T
 
     /**

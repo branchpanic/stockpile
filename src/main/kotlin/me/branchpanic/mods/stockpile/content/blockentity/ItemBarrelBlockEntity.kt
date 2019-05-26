@@ -40,8 +40,8 @@ class ItemBarrelBlockEntity(
     UpgradeApplier,
     Inventory {
 
-    private val inv: FixedMassItemInv = FixedMassItemInv(storage)
-    private val invWrapper = UnrestrictedInventoryFixedWrapper(inv)
+    val invAttribute: FixedMassItemInv = FixedMassItemInv(storage)
+    private val invWrapper = UnrestrictedInventoryFixedWrapper(invAttribute)
 
     override fun getInvStack(slot: Int): ItemStack = invWrapper.getInvStack(slot)
 
@@ -130,14 +130,14 @@ class ItemBarrelBlockEntity(
         }
 
         recentUsers = if (player.uuid in recentUsers && storage.instanceIsSet) {
-            player.inventory.main.replaceAll { s -> storage.offer(s) ?: ItemStack.EMPTY }
-            player.inventory.offHand.replaceAll { s -> storage.offer(s) ?: ItemStack.EMPTY }
+            player.inventory.main.replaceAll { s -> storage.offer(s) }
+            player.inventory.offHand.replaceAll { s -> storage.offer(s) }
             player.inventory.markDirty()
 
             recentUsers - player.uuid
         } else {
             val activeStack = player.getStackInHand(Hand.MAIN_HAND)
-            val resultingStack = storage.offer(activeStack) ?: ItemStack.EMPTY
+            val resultingStack = storage.offer(activeStack)
 
             player.setStackInHand(Hand.MAIN_HAND, resultingStack)
             player.inventory.markDirty()
@@ -209,7 +209,7 @@ class ItemBarrelBlockEntity(
             clearWhenEmpty
         )
 
-        inv.storage = storage
+        invAttribute.storage = storage
     }
 
     override fun toClientTag(tag: CompoundTag?): CompoundTag = toTag(tag ?: CompoundTag())

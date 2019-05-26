@@ -12,11 +12,16 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * A FixedMassItemInv wraps a MassItemStorage into a FixedItemInv.
+ */
 class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv {
     companion object {
         const val INBOUND_SLOT = 0
         const val OUTBOUND_SLOT = 1
     }
+
+    private var listeners: List<ItemInvSlotChangeListener> = emptyList()
 
     override fun getInvStack(slot: Int): ItemStack =
         when (slot) {
@@ -65,8 +70,17 @@ class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv {
         return storage.accepts(stack) || stack.isEmpty
     }
 
-    override fun addListener(p0: ItemInvSlotChangeListener?, p1: ListenerRemovalToken?): ListenerToken {
-        TODO("addListener")
+    override fun addListener(listener: ItemInvSlotChangeListener?, removalToken: ListenerRemovalToken?): ListenerToken {
+        if (listener == null || removalToken == null) {
+            throw NullPointerException("null parameter when trying to add a listener")
+        }
+
+        listeners = listeners + listener
+
+        return ListenerToken {
+            listeners = listeners.filterNot { l -> l == listener }
+            removalToken.onListenerRemoved()
+        }
     }
 
     override fun getSlotCount(): Int = 2

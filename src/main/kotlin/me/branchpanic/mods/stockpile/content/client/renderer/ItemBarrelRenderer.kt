@@ -1,8 +1,8 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
 import com.mojang.blaze3d.platform.GlStateManager
-import me.branchpanic.mods.stockpile.api.storage.MassItemStorage
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient

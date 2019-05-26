@@ -1,7 +1,9 @@
 package me.branchpanic.mods.stockpile.content.block
 
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
+import alexiil.mc.lib.attributes.AttributeList
+import alexiil.mc.lib.attributes.AttributeProvider
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.ChatFormat
 import net.minecraft.block.*
@@ -27,8 +29,8 @@ import net.minecraft.world.World
 import net.minecraft.world.loot.context.LootContext
 import net.minecraft.world.loot.context.LootContextParameters
 
-object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider,
-    AttackableBlock {
+object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider, AttackableBlock,
+    AttributeProvider {
     private val CONTENTS_STYLE = Style().setColor(ChatFormat.GRAY)
 
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
@@ -175,5 +177,13 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
 
         lines.add(barrel.getContentDescription().setStyle(CONTENTS_STYLE))
         lines.addAll(UpgradeRegistry.createTooltip(barrel))
+    }
+
+    override fun addAllAttributes(world: World?, pos: BlockPos?, state: BlockState?, attributes: AttributeList<*>?) {
+        if (world == null || pos == null || state == null || attributes == null) {
+            return
+        }
+
+        (world.getBlockEntity(pos) as? ItemBarrelBlockEntity)?.let { b -> attributes.offer(b.invAttribute) }
     }
 }

@@ -1,6 +1,5 @@
 package me.branchpanic.mods.stockpile
 
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.content.block.AttackableBlockCallback
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
@@ -12,6 +11,7 @@ import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
 import me.branchpanic.mods.stockpile.content.upgrade.CapacityUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.MultiplierUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.UpgradeInstallerCallback
+import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback

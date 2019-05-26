@@ -5,7 +5,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
-import me.branchpanic.mods.stockpile.impl.attribute.MassItemInv
+import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
 import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
@@ -40,12 +40,8 @@ class ItemBarrelBlockEntity(
     UpgradeApplier,
     Inventory {
 
-    private val inv: MassItemInv = MassItemInv(storage)
+    private val inv: FixedMassItemInv = FixedMassItemInv(storage)
     private val invWrapper = UnrestrictedInventoryFixedWrapper(inv)
-
-    init {
-        inv.addListener({ _, _, _, _ -> markDirty() }, {})
-    }
 
     override fun getInvStack(slot: Int): ItemStack = invWrapper.getInvStack(slot)
 
@@ -107,7 +103,6 @@ class ItemBarrelBlockEntity(
             storage.take(1)[0].giveTo(player)
         }
 
-        inv.recalculateSlots()
         markDirty()
         showContents(player)
     }
@@ -150,7 +145,6 @@ class ItemBarrelBlockEntity(
             recentUsers + (player.uuid to System.currentTimeMillis())
         }
 
-        inv.recalculateSlots()
         markDirty()
         showContents(player)
     }
@@ -216,7 +210,6 @@ class ItemBarrelBlockEntity(
         )
 
         inv.storage = storage
-        inv.recalculateSlots()
     }
 
     override fun toClientTag(tag: CompoundTag?): CompoundTag = toTag(tag ?: CompoundTag())
@@ -235,7 +228,6 @@ class ItemBarrelBlockEntity(
         appliedUpgrades += u
 
         fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag()))
-        inv.recalculateSlots()
         markDirty()
     }
 

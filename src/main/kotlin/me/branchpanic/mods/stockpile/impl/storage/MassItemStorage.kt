@@ -14,7 +14,6 @@ class MassItemStorage(
     var storedStack: ItemStack = ItemStack.EMPTY,
     var clearWhenEmpty: Boolean = true
 ) : MassStorage<ItemStack> {
-
     override val amountStored: Long
         get() = storedItems
 
@@ -46,65 +45,71 @@ class MassItemStorage(
 
     override fun accepts(t: ItemStack): Boolean = storedStack.isEmpty || t.itemEquals(storedStack)
 
-    override fun add(amount: Long): Long {
+    override fun add(amount: Long, simulate: Boolean): Long {
         val newAmount = storedItems + amount
 
         if (newAmount > capacity) {
-            storedItems = capacity
+            if (!simulate) {
+                storedItems = capacity
+            }
+
             return newAmount - capacity
         }
 
-        storedItems = newAmount
+        if (!simulate) {
+            storedItems = newAmount
+        }
+
         return 0
     }
 
-    override fun remove(amount: Long): Long {
-        return if (amount >= storedItems) {
-            val amountRemoved = storedItems
+    override fun remove(amount: Long, simulate: Boolean): Long = if (amount >= storedItems) {
+        val amountRemoved = storedItems
+
+        if (!simulate) {
             storedItems = 0
 
             if (clearWhenEmpty) {
                 clear()
             }
+        }
 
-            amountRemoved
-        } else {
+        amountRemoved
+    } else {
+        if (!simulate) {
             storedItems -= amount
-            amount
         }
+        amount
     }
 
-    override fun offer(ts: List<ItemStack>): List<ItemStack> {
-        if (ts.isEmpty()) {
-            return emptyList()
-        }
-
-        if (!instanceIsSet) {
-            storedStack = ts.first().withAmount(1)
-        }
-
-        return ts.map { s ->
-            if (accepts(s)) {
-                s.copy().withAmount(add(s.amount.toLong()).toInt())
-            } else {
-                s
-            }
-        }.filterNot { s -> s.isEmpty }
+    override fun offer(ts: List<ItemStack>, simulate: Boolean): List<ItemStack> {
+        return ts.map { t -> offer(t, simulate) }.filterNot { t -> t.isEmpty }
     }
 
-    override fun take(amount: Long): List<ItemStack> {
+    override fun offer(t: ItemStack, simulate: Boolean): ItemStack {
+        if (t.isEmpty || !accepts(t)) return t
+
+        if (!simulate && !instanceIsSet) {
+            storedStack = t.withAmount(1)
+        }
+
+        val remainder = add(t.amount.toLong(), simulate).toInt()
+
+        return t.withAmount(remainder)
+    }
+
+    override fun take(amount: Long, simulate: Boolean): List<ItemStack> {
         if (amount == 0L || storedStack.isEmpty || amountStored == 0L) {
             return emptyList()
         }
 
-        val resultingStack = storedStack.copy()
-        val removableAmount = remove(amount)
+        val removableAmount = remove(amount, simulate)
 
-        val removableFullStacks = removableAmount / resultingStack.maxAmount
-        val removableRemainingStack = removableAmount - (resultingStack.maxAmount * removableFullStacks)
+        val removableFullStacks = removableAmount / storedStack.maxAmount
+        val removableRemainingStack = removableAmount - (storedStack.maxAmount * removableFullStacks)
 
-        val fullStacks = (0 until removableFullStacks).map { resultingStack.withAmount(resultingStack.maxAmount) }
-        val remainderStack = resultingStack.copy().withAmount(removableRemainingStack.toInt())
+        val fullStacks = (0 until removableFullStacks).map { storedStack.withAmount(storedStack.maxAmount) }
+        val remainderStack = storedStack.withAmount(removableRemainingStack.toInt())
 
         return (fullStacks + remainderStack).filterNot { s -> s.isEmpty }
     }

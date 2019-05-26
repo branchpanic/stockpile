@@ -113,7 +113,7 @@ class MassItemStorageSpec : WordSpec({
                 clearWhenEmpty = false
             )
 
-            m.offer(ItemStack(TestItems.StandardItemA, 64)) shouldBe null
+            m.offer(ItemStack(TestItems.StandardItemA, 64)).isEmpty shouldBe true
             m.amountStored shouldBe 64L
         }
 

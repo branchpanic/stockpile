@@ -8,7 +8,7 @@ plugins {
 object Versions {
     // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
     // added.
-    const val STOCKPILE = "1.0.5"
+    const val STOCKPILE = "1.0.6"
 
     // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
     // be empty for full releases.
@@ -68,9 +68,8 @@ dependencies {
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
     compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
-    modCompile("alexiil.mc.lib:libblockattributes:0.4.2") {
-        isTransitive = false // Otherwise, Fabric API 0.2.7 will be brought in.
-    }
+    modCompile("alexiil.mc.lib:libblockattributes:0.4.2") { isTransitive = false }
+    include("alexiil.mc.lib:libblockattributes:0.4.2")
 
     // Additional dev environment mods (rip)
     // modCompile("io.github.prospector.modmenu:ModMenu:${Versions.MOD_MENU}")

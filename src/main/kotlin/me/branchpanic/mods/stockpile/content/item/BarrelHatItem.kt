@@ -49,7 +49,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
 
             insertableStacks.forEach { insertStack ->
                 val remainder = barrel.backingStorage.offer(insertStack)
-                insertStack.amount = remainder?.amount ?: 0
+                insertStack.amount = remainder.amount
             }
 
             barrel.toStack(barrelStack)

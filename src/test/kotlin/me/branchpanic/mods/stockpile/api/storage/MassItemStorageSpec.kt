@@ -146,8 +146,8 @@ class MassItemStorageSpec : WordSpec({
 
             val remainder = m.offer(ItemStack(TestItems.StandardItemA, 64))
 
-            remainder?.amount shouldBe 32
-            remainder?.item shouldBe TestItems.StandardItemA
+            remainder.amount shouldBe 32
+            remainder.item shouldBe TestItems.StandardItemA
         }
 
         "accept part of a list of stacks when space is available for them" {

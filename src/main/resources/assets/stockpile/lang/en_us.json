@@ -17,6 +17,7 @@
   "controls.stockpile": "Stockpile",
   "upgrade.stockpile.capacity": "Increased capacity (+%d stacks)",
   "upgrade.stockpile.multiplier": "Increased capacity (x%d stacks)",
+  "upgrade.stockpile.trash": "Destroys inserted items when full",
   "block.stockpile.item_barrel": "Barrel (Items)",
   "block.stockpile.trash_can": "Trash Can",
   "block.stockpile.trash_can.desc": "Destroys items! Right-click to open/close.",

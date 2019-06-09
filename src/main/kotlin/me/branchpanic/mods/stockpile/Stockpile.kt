@@ -10,6 +10,7 @@ import me.branchpanic.mods.stockpile.content.item.BarrelHatItem
 import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
 import me.branchpanic.mods.stockpile.content.upgrade.CapacityUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.MultiplierUpgrade
+import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.UpgradeInstallerCallback
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.api.ModInitializer
@@ -46,6 +47,7 @@ object Stockpile : ModInitializer {
         id("double_capacity_upgrade") to BasicUpgradeItem({ CapacityUpgrade(64) }, ITEM_SETTINGS),
         id("multiplier_upgrade") to BasicUpgradeItem({ MultiplierUpgrade(2) }, ITEM_SETTINGS),
         id("double_multiplier_upgrade") to BasicUpgradeItem({ MultiplierUpgrade(4) }, ITEM_SETTINGS),
+        id("trash_upgrade") to BasicUpgradeItem({ TrashUpgrade() }, ITEM_SETTINGS),
         id("barrel_hat") to BarrelHatItem
     )
 
@@ -56,7 +58,8 @@ object Stockpile : ModInitializer {
 
     private val UPGRADES: Map<Identifier, UpgradeType> = mapOf(
         id("capacity") to CapacityUpgrade.TYPE,
-        id("multiplier") to MultiplierUpgrade.TYPE
+        id("multiplier") to MultiplierUpgrade.TYPE,
+        id("trash") to TrashUpgrade.TYPE
     )
 
     fun id(path: String): Identifier = Identifier("stockpile", path)

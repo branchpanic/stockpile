@@ -11,13 +11,14 @@ import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry
 import net.fabricmc.fabric.api.client.render.BlockEntityRendererRegistry
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.minecraft.client.util.InputUtil
+import org.lwjgl.glfw.GLFW
 
 @Environment(EnvType.CLIENT)
 object StockpileClient : ClientModInitializer {
     val BARREL_HAT_KEY: FabricKeyBinding = FabricKeyBinding.Builder.create(
         Stockpile.id("barrel_hat"),
         InputUtil.Type.KEYSYM,
-        InputUtil.fromName("key.keyboard.g").keyCode,
+        GLFW.GLFW_KEY_G,
         "controls.stockpile"
     ).build()
 

@@ -17,7 +17,8 @@ import kotlin.math.min
 /**
  * A FixedMassItemInv wraps a MassItemStorage into a FixedItemInv.
  */
-class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv, ItemTransferable {
+class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems: Boolean = false) : FixedItemInv,
+    ItemTransferable {
     companion object {
         const val INBOUND_SLOT = 0
         const val OUTBOUND_SLOT = 1
@@ -47,6 +48,10 @@ class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv, It
             return storage.offer(stack).isEmpty
         }
 
+        if (storage.isFull && voidExtraItems) {
+            return true
+        }
+
         val before = getInvStack(slot)
         val change = stack.amount - before.amount
 
@@ -69,7 +74,7 @@ class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv, It
             return false
         }
 
-        if (slot == INBOUND_SLOT && storage.isFull) {
+        if (slot == INBOUND_SLOT && storage.isFull && !voidExtraItems) {
             return false
         }
 
@@ -94,6 +99,10 @@ class FixedMassItemInv(internal var storage: MassItemStorage) : FixedItemInv, It
     override fun getMaxAmount(slot: Int, stack: ItemStack?): Int {
         if (stack == null || !stack.itemEquals(storage.storedStack)) {
             return 0
+        }
+
+        if (voidExtraItems && slot == INBOUND_SLOT) {
+            return storage.storedStack.maxAmount
         }
 
         return when (slot) {

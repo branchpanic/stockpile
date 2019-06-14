@@ -5,6 +5,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
 import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
 import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
@@ -214,6 +215,7 @@ class ItemBarrelBlockEntity(
         )
 
         invAttribute.storage = storage
+        invAttribute.voidExtraItems = appliedUpgrades.filterIsInstance<TrashUpgrade>().any()
     }
 
     override fun toClientTag(tag: CompoundTag?): CompoundTag = toTag(tag ?: CompoundTag())

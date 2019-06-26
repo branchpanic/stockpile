@@ -1,6 +1,7 @@
 package me.branchpanic.mods.stockpile.api.upgrade
 
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.util.Identifier
 
 /**
@@ -17,6 +18,9 @@ interface Upgrade {
      * The Identifier tying this Upgrade to an [UpgradeType].
      */
     val id: Identifier
+
+    val name: Component
+        get() = TranslatableComponent("upgrade.${id.namespace}.${id.path}.name")
 
     /**
      * The description of this Upgrade, often used in tooltips.

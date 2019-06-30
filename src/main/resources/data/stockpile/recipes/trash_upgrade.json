@@ -9,11 +9,11 @@
     "S": {
       "item": "minecraft:stick"
     },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
     "P": {
       "tag": "minecraft:planks"
+    },
+    "T": {
+      "item": "stockpile:trash_can"
     }
   },
   "result": {

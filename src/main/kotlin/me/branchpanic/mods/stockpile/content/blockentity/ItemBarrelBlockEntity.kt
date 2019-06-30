@@ -196,7 +196,7 @@ class ItemBarrelBlockEntity(
 
     private fun fromTagWithoutWorldInfo(tag: CompoundTag) {
         val storedItem = ItemStack.fromTag(tag.getCompound(STORED_ITEM_TAG))
-        val amountStored = tag.getLong(AMOUNT_STORED_TAG)
+        val amountStored = if (storedItem.isEmpty) 0L else tag.getLong(AMOUNT_STORED_TAG)
         val clearWhenEmpty = tag.getBoolean(CLEAR_WHEN_EMPTY_TAG)
 
         val upgradeTags = tag.getList(UPGRADE_TAG, NbtType.COMPOUND).take(MAX_UPGRADES)

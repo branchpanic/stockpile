@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile.content.upgrade
 
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.entity.player.PlayerEntity
@@ -20,13 +20,13 @@ object UpgradeInstallerCallback : UseBlockCallback {
 
         val upgrade = (heldItem.item as? UpgradeItem)?.getUpgrade(heldItem) ?: return ActionResult.PASS
 
-        val blockEntity = (world.getBlockEntity(hit.blockPos) as? UpgradeApplier) ?: return ActionResult.PASS
+        val blockEntity = (world.getBlockEntity(hit.blockPos) as? UpgradeContainer) ?: return ActionResult.PASS
 
         if (blockEntity.appliedUpgrades.size >= blockEntity.maxUpgrades) {
             return ActionResult.FAIL
         }
 
-        if (!blockEntity.canApplyUpgrade(upgrade)) {
+        if (!blockEntity.isUpgradeTypeAllowed(upgrade)) {
             return ActionResult.FAIL
         }
 

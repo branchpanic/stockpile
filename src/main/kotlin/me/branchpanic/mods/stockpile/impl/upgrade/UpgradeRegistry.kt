@@ -2,7 +2,7 @@ package me.branchpanic.mods.stockpile.impl.upgrade
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import net.minecraft.ChatFormat
 import net.minecraft.nbt.CompoundTag
@@ -65,8 +65,8 @@ object UpgradeRegistry {
     /**
      * Creates a tooltip of TextComponents describing all the upgrades present on the given UpgradeApplier.
      */
-    fun createTooltip(applier: UpgradeApplier): List<Component> {
-        val upgrades = applier.appliedUpgrades
+    fun createTooltip(container: UpgradeContainer): List<Component> {
+        val upgrades = container.appliedUpgrades
 
         if (upgrades.isEmpty()) {
             return emptyList()
@@ -75,8 +75,8 @@ object UpgradeRegistry {
         return listOf(
             TranslatableComponent(
                 "ui.stockpile.upgrades",
-                applier.appliedUpgrades.size,
-                applier.maxUpgrades
+                container.appliedUpgrades.size,
+                container.maxUpgrades
             ).setStyle(UPGRADE_HEADER_STYLE)
         ) + upgrades.map { u -> u.description.setStyle(UPGRADE_TOOLTIP_STYLE) }
     }

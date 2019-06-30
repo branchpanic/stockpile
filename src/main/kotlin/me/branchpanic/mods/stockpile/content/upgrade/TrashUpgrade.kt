@@ -2,6 +2,7 @@ package me.branchpanic.mods.stockpile.content.upgrade
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.minecraft.nbt.CompoundTag
@@ -20,4 +21,6 @@ class TrashUpgrade : ItemBarrelUpgrade {
     override fun getConflictingUpgrades(upgrades: List<Upgrade>): List<Upgrade> {
         return upgrades.filterIsInstance<TrashUpgrade>()
     }
+
+    override fun canSafelyRemove(context: UpgradeContainer): Boolean = true
 }

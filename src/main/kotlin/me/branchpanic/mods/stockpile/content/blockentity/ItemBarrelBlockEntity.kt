@@ -2,7 +2,7 @@ package me.branchpanic.mods.stockpile.content.blockentity
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
@@ -38,7 +38,7 @@ class ItemBarrelBlockEntity(
 ) :
     BlockEntity(TYPE),
     BlockEntityClientSerializable,
-    UpgradeApplier,
+    UpgradeContainer,
     Inventory {
 
     val invAttribute: FixedMassItemInv = FixedMassItemInv(storage)
@@ -222,12 +222,12 @@ class ItemBarrelBlockEntity(
 
     override fun fromClientTag(tag: CompoundTag?) = fromTag(tag ?: CompoundTag())
 
-    override fun canApplyUpgrade(u: Upgrade): Boolean = u is ItemBarrelUpgrade
+    override fun isUpgradeTypeAllowed(u: Upgrade): Boolean = u is ItemBarrelUpgrade
 
     override fun applyUpgrade(u: Upgrade) {
         if (u !is ItemBarrelUpgrade) {
             Stockpile.LOGGER.warn("attempted to apply an invalid upgrade (type ${u.id}) to an item barrel")
-            Stockpile.LOGGER.debug("this is a bug! was canApplyUpgrade checked?")
+            Stockpile.LOGGER.debug("this is a bug! was isUpgradeTypeAllowed checked?")
             return
         }
 

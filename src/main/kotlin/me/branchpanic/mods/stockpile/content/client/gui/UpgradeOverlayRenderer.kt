@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile.content.client.gui
 
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
 import net.minecraft.ChatFormat
 import net.minecraft.client.resource.language.I18n
@@ -12,14 +12,14 @@ class UpgradeOverlayRenderer : TextOverlayRenderer {
     override fun getLines(world: World, heldItem: ItemStack, selectedPos: BlockPos): List<OverlayTextComponent> {
         val blockEntity = world.getBlockEntity(selectedPos)
 
-        if (heldItem.item !is UpgradeItem || blockEntity !is UpgradeApplier) {
+        if (heldItem.item !is UpgradeItem || blockEntity !is UpgradeContainer) {
             return emptyList()
         }
 
         val upgrade = (heldItem.item as UpgradeItem).getUpgrade(heldItem)
         val conflicts = upgrade.getConflictingUpgrades(blockEntity.appliedUpgrades)
 
-        if (!blockEntity.canApplyUpgrade(upgrade)) {
+        if (!blockEntity.isUpgradeTypeAllowed(upgrade)) {
             return listOf(OverlayTextComponent(I18n.translate("ui.stockpile.wrong_upgrade"), ChatFormat.RED.color!!))
         }
 

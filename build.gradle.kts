@@ -71,7 +71,11 @@ dependencies {
     modCompile("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
+    // I might be being dumb, but no matter what I do, I can't get Stockpile to compile against LBA from the BuildCraft
+    // Maven. It seems like the source isn't getting remapped properly, resulting in build errors that wouldn't exist
+    // in a running environment.
     modApi("com.github.AlexIIL:LibBlockAttributes:${Versions.LBA}")
+
     include("alexiil.mc.lib:libblockattributes-items:0.4.7")
 
     testImplementation("junit:junit:4.12")

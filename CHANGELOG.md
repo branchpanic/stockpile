@@ -14,10 +14,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Displays list and status when holding an upgrade or screwdriver
   - Shows conflicting upgrades
 - Barrel Hat status messages (will eventually replace with graphical overlay)
+- Hint message when trying to use stacked barrels with the Barrel Hat
 
 ### Changed
 - Barrel hat now leaves 1 of each item in inventory/barrels
   - Allows for repeated usage, helpful when building
+- Fabric versions to 1.14.3
+
+### Fixed
+- (Maybe) Issue where barrels would only hold 15 stacks on 1.14.3 (comment on #70)
+- Dupe glitch as a result of missing items
 
 ## [1.0.7] - 2019-06-01
 

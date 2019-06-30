@@ -76,6 +76,7 @@ dependencies {
     // in a running environment.
     modApi("com.github.AlexIIL:LibBlockAttributes:${Versions.LBA}")
 
+    include("alexiil.mc.lib:libblockattributes-core:0.4.7")
     include("alexiil.mc.lib:libblockattributes-items:0.4.7")
 
     testImplementation("junit:junit:4.12")

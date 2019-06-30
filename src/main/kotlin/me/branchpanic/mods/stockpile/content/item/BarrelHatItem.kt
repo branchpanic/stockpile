@@ -6,6 +6,7 @@ import me.branchpanic.mods.stockpile.StockpileClient
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
+import me.branchpanic.mods.stockpile.withCount
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
@@ -19,6 +20,7 @@ import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
+import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 import kotlin.math.min
 
@@ -34,7 +36,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
     }
 
     private fun getUsableBarrelStacks(player: PlayerEntity, stacks: List<ItemStack>): List<ItemStack> {
-        val potentialStacks = stacks.filter { s -> s.item == Stockpile.ITEMS[id("item_barrel")] }
+        val potentialStacks = stacks.filter { s -> s.item == Registry.ITEM[id("item_barrel")] }
 
         if (potentialStacks.any { s -> s.count > 1 }) {
             player.addChatMessage(
@@ -46,7 +48,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
             )
         }
 
-        return stacks.filter { s -> s.count == 1 && s.item == Stockpile.ITEMS[id("item_barrel")] }
+        return potentialStacks.filter { s -> s.count == 1 }
     }
 
     fun pushInventoryToBarrels(player: PlayerEntity) {
@@ -64,7 +66,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
             val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
 
             insertableStacks.forEach insertStack@{ insertStack ->
-                if (!barrel.backingStorage.accepts(insertStack)) {
+                if (!barrel.backingStorage.accepts(insertStack) || insertStack.isEmpty) {
                     return@insertStack
                 }
 
@@ -74,8 +76,9 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                     return@insertStack
                 }
 
-                val maxInsertableAmount = amount - 1
-                val remainder = (barrel.backingStorage.add(maxInsertableAmount.toLong()) + 1).toInt()
+                val maxInsertableStack = insertStack.withCount(amount - 1)
+                val remainder = barrel.backingStorage.offer(maxInsertableStack).count + 1
+
                 insertStack.count = remainder
                 itemsDeposited += amount - remainder
             }
@@ -107,9 +110,8 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         barrelStacks.forEach { barrelStack ->
             val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
 
-
             restockableStacks.forEach restockStack@{ restockStack ->
-                if (!barrel.backingStorage.accepts(restockStack)) {
+                if (!barrel.backingStorage.accepts(restockStack) || barrel.backingStorage.isEmpty) {
                     return@restockStack
                 }
 

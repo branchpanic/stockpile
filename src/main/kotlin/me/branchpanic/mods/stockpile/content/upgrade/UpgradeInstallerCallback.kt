@@ -4,7 +4,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
@@ -41,10 +41,10 @@ object UpgradeInstallerCallback : UseBlockCallback {
         }
 
         blockEntity.pushUpgrade(upgrade)
-        heldItem.subtractAmount(1)
+        heldItem.count--
         player.inventory.markDirty()
 
-        player.addChatMessage(TranslatableComponent("ui.stockpile.upgrade_applied"), true)
+        player.addChatMessage(TranslatableText("ui.stockpile.upgrade_applied"), true)
 
         return ActionResult.SUCCESS
     }

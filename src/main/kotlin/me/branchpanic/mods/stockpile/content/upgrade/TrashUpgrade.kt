@@ -8,8 +8,8 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
 
 class TrashUpgrade : ItemBarrelUpgrade {
@@ -18,7 +18,7 @@ class TrashUpgrade : ItemBarrelUpgrade {
     }
 
     override val id: Identifier = id("trash")
-    override val description: Component = TranslatableComponent("upgrade.stockpile.trash")
+    override val description: Text = TranslatableText("upgrade.stockpile.trash")
 
     override fun getConflictingUpgrades(upgrades: List<Upgrade>): List<Upgrade> {
         return upgrades.filterIsInstance<TrashUpgrade>()

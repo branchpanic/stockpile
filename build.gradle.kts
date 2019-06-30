@@ -2,27 +2,27 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.21"
-    id("fabric-loom") version "0.2.2-SNAPSHOT"
+    id("fabric-loom") version "0.2.4-SNAPSHOT"
 }
 
 object Versions {
     // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
     // added.
-    const val STOCKPILE = "1.0.7"
+    const val STOCKPILE = "1.0.8"
 
     // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
     // be empty for full releases.
     const val STOCKPILE_TAG = ""
 
-    const val MINECRAFT = "1.14.2"
-    const val YARN = "$MINECRAFT+build.2"
-    const val LOADER = "0.4.8+build.154"
+    const val MINECRAFT = "1.14.3"
+    const val YARN = "$MINECRAFT+build.9"
+    const val LOADER = "0.4.8+build.155"
 
-    const val FABRIC = "0.3.0+build.175"
+    const val FABRIC = "0.3.0+build.187"
     const val FABRIC_KT = "1.3.30+build.2"
-    const val LBA = "0.4.2"
+    const val LBA = "release-v0.4.7-mc1.14.x"
 
-    const val SIMPLE_PIPES = "0.1.5"
+    const val SIMPLE_PIPES = "0.1.8"
 }
 
 group = "me.branchpanic.mods"
@@ -55,22 +55,24 @@ repositories {
     maven(url = "https://mod-buildcraft.com/maven") {
         name = "BuildCraft"
     }
+
+    maven(url = "https://jitpack.io") {
+        name = "JitPack"
+    }
 }
 
 dependencies {
     minecraft("com.mojang:minecraft:${Versions.MINECRAFT}")
     mappings("net.fabricmc:yarn:${Versions.YARN}")
+
     modCompile("net.fabricmc:fabric-loader:${Versions.LOADER}")
 
     // Mod dependencies
     modCompile("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
-    compileOnly("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
-    modCompile("alexiil.mc.lib:libblockattributes:${Versions.LBA}") { isTransitive = false }
-    include("alexiil.mc.lib:libblockattributes:${Versions.LBA}")
 
-    // Additional dev environment mods
-    modCompile("alexiil.mc.mod:simple_pipes:${Versions.SIMPLE_PIPES}") { isTransitive = false }
+    modApi("com.github.AlexIIL:LibBlockAttributes:${Versions.LBA}")
+    include("alexiil.mc.lib:libblockattributes-items:0.4.7")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

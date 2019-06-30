@@ -20,10 +20,10 @@ import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.TranslatableComponent
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.Hand
 import java.text.NumberFormat
 import java.util.*
@@ -89,7 +89,7 @@ class ItemBarrelBlockEntity(
         const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
 
         fun loadFromStack(stack: ItemStack): ItemBarrelBlockEntity =
-            ItemBarrelBlockEntity(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+            ItemBarrelBlockEntity(stack.getOrCreateSubTag(STORED_BLOCK_ENTITY_TAG))
     }
 
     val backingStorage get() = storage
@@ -102,7 +102,7 @@ class ItemBarrelBlockEntity(
         }
 
         if (player.isSneaking) {
-            storage.take(storage.currentInstance.maxAmount.toLong())[0].giveTo(player)
+            storage.take(storage.currentInstance.maxCount.toLong())[0].giveTo(player)
         } else {
             storage.take(1)[0].giveTo(player)
         }
@@ -121,11 +121,11 @@ class ItemBarrelBlockEntity(
         if (player.isSneaking) {
             if (storage.clearWhenEmpty) {
                 storage.retainInstanceWhenEmpty()
-                player.addChatMessage(TranslatableComponent("ui.stockpile.barrel.just_locked"), true)
+                player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_locked"), true)
                 player.playSound(SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCKS, 0.1f, 0.9f)
             } else {
                 storage.clearInstanceWhenEmpty()
-                player.addChatMessage(TranslatableComponent("ui.stockpile.barrel.just_unlocked"), true)
+                player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_unlocked"), true)
                 player.playSound(SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_OFF, SoundCategory.BLOCKS, 0.1f, 0.9f)
             }
 
@@ -208,7 +208,7 @@ class ItemBarrelBlockEntity(
 
         storage = MassItemStorage(
             capacityStacks,
-            min(amountStored, capacityStacks.toLong() * storedItem.maxAmount),
+            min(amountStored, capacityStacks.toLong() * storedItem.maxCount),
             storedItem,
             clearWhenEmpty
         )
@@ -247,25 +247,25 @@ class ItemBarrelBlockEntity(
     }
 
     fun toStack(stack: ItemStack) {
-        toTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+        toTagWithoutWorldInfo(stack.getOrCreateSubTag(STORED_BLOCK_ENTITY_TAG))
     }
 
     fun fromStack(stack: ItemStack) {
-        fromTagWithoutWorldInfo(stack.getOrCreateSubCompoundTag(STORED_BLOCK_ENTITY_TAG))
+        fromTagWithoutWorldInfo(stack.getOrCreateSubTag(STORED_BLOCK_ENTITY_TAG))
     }
 
-    fun getContentDescription(): Component {
+    fun getContentDescription(): Text {
         val f = NumberFormat.getInstance()
 
         return if (storage.isEmpty) {
-            TranslatableComponent("ui.stockpile.barrel.contents_empty", f.format(storage.maxStacks))
+            TranslatableText("ui.stockpile.barrel.contents_empty", f.format(storage.maxStacks))
         } else {
-            TranslatableComponent(
+            TranslatableText(
                 "ui.stockpile.barrel.contents",
                 f.format(storage.amountStored),
                 f.format(storage.capacity),
-                storage.currentInstance.displayName.formattedText,
-                f.format(storage.amountStored / storage.currentInstance.maxAmount),
+                storage.currentInstance.name.asFormattedString(),
+                f.format(storage.amountStored / storage.currentInstance.maxCount),
                 f.format(storage.maxStacks)
             )
         }

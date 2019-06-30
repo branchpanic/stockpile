@@ -1,8 +1,8 @@
 package me.branchpanic.mods.stockpile.impl.storage
 
 import me.branchpanic.mods.stockpile.api.storage.MassStorage
-import me.branchpanic.mods.stockpile.itemEquals
-import me.branchpanic.mods.stockpile.withAmount
+import me.branchpanic.mods.stockpile.isStackableWith
+import me.branchpanic.mods.stockpile.withCount
 import net.minecraft.item.ItemStack
 
 /**
@@ -18,7 +18,7 @@ class MassItemStorage(
         get() = storedItems
 
     override val capacity: Long
-        get() = (currentInstance.maxAmount * maxStacks).toLong()
+        get() = (currentInstance.maxCount * maxStacks).toLong()
 
     override val currentInstance: ItemStack
         get() = storedStack
@@ -43,10 +43,10 @@ class MassItemStorage(
         clearWhenEmpty = false
     }
 
-    override fun accepts(t: ItemStack): Boolean = storedStack.isEmpty || t.itemEquals(storedStack)
+    override fun accepts(t: ItemStack): Boolean = storedStack.isEmpty || t.isStackableWith(storedStack)
 
-    override fun add(amount: Long, simulate: Boolean): Long {
-        val newAmount = storedItems + amount
+    override fun add(count: Long, simulate: Boolean): Long {
+        val newAmount = storedItems + count
 
         if (newAmount > capacity) {
             if (!simulate) {
@@ -63,8 +63,8 @@ class MassItemStorage(
         return 0
     }
 
-    override fun remove(amount: Long, simulate: Boolean): Long = if (amount >= storedItems) {
-        val amountRemoved = storedItems
+    override fun remove(count: Long, simulate: Boolean): Long = if (count >= storedItems) {
+        val countRemoved = storedItems
 
         if (!simulate) {
             storedItems = 0
@@ -74,12 +74,12 @@ class MassItemStorage(
             }
         }
 
-        amountRemoved
+        countRemoved
     } else {
         if (!simulate) {
-            storedItems -= amount
+            storedItems -= count
         }
-        amount
+        count
     }
 
     override fun offer(ts: List<ItemStack>, simulate: Boolean): List<ItemStack> {
@@ -90,12 +90,12 @@ class MassItemStorage(
         if (t.isEmpty || !accepts(t)) return t
 
         if (!simulate && !instanceIsSet) {
-            storedStack = t.withAmount(1)
+            storedStack = t.withCount(1)
         }
 
-        val remainder = add(t.amount.toLong(), simulate).toInt()
+        val remainder = add(t.count.toLong(), simulate).toInt()
 
-        return t.withAmount(remainder)
+        return t.withCount(remainder)
     }
 
     override fun take(amount: Long, simulate: Boolean): List<ItemStack> {
@@ -106,11 +106,11 @@ class MassItemStorage(
         val lastStoredStack = storedStack
         val removableAmount = remove(amount, simulate)
 
-        val removableFullStacks = removableAmount / lastStoredStack.maxAmount
-        val removableRemainingStack = removableAmount - (lastStoredStack.maxAmount * removableFullStacks)
+        val removableFullStacks = removableAmount / lastStoredStack.maxCount
+        val removableRemainingStack = removableAmount - (lastStoredStack.maxCount * removableFullStacks)
 
-        val fullStacks = (0 until removableFullStacks).map { lastStoredStack.withAmount(lastStoredStack.maxAmount) }
-        val remainderStack = lastStoredStack.withAmount(removableRemainingStack.toInt())
+        val fullStacks = (0 until removableFullStacks).map { lastStoredStack.withCount(lastStoredStack.maxCount) }
+        val remainderStack = lastStoredStack.withCount(removableRemainingStack.toInt())
 
         return (fullStacks + remainderStack).filterNot { s -> s.isEmpty }
     }

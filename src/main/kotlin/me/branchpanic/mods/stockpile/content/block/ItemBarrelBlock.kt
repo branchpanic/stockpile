@@ -6,7 +6,6 @@ import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.fabric.api.block.FabricBlockSettings
-import net.minecraft.ChatFormat
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
@@ -14,14 +13,11 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.Style
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.Properties
-import net.minecraft.util.ActionResult
-import net.minecraft.util.BlockMirror
-import net.minecraft.util.BlockRotation
-import net.minecraft.util.Hand
+import net.minecraft.text.Style
+import net.minecraft.text.Text
+import net.minecraft.util.*
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
@@ -32,7 +28,7 @@ import net.minecraft.world.loot.context.LootContextParameters
 
 object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), BlockEntityProvider, AttackableBlock,
     AttributeProvider {
-    private val CONTENTS_STYLE = Style().setColor(ChatFormat.GRAY)
+    private val CONTENTS_STYLE = Style().setColor(Formatting.GRAY)
 
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
         super.appendProperties(builder)
@@ -171,7 +167,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
     override fun buildTooltip(
         stack: ItemStack?,
         world: BlockView?,
-        lines: MutableList<Component>?,
+        lines: MutableList<Text>?,
         context: TooltipContext?
     ) {
         super.buildTooltip(stack, world, lines, context)

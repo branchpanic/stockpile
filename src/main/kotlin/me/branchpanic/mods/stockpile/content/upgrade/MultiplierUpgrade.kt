@@ -8,8 +8,8 @@ import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
 import kotlin.math.max
 
@@ -22,7 +22,7 @@ class MultiplierUpgrade(private val factor: Int) : ItemBarrelUpgrade {
     }
 
     override val id: Identifier = id("multiplier")
-    override val description: Component = TranslatableComponent("upgrade.stockpile.multiplier", factor)
+    override val description: Text = TranslatableText("upgrade.stockpile.multiplier", factor)
 
     override fun upgradeMaxStacks(currentMaxStacks: Int): Int = currentMaxStacks * factor
 
@@ -30,7 +30,7 @@ class MultiplierUpgrade(private val factor: Int) : ItemBarrelUpgrade {
         val barrel = context as? ItemBarrelBlockEntity ?: return false
 
         return barrel.backingStorage.amountStored <=
-                (barrel.backingStorage.maxStacks / factor) * barrel.backingStorage.storedStack.maxAmount
+                (barrel.backingStorage.maxStacks / factor) * barrel.backingStorage.storedStack.maxCount
     }
 
     override fun getCorrespondingStack(): ItemStack = when (factor) {

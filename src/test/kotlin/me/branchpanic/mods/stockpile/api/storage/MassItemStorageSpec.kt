@@ -146,7 +146,7 @@ class MassItemStorageSpec : WordSpec({
 
             val remainder = m.offer(ItemStack(TestItems.StandardItemA, 64))
 
-            remainder.amount shouldBe 32
+            remainder.count shouldBe 32
             remainder.item shouldBe TestItems.StandardItemA
         }
 
@@ -167,7 +167,7 @@ class MassItemStorageSpec : WordSpec({
             )
 
             remainder.size shouldBe 1
-            remainder[0].amount shouldBe 32
+            remainder[0].count shouldBe 32
             m.amountStored shouldBe 64L * 3L
         }
 
@@ -182,11 +182,11 @@ class MassItemStorageSpec : WordSpec({
             val taken = m.take(64)
 
             taken.size shouldBe 1
-            taken[0].amount shouldBe 64
+            taken[0].count shouldBe 64
             m.amountStored shouldBe 0
         }
 
-        "yield all of its remaining contents when the amount (>1 stack) is specified exactly" {
+        "yield all of its remaining contents when the count(>1 stack) is specified exactly" {
             val m = MassItemStorage(
                 3,
                 storedItems = 64L * 3L,
@@ -197,7 +197,7 @@ class MassItemStorageSpec : WordSpec({
             val taken = m.take(64L * 3L)
 
             taken shouldHaveSize 3
-            taken.forEach { s -> s.amount shouldBe 64 }
+            taken.forEach { s -> s.count shouldBe 64 }
             m.amountStored shouldBe 0
         }
 
@@ -212,7 +212,7 @@ class MassItemStorageSpec : WordSpec({
             val taken = m.take(64L * 10L)
 
             taken shouldHaveSize 3
-            taken.forEach { s -> s.amount shouldBe 64 }
+            taken.forEach { s -> s.count shouldBe 64 }
             m.amountStored shouldBe 0
         }
 

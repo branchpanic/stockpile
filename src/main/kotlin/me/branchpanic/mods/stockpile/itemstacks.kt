@@ -6,11 +6,11 @@ import net.minecraft.item.ItemStack
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 
-fun ItemStack.itemEquals(other: ItemStack): Boolean = ItemStack.areEqual(withAmount(1), other.withAmount(1))
+fun ItemStack.isStackableWith(other: ItemStack): Boolean = ItemStack.areItemsEqual(withCount(1), other.withCount(1))
 
-fun ItemStack.withAmount(amount: Int): ItemStack {
+fun ItemStack.withCount(count: Int): ItemStack {
     val newStack = copy()
-    newStack.amount = amount
+    newStack.count = count
     return newStack
 }
 

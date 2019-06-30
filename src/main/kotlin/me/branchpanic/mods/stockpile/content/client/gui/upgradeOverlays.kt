@@ -4,9 +4,9 @@ import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
 import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
-import net.minecraft.ChatFormat
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.item.ItemStack
+import net.minecraft.util.Formatting
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
@@ -24,13 +24,13 @@ fun getUpgradeList(
             0xFFFFFFFF.toInt()
         )
     ) + container.appliedUpgrades.mapIndexed { i, u ->
-        val prefix = if (u in removals) ChatFormat.STRIKETHROUGH.toString() else ""
+        val prefix = if (u in removals) Formatting.STRIKETHROUGH.toString() else ""
 
         OverlayTextComponent(
-            "${i + 1}. ${prefix + u.description.formattedText}", if (u in conflicts) {
-                ChatFormat.RED.color!!
+            "${i + 1}. ${prefix + u.description.asFormattedString()}", if (u in conflicts) {
+                Formatting.RED.colorValue!!
             } else {
-                ChatFormat.GRAY.color!!
+                Formatting.GRAY.colorValue!!
             }
         )
     }
@@ -48,7 +48,13 @@ class UpgradeOverlayRenderer : TextOverlayRenderer {
         val conflicts = upgrade.getConflictingUpgrades(blockEntity.appliedUpgrades)
 
         if (!blockEntity.isUpgradeTypeAllowed(upgrade)) {
-            return listOf(OverlayTextComponent(I18n.translate("ui.stockpile.wrong_upgrade"), ChatFormat.RED.color!!))
+            return listOf(
+                OverlayTextComponent(
+                    I18n.translate("ui.stockpile.wrong_upgrade"),
+                    0xFFFFFFFF.toInt(),
+                    0xE0FF2222.toInt()
+                )
+            )
         }
 
         val upgradeLines = getUpgradeList(blockEntity, conflicts = conflicts)
@@ -69,7 +75,7 @@ class UpgradeOverlayRenderer : TextOverlayRenderer {
         if (blockEntity.appliedUpgrades.size == blockEntity.maxUpgrades) {
             val status = OverlayTextComponent(
                 I18n.translate("ui.stockpile.upgrades_maxed"),
-                ChatFormat.YELLOW.color!!
+                Formatting.YELLOW.colorValue!!
             )
 
             return listOf(status) + upgradeLines
@@ -77,7 +83,7 @@ class UpgradeOverlayRenderer : TextOverlayRenderer {
 
         val status = OverlayTextComponent(
             I18n.translate("ui.stockpile.apply_upgrade"),
-            ChatFormat.GREEN.color!!
+            Formatting.GREEN.colorValue!!
         )
 
         return listOf(status) + upgradeLines
@@ -117,7 +123,7 @@ class UpgradeRemoverOverlayRenderer : TextOverlayRenderer {
         return listOf(
             OverlayTextComponent(
                 I18n.translate("ui.stockpile.use_to_remove"),
-                ChatFormat.GREEN.color!!
+                Formatting.GREEN.colorValue!!
             )
         ) + getUpgradeList(blockEntity, removals = listOf(upgradeToRemove))
     }

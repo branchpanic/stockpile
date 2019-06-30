@@ -8,8 +8,8 @@ import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ItemUsageContext
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
 import net.minecraft.world.World
 
@@ -42,12 +42,12 @@ object UpgradeRemoverItem : Item(Stockpile.ITEM_SETTINGS) {
         return ActionResult.SUCCESS
     }
 
-    override fun buildTooltip(
+    override fun appendTooltip(
         stack: ItemStack?,
         world: World?,
-        tooltip: MutableList<Component>?,
+        tooltip: MutableList<Text>?,
         context: TooltipContext?
     ) {
-        tooltip?.add(TranslatableComponent("item.stockpile.upgrade_remover.desc").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
+        tooltip?.add(TranslatableText("item.stockpile.upgrade_remover.desc").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
     }
 }

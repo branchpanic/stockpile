@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile.content.upgrade
 
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeApplier
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.minecraft.entity.player.PlayerEntity
@@ -20,26 +20,19 @@ object UpgradeInstallerCallback : UseBlockCallback {
 
         val upgrade = (heldItem.item as? UpgradeItem)?.getUpgrade(heldItem) ?: return ActionResult.PASS
 
-        val blockEntity = (world.getBlockEntity(hit.blockPos) as? UpgradeApplier) ?: return ActionResult.PASS
+        val blockEntity = (world.getBlockEntity(hit.blockPos) as? UpgradeContainer) ?: return ActionResult.PASS
 
         if (blockEntity.appliedUpgrades.size >= blockEntity.maxUpgrades) {
-            player.addChatMessage(
-                TranslatableComponent("ui.stockpile.too_many_upgrades", blockEntity.maxUpgrades),
-                true
-            )
-
             return ActionResult.FAIL
         }
 
-        if (!blockEntity.canApplyUpgrade(upgrade)) {
-            player.addChatMessage(TranslatableComponent("ui.stockpile.cant_apply_upgrade"), true)
+        if (!blockEntity.isUpgradeTypeAllowed(upgrade)) {
             return ActionResult.FAIL
         }
 
         val conflicts = upgrade.getConflictingUpgrades(blockEntity.appliedUpgrades)
 
         if (conflicts.isNotEmpty()) {
-            player.addChatMessage(TranslatableComponent("ui.stockpile.upgrade_conflicts"), true)
             return ActionResult.FAIL
         }
 
@@ -47,7 +40,7 @@ object UpgradeInstallerCallback : UseBlockCallback {
             return ActionResult.SUCCESS
         }
 
-        blockEntity.applyUpgrade(upgrade)
+        blockEntity.pushUpgrade(upgrade)
         heldItem.subtractAmount(1)
         player.inventory.markDirty()
 

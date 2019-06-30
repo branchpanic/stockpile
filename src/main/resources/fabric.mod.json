@@ -32,5 +32,8 @@
     "fabricloader": ">=0.4.0",
     "fabric-language-kotlin": ">=1.3.30",
     "libblockattributes": ">=0.4.2"
-  }
+  },
+  "mixins": [
+    "stockpile.mixins.json"
+  ]
 }

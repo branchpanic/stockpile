@@ -18,6 +18,7 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
+import kotlin.math.min
 
 object BarrelHatMaterial : ArmorMaterial by ArmorMaterials.LEATHER {
     override fun getName(): String = "barrel_hat"
@@ -42,20 +43,39 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
             return
         }
 
-        val insertableStacks = invStacks.filter { s -> s !in barrelStacks && s.item !is UpgradeItem }
+        val insertableStacks = invStacks.filter { s -> s !in barrelStacks }
+        var itemsDeposited = 0
 
         barrelStacks.forEach { barrelStack ->
             val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
 
-            insertableStacks.forEach { insertStack ->
-                val remainder = barrel.backingStorage.offer(insertStack)
-                insertStack.amount = remainder.amount
+            insertableStacks.forEach insertStack@{ insertStack ->
+                if (!barrel.backingStorage.accepts(insertStack)) {
+                    return@insertStack
+                }
+
+                val amount = insertStack.amount
+
+                if (amount <= 1) {
+                    return@insertStack
+                }
+
+                val maxInsertableAmount = amount - 1
+                val remainder = (barrel.backingStorage.add(maxInsertableAmount.toLong()) + 1).toInt()
+                insertStack.amount = remainder
+                itemsDeposited += amount - remainder
             }
 
             barrel.toStack(barrelStack)
         }
 
-        player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 0.5f, 1.0f)
+        if (itemsDeposited > 0) {
+            player.addChatMessage(TranslatableComponent("ui.stockpile.barrel_hat.pushed_items", itemsDeposited), true)
+            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 0.5f, 0.9f)
+        } else {
+            player.addChatMessage(TranslatableComponent("ui.stockpile.barrel_hat.no_pushed_items"), true)
+            player.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.MASTER, 0.5f, 1.0f)
+        }
         player.inventory.markDirty()
     }
 
@@ -68,22 +88,40 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         }
 
         val restockableStacks = invStacks.filter { s -> s !in barrelStacks && s.item !is UpgradeItem }
+        var itemsTaken = 0
 
         barrelStacks.forEach { barrelStack ->
             val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
 
-            restockableStacks.forEach { restockStack ->
-                if (barrel.backingStorage.accepts(restockStack)) {
-                    val amountNeededForFullStack = restockStack.maxAmount - restockStack.amount
-                    val removableAmount = barrel.backingStorage.remove(amountNeededForFullStack.toLong()).toInt()
-                    restockStack.amount += removableAmount
+
+            restockableStacks.forEach restockStack@{ restockStack ->
+                if (!barrel.backingStorage.accepts(restockStack)) {
+                    return@restockStack
                 }
+
+                val amountNeededForFullStack = restockStack.maxAmount - restockStack.amount
+                val removableAmount = barrel.backingStorage.remove(
+                    min(
+                        amountNeededForFullStack.toLong(),
+                        barrel.backingStorage.amountStored - 1
+                    )
+                ).toInt()
+
+                restockStack.amount += removableAmount
+                itemsTaken += removableAmount
             }
 
             barrel.toStack(barrelStack)
         }
 
-        player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 0.5f, 1.0f)
+        if (itemsTaken > 0) {
+            player.addChatMessage(TranslatableComponent("ui.stockpile.barrel_hat.pulled_items", itemsTaken), true)
+            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 0.5f, 1.1f)
+        } else {
+            player.addChatMessage(TranslatableComponent("ui.stockpile.barrel_hat.no_pulled_items"), true)
+            player.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.MASTER, 0.5f, 1.0f)
+        }
+
         player.inventory.markDirty()
     }
 

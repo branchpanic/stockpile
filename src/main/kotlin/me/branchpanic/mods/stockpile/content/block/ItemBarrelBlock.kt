@@ -3,6 +3,7 @@ package me.branchpanic.mods.stockpile.content.block
 import alexiil.mc.lib.attributes.AttributeList
 import alexiil.mc.lib.attributes.AttributeProvider
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.ChatFormat
@@ -117,6 +118,10 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             hand != Hand.MAIN_HAND ||
             hit.side != state[Properties.FACING]
         ) {
+            return false
+        }
+
+        if (player.getStackInHand(Hand.MAIN_HAND).item == UpgradeRemoverItem) {
             return false
         }
 

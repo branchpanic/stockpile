@@ -1,0 +1,23 @@
+{
+  "type": "crafting_shaped",
+  "pattern": [
+    "  i",
+    " I ",
+    "B  "
+  ],
+  "key": {
+    "B": {
+      "item": "stockpile:item_barrel"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "i": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "result": {
+    "item": "stockpile:upgrade_remover",
+    "count": 1
+  }
+}

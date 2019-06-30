@@ -3,10 +3,13 @@
   "ui.stockpile.barrel.just_unlocked": "Unlocked: this barrel will accept any item when empty.",
   "ui.stockpile.barrel.contents": "%s/%s %s (%s/%s stacks)",
   "ui.stockpile.apply_upgrade": "Use on block to apply",
+  "ui.stockpile.use_to_remove": "Use on block to remove",
   "ui.stockpile.applied_upgrades": "%d/%d upgrades installed",
   "ui.stockpile.upgrade_conflicts": "%d conflicting upgrades",
   "ui.stockpile.upgrade_conflict": "%d conflicting upgrade",
   "ui.stockpile.barrel.contents_empty": "Empty (holds up to %s stacks)",
+  "ui.stockpile.no_upgrades_to_remove": "No upgrades to remove",
+  "ui.stockpile.cant_remove_upgrade": "Can't remove upgrade",
   "ui.stockpile.upgrades": "Upgrades installed: %d/%d",
   "ui.stockpile.upgrade_application": "Use on a block to apply",
   "ui.stockpile.too_many_upgrades": "This block has a maximum of %d upgrades!",
@@ -32,5 +35,7 @@
   "item.stockpile.multiplier_upgrade": "Multiplier Upgrade",
   "item.stockpile.double_multiplier_upgrade": "Double Multiplier Upgrade",
   "item.stockpile.barrel_hat": "Barrel Hat",
+  "item.stockpile.upgrade_remover": "Screwdriver",
+  "item.stockpile.upgrade_remover.desc": "Removes upgrades. Made from barrels?",
   "itemGroup.stockpile.all": "Stockpile"
 }

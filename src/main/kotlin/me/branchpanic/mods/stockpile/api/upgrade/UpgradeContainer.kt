@@ -28,5 +28,7 @@ interface UpgradeContainer {
      * Applies the given upgrade to this UpgradeApplier. Eligibility to apply must be checked with
      * [isUpgradeTypeAllowed] and [Upgrade.getConflictingUpgrades] beforehand.
      */
-    fun applyUpgrade(u: Upgrade)
+    fun pushUpgrade(u: Upgrade)
+
+    fun popUpgrade(): Upgrade
 }

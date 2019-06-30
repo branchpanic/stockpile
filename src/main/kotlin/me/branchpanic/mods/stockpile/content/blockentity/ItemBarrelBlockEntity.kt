@@ -6,6 +6,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
+import me.branchpanic.mods.stockpile.giveTo
 import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
 import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
@@ -14,7 +15,6 @@ import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
@@ -40,7 +40,6 @@ class ItemBarrelBlockEntity(
     BlockEntityClientSerializable,
     UpgradeContainer,
     Inventory {
-
     val invAttribute: FixedMassItemInv = FixedMassItemInv(storage)
     private val invWrapper = UnrestrictedInventoryFixedWrapper(invAttribute)
 
@@ -224,7 +223,7 @@ class ItemBarrelBlockEntity(
 
     override fun isUpgradeTypeAllowed(u: Upgrade): Boolean = u is ItemBarrelUpgrade
 
-    override fun applyUpgrade(u: Upgrade) {
+    override fun pushUpgrade(u: Upgrade) {
         if (u !is ItemBarrelUpgrade) {
             Stockpile.LOGGER.warn("attempted to apply an invalid upgrade (type ${u.id}) to an item barrel")
             Stockpile.LOGGER.debug("this is a bug! was isUpgradeTypeAllowed checked?")
@@ -235,6 +234,16 @@ class ItemBarrelBlockEntity(
 
         fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag()))
         markDirty()
+    }
+
+    override fun popUpgrade(): Upgrade {
+        val result = appliedUpgrades.last()
+        appliedUpgrades = appliedUpgrades.dropLast(1)
+
+        fromTagWithoutWorldInfo(toTagWithoutWorldInfo(CompoundTag())) // TODO: what?
+        markDirty()
+
+        return result
     }
 
     fun toStack(stack: ItemStack) {
@@ -261,15 +270,4 @@ class ItemBarrelBlockEntity(
             )
         }
     }
-}
-
-private fun ItemStack.giveTo(player: PlayerEntity) {
-    player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.1f, 0.7f)
-    player.inventory.insertStack(this)
-
-    if (isEmpty) {
-        return
-    }
-
-    player.world.spawnEntity(ItemEntity(player.world, player.x, player.y, player.z, this))
 }

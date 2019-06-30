@@ -8,6 +8,7 @@ import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import me.branchpanic.mods.stockpile.content.item.BarrelHatItem
 import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
+import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
 import me.branchpanic.mods.stockpile.content.upgrade.CapacityUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.MultiplierUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
@@ -48,7 +49,8 @@ object Stockpile : ModInitializer {
         id("multiplier_upgrade") to BasicUpgradeItem({ MultiplierUpgrade(2) }, ITEM_SETTINGS),
         id("double_multiplier_upgrade") to BasicUpgradeItem({ MultiplierUpgrade(4) }, ITEM_SETTINGS),
         id("trash_upgrade") to BasicUpgradeItem({ TrashUpgrade() }, ITEM_SETTINGS),
-        id("barrel_hat") to BarrelHatItem
+        id("barrel_hat") to BarrelHatItem,
+        id("upgrade_remover") to UpgradeRemoverItem
     )
 
     internal val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(

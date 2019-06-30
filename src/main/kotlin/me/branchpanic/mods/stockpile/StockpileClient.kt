@@ -4,6 +4,7 @@ import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.client.BarrelHatKeyListener
 import me.branchpanic.mods.stockpile.content.client.gui.OverlayRenderer
 import me.branchpanic.mods.stockpile.content.client.gui.UpgradeOverlayRenderer
+import me.branchpanic.mods.stockpile.content.client.gui.UpgradeRemoverOverlayRenderer
 import me.branchpanic.mods.stockpile.content.client.renderer.ItemBarrelRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
@@ -29,7 +30,8 @@ object StockpileClient : ClientModInitializer {
     ).build()
 
     private val overlays: List<OverlayRenderer> = listOf(
-        UpgradeOverlayRenderer()
+        UpgradeOverlayRenderer(),
+        UpgradeRemoverOverlayRenderer()
     )
 
     override fun onInitializeClient() {

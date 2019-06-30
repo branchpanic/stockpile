@@ -40,7 +40,7 @@ object UpgradeInstallerCallback : UseBlockCallback {
             return ActionResult.SUCCESS
         }
 
-        blockEntity.applyUpgrade(upgrade)
+        blockEntity.pushUpgrade(upgrade)
         heldItem.subtractAmount(1)
         player.inventory.markDirty()
 

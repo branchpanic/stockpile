@@ -26,7 +26,7 @@ class MultiplierUpgrade(private val factor: Int) : ItemBarrelUpgrade {
 
     override fun upgradeMaxStacks(currentMaxStacks: Int): Int = currentMaxStacks * factor
 
-    override fun canSafelyRemove(context: UpgradeContainer): Boolean {
+    override fun canSafelyBeRemovedFrom(context: UpgradeContainer): Boolean {
         val barrel = context as? ItemBarrelBlockEntity ?: return false
 
         return barrel.backingStorage.amountStored <=

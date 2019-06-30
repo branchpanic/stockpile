@@ -41,5 +41,5 @@ interface Upgrade {
     /**
      * Determines whether or not an upgrade can safely be removed from an UpgradeApplier without losing data.
      */
-    fun canSafelyRemove(context: UpgradeContainer): Boolean = false
+    fun canSafelyBeRemovedFrom(context: UpgradeContainer): Boolean = false
 }

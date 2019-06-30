@@ -27,7 +27,7 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
 
     override fun upgradeMaxStacks(currentMaxStacks: Int): Int = currentMaxStacks + amount
 
-    override fun canSafelyRemove(context: UpgradeContainer): Boolean {
+    override fun canSafelyBeRemovedFrom(context: UpgradeContainer): Boolean {
         val barrel = context as? ItemBarrelBlockEntity ?: return false
 
         return barrel.backingStorage.amountStored <=

@@ -1,8 +1,8 @@
 package me.branchpanic.mods.stockpile.api.upgrade
 
 import net.minecraft.item.ItemStack
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
 
 /**
@@ -23,13 +23,13 @@ interface Upgrade {
      */
     val id: Identifier
 
-    val name: Component
-        get() = TranslatableComponent("upgrade.${id.namespace}.${id.path}.name")
+    val name: Text
+        get() = TranslatableText("upgrade.${id.namespace}.${id.path}.name")
 
     /**
      * The description of this Upgrade, often used in tooltips.
      */
-    val description: Component
+    val description: Text
 
     /**
      * Determines which upgrades in a given list conflict with this Upgrade.

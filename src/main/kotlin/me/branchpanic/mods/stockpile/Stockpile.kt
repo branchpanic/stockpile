@@ -42,7 +42,7 @@ object Stockpile : ModInitializer {
         id("trash_can") to TrashCanBlock
     )
 
-    internal val ITEM_SETTINGS = Item.Settings().itemGroup(ITEM_GROUP)
+    internal val ITEM_SETTINGS = Item.Settings().group(ITEM_GROUP)
     internal val ITEMS: Map<Identifier, Item> = mapOf(
         id("capacity_upgrade") to BasicUpgradeItem({ CapacityUpgrade(32) }, ITEM_SETTINGS),
         id("double_capacity_upgrade") to BasicUpgradeItem({ CapacityUpgrade(64) }, ITEM_SETTINGS),

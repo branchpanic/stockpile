@@ -1,9 +1,7 @@
 package me.branchpanic.mods.stockpile.content.blockentity
 
 import me.branchpanic.mods.stockpile.content.block.IS_OPEN
-import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
-import net.minecraft.block.Block
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.EntityType
@@ -12,7 +10,7 @@ import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.predicate.entity.EntityPredicates
 import net.minecraft.util.Tickable
-import net.minecraft.util.math.BoundingBox
+import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
 import java.util.function.Supplier
 
@@ -33,7 +31,7 @@ class TrashCanBlockEntity : BlockEntity(TYPE), SidedInventory, Tickable {
             return
         }
 
-        world?.getEntities(EntityType.ITEM, BoundingBox(pos.up()), EntityPredicates.VALID_ENTITY)
+        world?.getEntities(EntityType.ITEM, Box(pos.up()), EntityPredicates.VALID_ENTITY)
             ?.forEach { e -> e.kill() }
     }
 

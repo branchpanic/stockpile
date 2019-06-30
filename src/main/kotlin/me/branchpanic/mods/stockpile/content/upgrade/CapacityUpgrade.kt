@@ -8,8 +8,8 @@ import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.TranslatableComponent
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 
 class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
     companion object {
@@ -23,7 +23,7 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
     }
 
     override val id = id("capacity")
-    override val description: Component = TranslatableComponent("upgrade.stockpile.capacity", amount)
+    override val description: Text = TranslatableText("upgrade.stockpile.capacity", amount)
 
     override fun upgradeMaxStacks(currentMaxStacks: Int): Int = currentMaxStacks + amount
 
@@ -31,7 +31,7 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
         val barrel = context as? ItemBarrelBlockEntity ?: return false
 
         return barrel.backingStorage.amountStored <=
-                (barrel.backingStorage.maxStacks - amount) * barrel.backingStorage.storedStack.maxAmount
+                (barrel.backingStorage.maxStacks - amount) * barrel.backingStorage.storedStack.maxCount
     }
 
     override fun getCorrespondingStack(): ItemStack = when (amount) {

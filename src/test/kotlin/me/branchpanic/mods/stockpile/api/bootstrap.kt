@@ -12,8 +12,6 @@ object TestItems {
 
     val StandardItemA = Item(Item.Settings())
     val StandardItemB = Item(Item.Settings())
-
-    val QuarterStackingItem = Item(Item.Settings().stackSize(16))
 }
 
 infix operator fun Item.times(amount: Int) = ItemStack(this, amount)

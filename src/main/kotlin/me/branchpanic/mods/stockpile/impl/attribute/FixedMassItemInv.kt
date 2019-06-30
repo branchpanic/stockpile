@@ -8,7 +8,7 @@ import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener
 import alexiil.mc.lib.attributes.item.ItemTransferable
 import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
-import me.branchpanic.mods.stockpile.itemEquals
+import me.branchpanic.mods.stockpile.isStackableWith
 import net.minecraft.item.ItemStack
 import kotlin.math.abs
 import kotlin.math.max
@@ -33,7 +33,7 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
         when (slot) {
             INBOUND_SLOT -> ItemStack.EMPTY
             OUTBOUND_SLOT -> storage.take(
-                storage.currentInstance.maxAmount.toLong(),
+                storage.currentInstance.maxCount.toLong(),
                 simulate = true
             ).getOrElse(0) { ItemStack.EMPTY }
             else -> throw IllegalArgumentException("slot index out of bounds")
@@ -53,7 +53,7 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
         }
 
         val before = getInvStack(slot)
-        val change = stack.amount - before.amount
+        val change = stack.count - before.count
 
         when {
             change > 0 -> {
@@ -97,20 +97,20 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
     override fun getSlotCount(): Int = 2
 
     override fun getMaxAmount(slot: Int, stack: ItemStack?): Int {
-        if (stack == null || !stack.itemEquals(storage.storedStack)) {
+        if (stack == null || !stack.isStackableWith(storage.storedStack)) {
             return 0
         }
 
         if (voidExtraItems && slot == INBOUND_SLOT) {
-            return storage.storedStack.maxAmount
+            return storage.storedStack.maxCount
         }
 
         return when (slot) {
             INBOUND_SLOT -> max(
                 0,
-                min(storage.storedStack.amount.toLong(), storage.capacity - storage.amountStored)
+                min(storage.storedStack.count.toLong(), storage.capacity - storage.amountStored)
             ).toInt()
-            OUTBOUND_SLOT -> min(storage.storedStack.amount.toLong(), storage.amountStored).toInt()
+            OUTBOUND_SLOT -> min(storage.storedStack.count.toLong(), storage.amountStored).toInt()
             else -> throw IllegalArgumentException("slot index out of bounds")
         }
     }

@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).  
 
+## Unreleased
+
+### Added
+- Screwdriver
+  - Removes upgrades from Barrels
+- New upgrade UI
+  - Displays list and status when holding an upgrade or screwdriver
+  - Shows conflicting upgrades
+- Barrel Hat status messages (will eventually replace with graphical overlay)
+
+### Changed
+- Barrel hat now leaves 1 of each item in inventory/barrels
+  - Allows for repeated usage, helpful when building
+
 ## [1.0.7] - 2019-06-01
 
 ### Fixed

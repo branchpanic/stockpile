@@ -8,6 +8,7 @@ import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import me.branchpanic.mods.stockpile.content.item.BarrelHatItem
 import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
+import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
 import me.branchpanic.mods.stockpile.content.upgrade.CapacityUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.MultiplierUpgrade
 import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
@@ -36,27 +37,28 @@ object Stockpile : ModInitializer {
 
     private val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.build(id("all")) { ItemStack(ItemBarrelBlock) }
 
-    private val BLOCKS: Map<Identifier, Block> = mapOf(
+    internal val BLOCKS: Map<Identifier, Block> = mapOf(
         id("item_barrel") to ItemBarrelBlock,
         id("trash_can") to TrashCanBlock
     )
 
     internal val ITEM_SETTINGS = Item.Settings().itemGroup(ITEM_GROUP)
-    private val ITEMS: Map<Identifier, Item> = mapOf(
+    internal val ITEMS: Map<Identifier, Item> = mapOf(
         id("capacity_upgrade") to BasicUpgradeItem({ CapacityUpgrade(32) }, ITEM_SETTINGS),
         id("double_capacity_upgrade") to BasicUpgradeItem({ CapacityUpgrade(64) }, ITEM_SETTINGS),
         id("multiplier_upgrade") to BasicUpgradeItem({ MultiplierUpgrade(2) }, ITEM_SETTINGS),
         id("double_multiplier_upgrade") to BasicUpgradeItem({ MultiplierUpgrade(4) }, ITEM_SETTINGS),
         id("trash_upgrade") to BasicUpgradeItem({ TrashUpgrade() }, ITEM_SETTINGS),
-        id("barrel_hat") to BarrelHatItem
+        id("barrel_hat") to BarrelHatItem,
+        id("upgrade_remover") to UpgradeRemoverItem
     )
 
-    private val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
+    internal val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
         id("item_barrel") to ItemBarrelBlockEntity.TYPE,
         id("trash_can") to TrashCanBlockEntity.TYPE
     )
 
-    private val UPGRADES: Map<Identifier, UpgradeType> = mapOf(
+    internal val UPGRADES: Map<Identifier, UpgradeType> = mapOf(
         id("capacity") to CapacityUpgrade.TYPE,
         id("multiplier") to MultiplierUpgrade.TYPE,
         id("trash") to TrashUpgrade.TYPE

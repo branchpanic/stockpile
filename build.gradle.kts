@@ -20,7 +20,7 @@ object Versions {
 
     const val FABRIC = "0.3.0+build.200"
     const val FABRIC_KT = "1.3.30+build.2"
-    const val LBA = "release-v0.4.7-mc1.14.x"
+    const val LBA = "0.4.9"
 
     const val SIMPLE_PIPES = "0.1.8"
 }
@@ -71,13 +71,9 @@ dependencies {
     modCompile("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
-    // I might be being dumb, but no matter what I do, I can't get Stockpile to compile against LBA from the BuildCraft
-    // Maven. It seems like the source isn't getting remapped properly, resulting in build errors that wouldn't exist
-    // in a running environment.
-    modApi("com.github.AlexIIL:LibBlockAttributes:${Versions.LBA}")
-
-    include("alexiil.mc.lib:libblockattributes-core:0.4.7")
-    include("alexiil.mc.lib:libblockattributes-items:0.4.7")
+    modCompile("alexiil.mc.lib:libblockattributes-all:${Versions.LBA}")
+    include("alexiil.mc.lib:libblockattributes-core:${Versions.LBA}")
+    include("alexiil.mc.lib:libblockattributes-items:${Versions.LBA}")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

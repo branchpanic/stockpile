@@ -9,6 +9,11 @@
   "authors": [
     "branchpanic"
   ],
+  "contributors": [
+    "Yanis48",
+    "XuyuEre",
+    "Juuxel"
+  ],
   "license": "MIT",
   "version": "$version",
   "icon": "assets/stockpile/icon.png",

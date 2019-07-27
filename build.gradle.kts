@@ -2,17 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.3.21"
-    id("fabric-loom") version "0.2.4-SNAPSHOT"
+    id("fabric-loom") version "0.2.5-SNAPSHOT"
 }
 
 object Versions {
     // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
     // added.
     const val STOCKPILE = "1.0.9"
-
-    // This tag is used to differentiate Stockpile builds, and should generally correspond with the current branch OR
-    // be empty for full releases.
-    const val STOCKPILE_TAG = ""
 
     const val MINECRAFT = "1.14.4"
     const val YARN = "$MINECRAFT+build.2"
@@ -26,13 +22,7 @@ object Versions {
 }
 
 group = "me.branchpanic.mods"
-version = Versions.STOCKPILE +
-        if (Versions.STOCKPILE_TAG.isNotBlank()) {
-            "-${Versions.STOCKPILE_TAG}"
-        } else {
-            ""
-        } +
-        "+" + Versions.MINECRAFT.replace(" Pre-Release ", "-Pre")
+version = Versions.STOCKPILE + "+" + Versions.MINECRAFT.replace(" Pre-Release ", "-Pre")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8

@@ -28,7 +28,6 @@ import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
 import net.minecraft.world.IWorld
 import net.minecraft.world.World
-import net.minecraft.world.loot.context.LootContext
 
 val IS_OPEN: BooleanProperty = BooleanProperty.of("is_open")
 
@@ -60,20 +59,6 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         pos: BlockPos?,
         context: EntityContext
     ): VoxelShape = createCuboidShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
-
-    override fun getDroppedStacks(state: BlockState?, context: LootContext.Builder?): MutableList<ItemStack> {
-        return mutableListOf(ItemStack(asItem()))
-    }
-
-    override fun onBlockRemoved(
-        state: BlockState?,
-        world: World?,
-        pos: BlockPos?,
-        newState: BlockState?,
-        unknown: Boolean
-    ) {
-        world?.removeBlockEntity(pos)
-    }
 
     override fun activate(
         state: BlockState?,

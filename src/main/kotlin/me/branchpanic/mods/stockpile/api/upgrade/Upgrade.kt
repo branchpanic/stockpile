@@ -9,12 +9,6 @@ import net.minecraft.util.Identifier
  * An Upgrade changes the functionality of an UpgradeApplier in some way. This interface is rather useless on its own
  * and should be implemented in conjunction with target-specific interfaces such as
  * [me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade].
- *
- * Upgrades must be registered with the [UpgradeRegistry], otherwise they will not persist properly and potentially
- * leave the game in an unstable state.
- *
- * TODO: All the casting in working with upgrades is totally what generics are for... I just don't have time to
- *       reimplement them properly.
  */
 interface Upgrade {
 

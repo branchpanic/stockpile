@@ -33,19 +33,12 @@ val IS_OPEN: BooleanProperty = BooleanProperty.of("is_open")
 
 object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()), BlockEntityProvider, Waterloggable {
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
-        if (builder == null) {
-            return
-        }
-
-        builder.add(IS_OPEN, Properties.WATERLOGGED)
+        builder?.add(IS_OPEN, Properties.WATERLOGGED)
     }
 
     override fun getPlacementState(context: ItemPlacementContext?): BlockState? {
-        if (context == null) {
-            return null
-        }
-
-        val fluid = context.world.getFluidState(context.blockPos)
+        val fluid = context?.world?.getFluidState(context.blockPos)
+            ?: throw NullPointerException("Received null item placement context!")
 
         return super.getPlacementState(context)?.with(IS_OPEN, false)
             ?.with(Properties.WATERLOGGED, fluid.matches(FluidTags.WATER) && fluid.level == 8)
@@ -86,7 +79,7 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         pos: BlockPos?,
         neighborPos: BlockPos?
     ): BlockState {
-        if (state?.get<Boolean>(Properties.WATERLOGGED) as Boolean) {
+        if (state?.get<Boolean>(Properties.WATERLOGGED) == true) {
             world?.fluidTickScheduler?.schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world))
         }
 

@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile
+package me.branchpanic.mods.stockpile.extension
 
 import net.minecraft.entity.ItemEntity
 import net.minecraft.entity.player.PlayerEntity
@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 
-fun ItemStack.isStackableWith(other: ItemStack): Boolean = ItemStack.areItemsEqual(withCount(1), other.withCount(1))
+fun ItemStack.canStackWith(other: ItemStack): Boolean = ItemStack.areItemsEqual(withCount(1), other.withCount(1))
 
 fun ItemStack.withCount(count: Int): ItemStack {
     val newStack = copy()

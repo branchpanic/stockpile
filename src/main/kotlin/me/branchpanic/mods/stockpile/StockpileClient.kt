@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile
 
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.content.blockentity.LegacyItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.client.BarrelHatKeyListener
 import me.branchpanic.mods.stockpile.content.client.gui.OverlayRenderer
 import me.branchpanic.mods.stockpile.content.client.gui.UpgradeOverlayRenderer
@@ -35,7 +35,7 @@ object StockpileClient : ClientModInitializer {
     )
 
     override fun onInitializeClient() {
-        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity::class.java, ItemBarrelRenderer)
+        BlockEntityRendererRegistry.INSTANCE.register(LegacyItemBarrelBlockEntity::class.java, ItemBarrelRenderer)
 
         KeyBindingRegistry.INSTANCE.addCategory("controls.stockpile")
         KeyBindingRegistry.INSTANCE.register(BARREL_HAT_KEY)

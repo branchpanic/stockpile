@@ -4,9 +4,8 @@ import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.StockpileClient
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.content.blockentity.LegacyItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
-import me.branchpanic.mods.stockpile.withCount
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
@@ -63,7 +62,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         var itemsDeposited = 0
 
         barrelStacks.forEach { barrelStack ->
-            val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
+            val barrel = LegacyItemBarrelBlockEntity.loadFromStack(barrelStack)
 
             insertableStacks.forEach insertStack@{ insertStack ->
                 if (!barrel.backingStorage.accepts(insertStack) || insertStack.isEmpty) {
@@ -108,7 +107,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         var itemsTaken = 0
 
         barrelStacks.forEach { barrelStack ->
-            val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
+            val barrel = LegacyItemBarrelBlockEntity.loadFromStack(barrelStack)
 
             restockableStacks.forEach restockStack@{ restockStack ->
                 if (!barrel.backingStorage.accepts(restockStack) || barrel.backingStorage.isEmpty) {
@@ -116,7 +115,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                 }
 
                 val amountNeededForFullStack = restockStack.maxCount - restockStack.count
-                val removableAmount = barrel.backingStorage.remove(
+                val removableAmount = barrel.backingStorage.removeAtMost(
                     min(
                         amountNeededForFullStack.toLong(),
                         barrel.backingStorage.amountStored - 1

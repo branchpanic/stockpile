@@ -16,21 +16,21 @@ interface Quantizer<T> {
     val amount: Long
 
     /**
-     * Returns a copy of this Quantized<T> with the given amount.
+     * Returns a copy of this Quantizer with the given amount.
      */
     fun withAmount(amount: Long): Quantizer<T>
 
     /**
-     * Determines whether or not this Quantized<T> is empty.
+     * Determines whether or not this Quantizer is empty.
      */
     val isEmpty: Boolean
         get() = amount <= 0
 
     /**
-     * Determines whether or not two Quantized references are effectively equal.
+     * Determines whether or not two Quantizers are effectively equal.
      *
-     * If this is true of quantized objects A and B, then a quantized object C with `reference == A.reference` and
-     * `amount == A.amount + B.amount` is an accurate combination of A and B.
+     * If this is true of quantizers A and B, then a quantizer C with `reference == A.reference` and
+     * `amount == A.amount + B.amount` is a completely accurate combination of A and B.
      */
     fun canMergeWith(other: Quantizer<T>): Boolean {
         return false

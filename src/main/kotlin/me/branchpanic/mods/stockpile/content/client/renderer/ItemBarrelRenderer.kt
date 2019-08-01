@@ -2,7 +2,6 @@ package me.branchpanic.mods.stockpile.content.client.renderer
 
 import com.mojang.blaze3d.platform.GlStateManager
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
@@ -79,7 +78,7 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
         }
     }
 
-    private fun renderFillBar(storage: MassItemStorage, xCenter: Double, yCenter: Double) {
+    private fun renderFillBar(storage: MutableMassItemStackStorage, xCenter: Double, yCenter: Double) {
         GlStateManager.translated(0.0, 0.0, 0.3 * 1 / COFH_TRANSFORM_OFFSET)
         GlStateManager.scaled(0.5, 0.5, 1.0)
 
@@ -99,7 +98,7 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
         val textCenterY = yCenter * 2 - (textHeight / 2)
 
         val totalBarWidth = 2 * FILL_BAR_WIDTH + 0.25 * FILL_BAR_WIDTH
-        val filledBarWidth = totalBarWidth * Math.min(filledAmount, 1.0)
+        val filledBarWidth = totalBarWidth * min(filledAmount, 1.0)
         val unfilledBarWidth = totalBarWidth - filledBarWidth
 
         GlStateManager.disableTexture()
@@ -144,7 +143,7 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
     }
 
     private fun renderDisplay(
-        storage: MassItemStorage,
+        storage: MutableMassItemStackStorage,
         orientation: Direction,
         x: Double,
         y: Double,
@@ -180,7 +179,7 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
         GlStateManager.disableBlend()
     }
 
-    private fun getDisplayText(storage: MassItemStorage): String {
+    private fun getDisplayText(storage: MutableMassItemStackStorage): String {
         return if (storage.isEmpty) {
             I18n.translate("ui.stockpile.empty")
         } else {

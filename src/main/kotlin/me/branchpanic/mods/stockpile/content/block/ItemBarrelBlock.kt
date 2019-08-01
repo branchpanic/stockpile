@@ -2,7 +2,7 @@ package me.branchpanic.mods.stockpile.content.block
 
 import alexiil.mc.lib.attributes.AttributeList
 import alexiil.mc.lib.attributes.AttributeProvider
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.content.blockentity.LegacyItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.fabricmc.fabric.api.block.FabricBlockSettings
@@ -47,7 +47,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         state?.with(Properties.FACING, mirror?.apply(state.get(Properties.FACING)) ?: Direction.NORTH)
             ?: throw NullPointerException("attempted to mirror null item barrel")
 
-    override fun createBlockEntity(world: BlockView?): BlockEntity? = ItemBarrelBlockEntity()
+    override fun createBlockEntity(world: BlockView?): BlockEntity? = LegacyItemBarrelBlockEntity()
 
     override fun onPlaced(
         world: World?,
@@ -60,7 +60,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             return
         }
 
-        (world.getBlockEntity(pos) as ItemBarrelBlockEntity).apply {
+        (world.getBlockEntity(pos) as LegacyItemBarrelBlockEntity).apply {
             fromStack(stack)
             markDirty()
         }
@@ -83,7 +83,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             return ActionResult.PASS
         }
 
-        (world.getBlockEntity(pos) as ItemBarrelBlockEntity).onPunched(player)
+        (world.getBlockEntity(pos) as LegacyItemBarrelBlockEntity).onPunched(player)
 
         return ActionResult.PASS
     }
@@ -125,7 +125,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             return true
         }
 
-        (world.getBlockEntity(pos) as ItemBarrelBlockEntity).onActivated(player)
+        (world.getBlockEntity(pos) as LegacyItemBarrelBlockEntity).onActivated(player)
 
         return true
     }
@@ -135,7 +135,8 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             return mutableListOf()
         }
 
-        val barrel = context[LootContextParameters.BLOCK_ENTITY] as? ItemBarrelBlockEntity ?: return mutableListOf()
+        val barrel =
+            context[LootContextParameters.BLOCK_ENTITY] as? LegacyItemBarrelBlockEntity ?: return mutableListOf()
         val stack = ItemStack(this)
 
         if (barrel.backingStorage.isEmpty) {
@@ -150,7 +151,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
     override fun hasComparatorOutput(state: BlockState?): Boolean = true
 
     override fun getComparatorOutput(state: BlockState?, world: World?, pos: BlockPos?): Int {
-        val barrel = (world?.getBlockEntity(pos) as? ItemBarrelBlockEntity) ?: return 0
+        val barrel = (world?.getBlockEntity(pos) as? LegacyItemBarrelBlockEntity) ?: return 0
         val amountStored = barrel.backingStorage.amountStored
 
         return if (amountStored <= 0) {
@@ -174,7 +175,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
 
         if (stack == null || lines == null) return
 
-        val barrel = ItemBarrelBlockEntity.loadFromStack(stack)
+        val barrel = LegacyItemBarrelBlockEntity.loadFromStack(stack)
 
         lines.add(barrel.getContentDescription().setStyle(CONTENTS_STYLE))
         lines.addAll(UpgradeRegistry.createTooltip(barrel))
@@ -185,6 +186,6 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             return
         }
 
-        (world.getBlockEntity(pos) as? ItemBarrelBlockEntity)?.let { b -> attributes.offer(b.invAttribute) }
+        (world.getBlockEntity(pos) as? LegacyItemBarrelBlockEntity)?.let { b -> attributes.offer(b.invAttribute) }
     }
 }

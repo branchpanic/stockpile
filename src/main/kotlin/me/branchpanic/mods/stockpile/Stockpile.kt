@@ -4,7 +4,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.content.block.AttackableBlockCallback
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.content.blockentity.LegacyItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import me.branchpanic.mods.stockpile.content.item.BarrelHatItem
 import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
@@ -54,7 +54,7 @@ object Stockpile : ModInitializer {
     )
 
     internal val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
-        id("item_barrel") to ItemBarrelBlockEntity.TYPE,
+        id("item_barrel") to LegacyItemBarrelBlockEntity.TYPE,
         id("trash_can") to TrashCanBlockEntity.TYPE
     )
 

@@ -5,7 +5,7 @@ import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.content.blockentity.LegacyItemBarrelBlockEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.text.Text
@@ -28,7 +28,7 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
     override fun upgradeMaxStacks(currentMaxStacks: Int): Int = currentMaxStacks + amount
 
     override fun canSafelyBeRemovedFrom(context: UpgradeContainer): Boolean {
-        val barrel = context as? ItemBarrelBlockEntity ?: return false
+        val barrel = context as? LegacyItemBarrelBlockEntity ?: return false
 
         return barrel.backingStorage.amountStored <=
                 (barrel.backingStorage.maxStacks - amount) * barrel.backingStorage.storedStack.maxCount

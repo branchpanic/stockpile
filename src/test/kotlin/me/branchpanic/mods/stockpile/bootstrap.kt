@@ -8,11 +8,18 @@ import org.powermock.reflect.Whitebox
 
 object TestItems {
     init {
-        Whitebox.setInternalState(Items::class.java, "AIR", Item(Item.Settings()))
+        Whitebox.setInternalState(Items::class.java, "AIR", object : Item(Settings()) {
+            override fun toString(): String = "Air"
+        })
     }
 
-    val ItemA = Item(Item.Settings())
-    val ItemB = Item(Item.Settings())
+    val ItemA = object : Item(Settings()) {
+        override fun toString(): String = "Item A"
+    }
+
+    val ItemB = object : Item(Settings()) {
+        override fun toString(): String = "Item B"
+    }
 }
 
 infix fun Int.of(item: Item) = ItemStack(item, this)

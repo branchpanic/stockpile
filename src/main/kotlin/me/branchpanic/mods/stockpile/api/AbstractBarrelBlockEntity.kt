@@ -1,7 +1,6 @@
 package me.branchpanic.mods.stockpile.api
 
 import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
@@ -28,9 +27,8 @@ enum class BarrelTransactionAmount {
  */
 abstract class AbstractBarrelBlockEntity<T>(
     open val storage: MutableMassStorage<T>,
-    open val upgrades: UpgradeContainer,
     private val doubleClickThresholdMs: Long,
-    type: BlockEntityType<AbstractBarrelBlockEntity<T>>
+    type: BlockEntityType<*>
 ) : BlockEntity(type) {
     private var userCache: Map<UUID, Long> = emptyMap()
 
@@ -43,7 +41,8 @@ abstract class AbstractBarrelBlockEntity<T>(
         userCache = userCache.filterValues { activatedTime -> now - activatedTime < doubleClickThresholdMs }
 
         if (player.isSneaking) {
-            TODO("Toggle barrel lock status")
+            changeModes()
+            return
         }
 
         if (player.uuid in userCache) {
@@ -73,4 +72,5 @@ abstract class AbstractBarrelBlockEntity<T>(
 
     abstract fun giveToPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
     abstract fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
+    abstract fun changeModes()
 }

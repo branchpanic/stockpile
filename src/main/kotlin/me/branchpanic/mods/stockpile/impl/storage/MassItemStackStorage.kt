@@ -6,8 +6,11 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.text.Text
 
-class MassItemStackStorage(override var contents: Quantizer<ItemStack>, override var capacity: Long) :
+class MassItemStackStorage(override var contents: Quantizer<ItemStack>, var maxStacks: Int) :
     MutableMassStorage<ItemStack> {
+    override val capacity: Long
+        get() = (maxStacks * contents.reference.maxCount).toLong()
+
     override fun describeContents(): Text {
         TODO("not implemented")
     }

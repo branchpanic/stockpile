@@ -26,6 +26,8 @@ class ItemStackQuantizer(override val reference: ItemStack, override val amount:
         return generateSequence { reference.withCount(reference.maxCount) }.take(fullStacks.toInt()).toList() +
                 listOf(reference.withCount(remainderStackCount.toInt()))
     }
+
+    override fun toString(): String = "ItemStackQuantizer(reference = $reference, amount = $amount)"
 }
 
 fun Quantizer<ItemStack>.firstStack(): ItemStack = toObjects().getOrElse(0) { ItemStack.EMPTY }

@@ -3,8 +3,6 @@ package me.branchpanic.mods.stockpile.content.item
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.StockpileClient
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
-import me.branchpanic.mods.stockpile.content.blockentity.LegacyItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.EquipmentSlot
@@ -13,15 +11,12 @@ import net.minecraft.item.ArmorItem
 import net.minecraft.item.ArmorMaterial
 import net.minecraft.item.ArmorMaterials
 import net.minecraft.item.ItemStack
-import net.minecraft.sound.SoundCategory
-import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
-import kotlin.math.min
 
 object BarrelHatMaterial : ArmorMaterial by ArmorMaterials.LEATHER {
     override fun getName(): String = "barrel_hat"
@@ -51,6 +46,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
     }
 
     fun pushInventoryToBarrels(player: PlayerEntity) {
+        /*
         val invStacks = getInventoryStacks(player)
         val barrelStacks = getUsableBarrelStacks(player, invStacks)
 
@@ -62,7 +58,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         var itemsDeposited = 0
 
         barrelStacks.forEach { barrelStack ->
-            val barrel = LegacyItemBarrelBlockEntity.loadFromStack(barrelStack)
+            val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
 
             insertableStacks.forEach insertStack@{ insertStack ->
                 if (!barrel.backingStorage.accepts(insertStack) || insertStack.isEmpty) {
@@ -93,9 +89,12 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
             player.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.MASTER, 0.5f, 1.0f)
         }
         player.inventory.markDirty()
+         */
+        TODO()
     }
 
     fun pullInventoryFromBarrels(player: PlayerEntity) {
+        /*
         val invStacks = getInventoryStacks(player)
         val barrelStacks = getUsableBarrelStacks(player, invStacks)
 
@@ -138,6 +137,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         }
 
         player.inventory.markDirty()
+        */
     }
 
     override fun appendTooltip(

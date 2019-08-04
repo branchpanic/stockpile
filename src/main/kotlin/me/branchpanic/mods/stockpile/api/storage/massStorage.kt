@@ -52,11 +52,6 @@ interface MutableMassStorage<T> : MassStorage<T> {
     override var contents: Quantizer<T>
 
     /**
-     * The modifiable capacity of this MassStorage.
-     */
-    override var capacity: Long
-
-    /**
      * Adds at most [amount] to this MutableMassStorage's contents, returning the portion that **could not** be
      * inserted.
      *

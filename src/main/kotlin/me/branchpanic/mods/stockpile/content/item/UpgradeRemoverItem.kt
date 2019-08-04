@@ -2,7 +2,7 @@ package me.branchpanic.mods.stockpile.content.item
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
-import me.branchpanic.mods.stockpile.giveTo
+import me.branchpanic.mods.stockpile.extension.giveTo
 import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Item

@@ -1,14 +1,7 @@
 package me.branchpanic.mods.stockpile.content.blockentity
 
-import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
-import net.minecraft.block.entity.BlockEntity
-import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.item.ItemStack
-import java.util.function.Supplier
-
-@Deprecated("No longer used", level = DeprecationLevel.ERROR)
-class LegacyItemBarrelBlockEntity() :
-    BlockEntity(TYPE) {
+@Deprecated("No longer used", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("ItemBarrelBlockEntity"))
+class LegacyItemBarrelBlockEntity {
 
     companion object {
         const val DEFAULT_CAPACITY_STACKS = 32
@@ -20,14 +13,6 @@ class LegacyItemBarrelBlockEntity() :
         const val UPGRADE_TAG = "Upgrades"
 
         const val RIGHT_CLICK_PERIOD_MS = 500
-
-        val TYPE: BlockEntityType<LegacyItemBarrelBlockEntity> =
-            BlockEntityType.Builder.create(Supplier { LegacyItemBarrelBlockEntity() }, ItemBarrelBlock).build(null)
-
-        const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
-
-        fun loadFromStack(stack: ItemStack): LegacyItemBarrelBlockEntity =
-            LegacyItemBarrelBlockEntity()
     }
 
     /*
@@ -209,5 +194,6 @@ class LegacyItemBarrelBlockEntity() :
             )
         }
     }
+
      */
 }

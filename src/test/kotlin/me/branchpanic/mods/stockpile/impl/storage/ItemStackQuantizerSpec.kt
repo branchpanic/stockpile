@@ -47,7 +47,7 @@ class ItemStackQuantizerSpec : StringSpec({
             row(ItemA.toQuantizer(128), listOf(64 of ItemA, 64 of ItemA)),
             row(ItemA.toQuantizer(129), listOf(64 of ItemA, 64 of ItemA, 1 of ItemA))
         ) { quantizer, expectedObjects ->
-            quantizer.toObjects() shouldContainExactlyInAnyOrder expectedObjects
+            quantizer.toObjects().map { s -> s.item to s.count } shouldContainExactlyInAnyOrder expectedObjects.map { s -> s.item to s.count }
         }
     }
 })

@@ -60,7 +60,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         }
 
         (world.getBlockEntity(pos) as ItemBarrelBlockEntity).apply {
-            TODO("fromStack(stack)")
+            // TODO(impl): load from stack
             markDirty()
         }
     }

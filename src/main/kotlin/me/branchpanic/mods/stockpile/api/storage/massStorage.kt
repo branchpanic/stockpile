@@ -76,7 +76,12 @@ interface MutableMassStorage<T> : MassStorage<T> {
             return quantizer
         }
 
-        return quantizer.withAmount(addAtMost(quantizer.amount, simulate))
+        val amount = quantizer.amount
+        val insertedAmount = if (amount <= freeSpace) amount else freeSpace
+
+        if (!simulate) contents += quantizer.withAmount(insertedAmount)
+
+        return quantizer.withAmount(amount - insertedAmount)
     }
 
     /**

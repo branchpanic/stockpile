@@ -10,6 +10,7 @@ import me.branchpanic.mods.stockpile.impl.storage.MassItemStackStorage
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.Identifier
@@ -24,7 +25,7 @@ class ItemBarrelBlockEntity(
     storage = MassItemStackStorage(ItemStackQuantizer.NONE, DEFAULT_CAPACITY_STACKS),
     doubleClickThresholdMs = 5000,
     type = TYPE
-), BlockEntityClientSerializable {
+), BlockEntityClientSerializable, Inventory {
     companion object {
         const val DEFAULT_CAPACITY_STACKS = 32
         const val MAX_UPGRADES = 6
@@ -44,12 +45,21 @@ class ItemBarrelBlockEntity(
 
     // TODO(perf): Cache and re-create when needed by observing this.storage
     val invAttribute
-        get() = UnrestrictedInventoryFixedWrapper(FixedMassItemInv(storage, false))
+        get() = FixedMassItemInv(storage, false)
+
+    private val invWrapper
+        get() = UnrestrictedInventoryFixedWrapper(invAttribute)
+
+    init {
+        invAttribute.addListener({ _, _, _, _ -> markDirty() }, { })
+    }
 
     override fun markDirty() {
         if (clearWhenEmpty && storage.isEmpty) {
             storage.contents = ItemStackQuantizer.NONE
         }
+
+        println(storage.contents)
 
         super.markDirty()
     }
@@ -94,8 +104,29 @@ class ItemBarrelBlockEntity(
         if (itemName.isNullOrBlank() || itemId == Registry.ITEM.defaultId || !Registry.ITEM.containsId(itemId)) {
             storage.contents = ItemStackQuantizer.NONE
         } else {
-            val itemAmount = max(min(0L, tag.getLong(AMOUNT_STORED_TAG)), storage.capacity)
+            val itemAmount = min(max(0L, tag.getLong(AMOUNT_STORED_TAG)), storage.capacity)
             storage.contents = ItemStackQuantizer(ItemStack(Registry.ITEM[itemId], 1), itemAmount)
         }
     }
+
+    // Delegation of Inventory to invAttribute. As far as I know we can't use Kotlin's implementation by delegation
+    // because the implementation can change.
+
+    override fun getInvStack(slot: Int): ItemStack = invWrapper.getInvStack(slot)
+
+    override fun clear() = invWrapper.clear()
+
+    override fun setInvStack(slot: Int, stack: ItemStack?) = invWrapper.setInvStack(slot, stack)
+
+    override fun removeInvStack(slot: Int): ItemStack = invWrapper.removeInvStack(slot)
+
+    override fun canPlayerUseInv(player: PlayerEntity?): Boolean = invWrapper.canPlayerUseInv(player)
+
+    override fun getInvSize(): Int = invWrapper.invSize
+
+    override fun takeInvStack(slot: Int, amount: Int): ItemStack = invWrapper.takeInvStack(slot, amount)
+
+    override fun isInvEmpty(): Boolean = invWrapper.isInvEmpty
+
+    override fun isValidInvStack(slot: Int, stack: ItemStack?): Boolean = invWrapper.isValidInvStack(slot, stack)
 }

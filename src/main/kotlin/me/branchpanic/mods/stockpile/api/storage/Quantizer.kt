@@ -68,7 +68,7 @@ interface Quantizer<T> {
      * Returns a new Quantizer with the given amount subtracted.
      */
     operator fun minus(amount: Long): Quantizer<T> {
-        require(this.amount - amount > 0) {
+        require(this.amount - amount >= 0) {
             "Attempted to subtract $amount from a Quantizer representing ${this.amount} objects, which would result " +
                     "in a negative quantity."
         }

@@ -38,7 +38,29 @@ class ItemStackQuantizer(override val reference: ItemStack, override val amount:
 
     override fun equals(other: Any?): Boolean {
         val otherQuantizer = other as? ItemStackQuantizer ?: return false
-        return canMergeWith(otherQuantizer) && amount == otherQuantizer.amount
+        return ItemStack.areItemsEqual(reference, other.reference) &&
+                ItemStack.areTagsEqual(reference, other.reference) &&
+                amount == otherQuantizer.amount
+    }
+
+    override fun hashCode(): Int {
+        var result = reference.hashCode()
+        result = 31 * result + amount.hashCode()
+        return result
+    }
+
+    override fun plus(other: Quantizer<ItemStack>): Quantizer<ItemStack> {
+        val untypedResult = super.plus(other)
+
+        // Note that:
+        // n of EMPTY + m of something = (n + m) of something
+        // However:
+        // n of something - n of something = 0 of something
+        return if (reference.isEmpty) {
+            ItemStackQuantizer(other.reference, untypedResult.amount)
+        } else {
+            untypedResult
+        }
     }
 }
 

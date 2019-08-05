@@ -8,7 +8,6 @@ import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener
 import alexiil.mc.lib.attributes.item.ItemTransferable
 import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
-import me.branchpanic.mods.stockpile.extension.canStackWith
 import me.branchpanic.mods.stockpile.extension.withCount
 import me.branchpanic.mods.stockpile.impl.storage.firstStack
 import me.branchpanic.mods.stockpile.impl.storage.oneStackToQuantizer
@@ -19,7 +18,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * A FixedMassItemInv wraps a MassItemStorage into a FixedItemInv.
+ * A FixedMassItemInv wraps a MutableMassStorage of ItemStacks into a FixedItemInv.
  */
 class FixedMassItemInv(internal var storage: MutableMassStorage<ItemStack>, var voidExtraItems: Boolean = false) :
     FixedItemInv,
@@ -83,7 +82,9 @@ class FixedMassItemInv(internal var storage: MutableMassStorage<ItemStack>, var 
             return false
         }
 
-        return storage.contents.canMergeWith(stack.toQuantizer()) || stack.isEmpty
+        println("Valid: ${storage.contents.canMergeWith(stack.toQuantizer())}")
+
+        return storage.contents.canMergeWith(stack.toQuantizer())
     }
 
     override fun addListener(listener: ItemInvSlotChangeListener?, removalToken: ListenerRemovalToken?): ListenerToken {
@@ -102,7 +103,7 @@ class FixedMassItemInv(internal var storage: MutableMassStorage<ItemStack>, var 
     override fun getSlotCount(): Int = 2
 
     override fun getMaxAmount(slot: Int, stack: ItemStack?): Int {
-        if (stack == null || !stack.canStackWith(storage.contents.reference)) {
+        if (stack == null || !storage.contents.canMergeWith(stack.toQuantizer())) {
             return 0
         }
 
@@ -113,9 +114,9 @@ class FixedMassItemInv(internal var storage: MutableMassStorage<ItemStack>, var 
         return when (slot) {
             INBOUND_SLOT -> max(
                 0,
-                min(storage.contents.reference.count.toLong(), storage.capacity - storage.contents.amount)
+                min(storage.contents.reference.maxCount.toLong(), storage.freeSpace)
             ).toInt()
-            OUTBOUND_SLOT -> min(storage.contents.reference.count.toLong(), storage.contents.amount).toInt()
+            OUTBOUND_SLOT -> min(storage.contents.reference.maxCount.toLong(), storage.contents.amount).toInt()
             else -> throw IllegalArgumentException("slot index out of bounds")
         }
     }
@@ -138,6 +139,7 @@ class FixedMassItemInv(internal var storage: MutableMassStorage<ItemStack>, var 
         return if (extractedAmount <= 0) {
             ItemStack.EMPTY
         } else {
+            // This is safe because the reference will only ever change on insertion.
             storage.contents.reference.withCount(extractedAmount.toInt())
         }
     }

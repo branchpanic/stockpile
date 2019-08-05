@@ -23,6 +23,15 @@ import org.powermock.modules.junit4.PowerMockRunnerDelegate
 @SuppressStaticInitializationFor("net.minecraft.item.Items", "net.minecraft.util.registry.Registry")
 @PrepareForTest(Items::class, Registry::class)
 class ItemStackQuantizerSpec : StringSpec({
+    "plus" {
+        forall(
+            row(ItemA.toQuantizer(1), ItemA.toQuantizer(1), ItemA.toQuantizer(2)),
+            row(ItemStackQuantizer.NONE, ItemA.toQuantizer(1), ItemA.toQuantizer(1))
+        ) { quantizerA, quantizerB, sum ->
+            quantizerA + quantizerB shouldBe sum
+        }
+    }
+
     "canMergeWith" {
         forall(
             row(ItemA.toQuantizer(1), ItemA.toQuantizer(1), true),

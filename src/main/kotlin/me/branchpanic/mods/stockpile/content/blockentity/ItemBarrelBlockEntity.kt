@@ -42,6 +42,7 @@ class ItemBarrelBlockEntity(
         fun loadFromStack(stack: ItemStack): ItemBarrelBlockEntity = ItemBarrelBlockEntity()
     }
 
+    // TODO(perf): Cache and re-create when needed by observing this.storage
     val invAttribute
         get() = UnrestrictedInventoryFixedWrapper(FixedMassItemInv(storage, false))
 

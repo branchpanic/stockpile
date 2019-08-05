@@ -51,7 +51,7 @@ abstract class AbstractBarrelBlockEntity<T>(
             return
         }
 
-        takeFromPlayer(player, BarrelTransactionAmount.ONE)
+        takeFromPlayer(player, BarrelTransactionAmount.MANY)
         userCache = userCache + (player.uuid to now)
 
         showStatusToPlayer(player)

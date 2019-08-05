@@ -3,16 +3,17 @@ package me.branchpanic.mods.stockpile.content.blockentity
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.BarrelTransactionAmount
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.extension.giveTo
 import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
 import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
-import me.branchpanic.mods.stockpile.impl.storage.ItemStackQuantizer
-import me.branchpanic.mods.stockpile.impl.storage.MassItemStackStorage
+import me.branchpanic.mods.stockpile.impl.storage.*
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 import java.util.function.Supplier
@@ -20,10 +21,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 class ItemBarrelBlockEntity(
-    private var clearWhenEmpty: Boolean = true
+    internal var clearWhenEmpty: Boolean = true
 ) : AbstractBarrelBlockEntity<ItemStack>(
     storage = MassItemStackStorage(ItemStackQuantizer.NONE, DEFAULT_CAPACITY_STACKS),
-    doubleClickThresholdMs = 5000,
+    doubleClickThresholdMs = 3000,
     type = TYPE
 ), BlockEntityClientSerializable, Inventory {
     companion object {
@@ -43,12 +44,8 @@ class ItemBarrelBlockEntity(
         fun loadFromStack(stack: ItemStack): ItemBarrelBlockEntity = ItemBarrelBlockEntity()
     }
 
-    // TODO(perf): Cache and re-create when needed by observing this.storage
-    val invAttribute
-        get() = FixedMassItemInv(storage, false)
-
-    private val invWrapper
-        get() = UnrestrictedInventoryFixedWrapper(invAttribute)
+    val invAttribute = FixedMassItemInv(storage, false)
+    private val invWrapper = UnrestrictedInventoryFixedWrapper(invAttribute)
 
     init {
         invAttribute.addListener({ _, _, _, _ -> markDirty() }, { })
@@ -59,17 +56,42 @@ class ItemBarrelBlockEntity(
             storage.contents = ItemStackQuantizer.NONE
         }
 
-        println(storage.contents)
+        world?.apply {
+            updateListeners(pos, getBlockState(pos), getBlockState(pos), 3)
+        }
 
         super.markDirty()
     }
 
     override fun giveToPlayer(player: PlayerEntity, amount: BarrelTransactionAmount) {
+        val removedItems = when (amount) {
+            BarrelTransactionAmount.ONE -> storage.contents.withAmount(1)
+            BarrelTransactionAmount.MANY -> storage.contents.reference.oneStackToQuantizer()
+            BarrelTransactionAmount.ALL -> TODO()
+        }
 
+        storage.removeAtMost(removedItems).toObjects().forEach { it.giveTo(player) }
+        markDirty()
     }
 
     override fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount) {
+        when (amount) {
+            BarrelTransactionAmount.ONE -> TODO()
 
+            BarrelTransactionAmount.MANY -> {
+                if (!player.mainHandStack.isEmpty) player.setStackInHand(
+                    Hand.MAIN_HAND,
+                    storage.addAtMost(player.mainHandStack.toQuantizer()).firstStack()
+                )
+            }
+
+            BarrelTransactionAmount.ALL -> {
+                player.inventory.main.replaceAll { storage.addAtMost(it.toQuantizer()).firstStack() }
+            }
+        }
+
+        player.inventory.markDirty()
+        markDirty()
     }
 
     override fun changeModes() {
@@ -130,3 +152,4 @@ class ItemBarrelBlockEntity(
 
     override fun isValidInvStack(slot: Int, stack: ItemStack?): Boolean = invWrapper.isValidInvStack(slot, stack)
 }
+

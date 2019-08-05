@@ -20,11 +20,18 @@ class ItemStackQuantizer(override val reference: ItemStack, override val amount:
     }
 
     override fun toObjects(): List<ItemStack> {
+        if (reference.isEmpty || amount <= 0L) return emptyList()
+
         val fullStacks = amount / reference.maxCount
         val remainderStackCount = amount % reference.maxCount
 
-        return generateSequence { reference.withCount(reference.maxCount) }.take(fullStacks.toInt()).toList() +
-                listOf(reference.withCount(remainderStackCount.toInt()))
+        val fullStackList =
+            generateSequence { reference.withCount(reference.maxCount) }.take(fullStacks.toInt()).toList()
+        val remainderStackList = if (remainderStackCount > 0L) {
+            listOf(reference.withCount(remainderStackCount.toInt()))
+        } else emptyList()
+
+        return fullStackList + remainderStackList
     }
 
     override fun toString(): String = "ItemStackQuantizer(reference = $reference, amount = $amount)"

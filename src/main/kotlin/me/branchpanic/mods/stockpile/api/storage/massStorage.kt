@@ -92,7 +92,7 @@ interface MutableMassStorage<T> : MassStorage<T> {
     fun removeAtMost(amount: Long, simulate: Boolean = false): Long {
         val removedAmount = if (amount >= contents.amount) contents.amount else amount
 
-        if (!simulate) contents -= amount
+        if (!simulate) contents -= removedAmount
 
         return removedAmount
     }

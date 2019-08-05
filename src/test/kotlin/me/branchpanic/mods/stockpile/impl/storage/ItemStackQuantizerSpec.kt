@@ -50,4 +50,19 @@ class ItemStackQuantizerSpec : StringSpec({
             quantizer.toObjects().map { s -> s.item to s.count } shouldContainExactlyInAnyOrder expectedObjects.map { s -> s.item to s.count }
         }
     }
+
+    "equals" {
+        forall(
+            row(ItemA.toQuantizer(1), ItemA.toQuantizer(1), true),
+            row(ItemA.toQuantizer(1), ItemA.toQuantizer(5), false),
+            row(ItemA.toQuantizer(0), ItemA.toQuantizer(1), false),
+            row(ItemStackQuantizer.NONE, ItemStackQuantizer.NONE, true),
+            row(ItemA.toQuantizer(1), ItemB.toQuantizer(1), false),
+            row(ItemA.toQuantizer(1), ItemB.toQuantizer(0), false),
+            row(ItemA.toQuantizer(1), ItemStackQuantizer.NONE, false),
+            row((1 of ItemA).withDummyTag().toQuantizer(1), ItemA.toQuantizer(1), false)
+        ) { quantizerA, quantizerB, shouldEqual ->
+            (quantizerA == quantizerB) shouldBe shouldEqual
+        }
+    }
 })

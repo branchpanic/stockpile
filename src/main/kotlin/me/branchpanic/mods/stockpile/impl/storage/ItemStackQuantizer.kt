@@ -35,6 +35,11 @@ class ItemStackQuantizer(override val reference: ItemStack, override val amount:
     }
 
     override fun toString(): String = "ItemStackQuantizer(reference = $reference, amount = $amount)"
+
+    override fun equals(other: Any?): Boolean {
+        val otherQuantizer = other as? ItemStackQuantizer ?: return false
+        return canMergeWith(otherQuantizer) && amount == otherQuantizer.amount
+    }
 }
 
 fun Quantizer<ItemStack>.firstStack(): ItemStack = toObjects().getOrElse(0) { ItemStack.EMPTY }

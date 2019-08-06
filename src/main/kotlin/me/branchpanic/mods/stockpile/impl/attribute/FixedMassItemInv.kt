@@ -7,17 +7,24 @@ import alexiil.mc.lib.attributes.item.FixedItemInv
 import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener
 import alexiil.mc.lib.attributes.item.ItemTransferable
 import alexiil.mc.lib.attributes.item.filter.ItemFilter
-import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
-import me.branchpanic.mods.stockpile.isStackableWith
+import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
+import me.branchpanic.mods.stockpile.extension.withCount
+import me.branchpanic.mods.stockpile.impl.storage.firstStack
+import me.branchpanic.mods.stockpile.impl.storage.oneStackToQuantizer
+import me.branchpanic.mods.stockpile.impl.storage.toQuantizer
 import net.minecraft.item.ItemStack
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 /**
- * A FixedMassItemInv wraps a MassItemStorage into a FixedItemInv.
+ * A FixedMassItemInv wraps a MutableMassStorage of ItemStacks into a FixedItemInv.
  */
-class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems: Boolean = false) : FixedItemInv,
+class FixedMassItemInv(
+    internal var storage: MutableMassStorage<ItemStack>,
+    var voidExtraItems: Boolean = false
+) :
+    FixedItemInv,
     ItemTransferable {
     companion object {
         const val INBOUND_SLOT = 0
@@ -32,10 +39,10 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
     override fun getInvStack(slot: Int): ItemStack =
         when (slot) {
             INBOUND_SLOT -> ItemStack.EMPTY
-            OUTBOUND_SLOT -> storage.take(
-                storage.currentInstance.maxCount.toLong(),
+            OUTBOUND_SLOT -> storage.removeAtMost(
+                storage.contents.reference.oneStackToQuantizer(),
                 simulate = true
-            ).getOrElse(0) { ItemStack.EMPTY }
+            ).firstStack()
             else -> throw IllegalArgumentException("slot index out of bounds")
         }
 
@@ -45,7 +52,7 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
         }
 
         if (storage.isEmpty) {
-            return storage.offer(stack).isEmpty
+            return storage.addAtMost(stack.toQuantizer()).isEmpty
         }
 
         if (storage.isFull && voidExtraItems) {
@@ -57,12 +64,12 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
 
         when {
             change > 0 -> {
-                val remainder = storage.add(change.toLong())
+                val remainder = storage.addAtMost(change.toLong())
                 if (remainder != 0L) {
                     throw RuntimeException("lost $remainder items in a transaction")
                 }
             }
-            change < 0 -> storage.remove(abs(change).toLong())
+            change < 0 -> storage.removeAtMost(abs(change).toLong())
         }
 
         fireListeners(slot, before, getInvStack(slot))
@@ -78,7 +85,7 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
             return false
         }
 
-        return storage.accepts(stack) || stack.isEmpty
+        return storage.contents.canMergeWith(stack.toQuantizer())
     }
 
     override fun addListener(listener: ItemInvSlotChangeListener?, removalToken: ListenerRemovalToken?): ListenerToken {
@@ -97,20 +104,20 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
     override fun getSlotCount(): Int = 2
 
     override fun getMaxAmount(slot: Int, stack: ItemStack?): Int {
-        if (stack == null || !stack.isStackableWith(storage.storedStack)) {
+        if (stack == null || !storage.contents.canMergeWith(stack.toQuantizer())) {
             return 0
         }
 
         if (voidExtraItems && slot == INBOUND_SLOT) {
-            return storage.storedStack.maxCount
+            return storage.contents.reference.maxCount
         }
 
         return when (slot) {
             INBOUND_SLOT -> max(
                 0,
-                min(storage.storedStack.count.toLong(), storage.capacity - storage.amountStored)
+                min(storage.contents.reference.maxCount.toLong(), storage.freeSpace)
             ).toInt()
-            OUTBOUND_SLOT -> min(storage.storedStack.count.toLong(), storage.amountStored).toInt()
+            OUTBOUND_SLOT -> min(storage.contents.reference.maxCount.toLong(), storage.contents.amount).toInt()
             else -> throw IllegalArgumentException("slot index out of bounds")
         }
     }
@@ -121,13 +128,20 @@ class FixedMassItemInv(internal var storage: MassItemStorage, var voidExtraItems
         if (stack == null) return ItemStack.EMPTY
 
         fireListeners(-1, ItemStack.EMPTY, ItemStack.EMPTY)
-        return storage.offer(stack, simulation == Simulation.SIMULATE)
+        return storage.addAtMost(stack.toQuantizer(), simulation == Simulation.SIMULATE).firstStack()
     }
 
     override fun attemptExtraction(filter: ItemFilter?, amount: Int, simulation: Simulation?): ItemStack {
-        if (filter == null || !filter.matches(storage.storedStack)) return ItemStack.EMPTY
+        if (filter == null || !filter.matches(storage.contents.reference)) return ItemStack.EMPTY
 
         fireListeners(-1, ItemStack.EMPTY, ItemStack.EMPTY)
-        return storage.take(amount.toLong(), simulation == Simulation.SIMULATE).getOrElse(0) { ItemStack.EMPTY }
+        val extractedAmount = storage.removeAtMost(amount.toLong(), simulation == Simulation.SIMULATE)
+
+        return if (extractedAmount <= 0) {
+            ItemStack.EMPTY
+        } else {
+            // This is safe because the reference will only ever change on insertion.
+            storage.contents.reference.withCount(extractedAmount.toInt())
+        }
     }
 }

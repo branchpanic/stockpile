@@ -1,8 +1,8 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
 import com.mojang.blaze3d.platform.GlStateManager
+import me.branchpanic.mods.stockpile.api.storage.MassStorage
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.impl.storage.MassItemStorage
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
@@ -11,6 +11,7 @@ import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.resource.language.I18n
+import net.minecraft.item.ItemStack
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.Direction
 import org.lwjgl.opengl.GL11
@@ -42,16 +43,14 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
 
         val face = barrel.cachedState[Properties.FACING]
         val obscuringPos = barrel.pos.offset(face)
+        val state = world.getBlockState(obscuringPos)
 
-        if (world.getBlockState(obscuringPos).isFullOpaque(
-                world,
-                obscuringPos
-            ) || barrel.backingStorage.currentInstance.isEmpty
-        ) return
+        if (state.isFullOpaque(world, obscuringPos) || barrel.storage.contents.reference.isEmpty) return
 
-        renderDisplay(barrel.backingStorage, face, x, y, z)
+        renderDisplay(barrel.storage, barrel.clearWhenEmpty, face, x, y, z)
     }
 
+    // TODO(chore): Replace this with real operations instead of a hardcoded table
     private fun transformToFace(orientation: Direction, x: Double, y: Double, z: Double) = when (orientation) {
         Direction.NORTH ->
             GlStateManager.translated(x + 0.75, y + 0.75, z + COFH_TRANSFORM_OFFSET * 145)
@@ -79,12 +78,17 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
         }
     }
 
-    private fun renderFillBar(storage: MassItemStorage, xCenter: Double, yCenter: Double) {
+    private fun renderFillBar(
+        storage: MassStorage<ItemStack>,
+        clearWhenEmpty: Boolean,
+        xCenter: Double,
+        yCenter: Double
+    ) {
         GlStateManager.translated(0.0, 0.0, 0.3 * 1 / COFH_TRANSFORM_OFFSET)
         GlStateManager.scaled(0.5, 0.5, 1.0)
 
-        val displayText = getDisplayText(storage)
-        val amount = storage.amountStored
+        val displayText = getDisplayText(storage, clearWhenEmpty)
+        val amount = storage.contents.amount
         val capacity = storage.capacity
         val filledAmount = amount.toDouble() / capacity
         val textColor = if (capacity > amount) {
@@ -99,7 +103,7 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
         val textCenterY = yCenter * 2 - (textHeight / 2)
 
         val totalBarWidth = 2 * FILL_BAR_WIDTH + 0.25 * FILL_BAR_WIDTH
-        val filledBarWidth = totalBarWidth * Math.min(filledAmount, 1.0)
+        val filledBarWidth = totalBarWidth * min(filledAmount, 1.0)
         val unfilledBarWidth = totalBarWidth - filledBarWidth
 
         GlStateManager.disableTexture()
@@ -144,13 +148,14 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
     }
 
     private fun renderDisplay(
-        storage: MassItemStorage,
+        storage: MassStorage<ItemStack>,
+        clearWhenEmpty: Boolean,
         orientation: Direction,
         x: Double,
         y: Double,
         z: Double
     ) {
-        val stack = storage.currentInstance
+        val stack = storage.contents.reference
 
         GlStateManager.enableRescaleNormal()
         GlStateManager.alphaFunc(516, 0.1F)
@@ -173,22 +178,23 @@ object ItemBarrelRenderer : BlockEntityRenderer<ItemBarrelBlockEntity>() {
         MinecraftClient.getInstance().itemRenderer.renderGuiItem(stack, 0, -3)
 
         GlStateManager.translated(0.0, 0.0, -6.0)
-        renderFillBar(storage, 8.0, 16.0)
+        renderFillBar(storage, clearWhenEmpty, 8.0, 16.0)
 
         GlStateManager.popMatrix()
         GlStateManager.disableRescaleNormal()
         GlStateManager.disableBlend()
     }
 
-    private fun getDisplayText(storage: MassItemStorage): String {
+    private fun getDisplayText(storage: MassStorage<ItemStack>, clearWhenEmpty: Boolean): String {
         return if (storage.isEmpty) {
             I18n.translate("ui.stockpile.empty")
         } else {
-            storage.amountStored.abbreviate() + if (storage.clearWhenEmpty) "*" else ""
+            storage.contents.amount.abbreviate() + if (clearWhenEmpty) "*" else ""
         }
     }
 }
 
+// TODO(i18n): Localize quantities
 val INT_SUFFIXES = arrayOf("k", "M", "B", "T", "Q")
 
 fun Long.abbreviate(): String {

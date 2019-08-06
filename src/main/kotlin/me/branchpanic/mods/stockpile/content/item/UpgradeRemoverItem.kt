@@ -2,8 +2,8 @@ package me.branchpanic.mods.stockpile.content.item
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
-import me.branchpanic.mods.stockpile.giveTo
-import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
+import me.branchpanic.mods.stockpile.extension.giveTo
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
@@ -36,7 +36,7 @@ object UpgradeRemoverItem : Item(Stockpile.ITEM_SETTINGS) {
         blockEntity.popUpgrade()
 
         if (ctx.player != null) {
-            upgradeToRemove.getCorrespondingStack().giveTo(ctx.player!!, playSound = false)
+            upgradeToRemove.toStack().giveTo(ctx.player!!)
         }
 
         return ActionResult.SUCCESS

@@ -7,12 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-### Added
-- Barrel hat API for future expansion
-
 ### Changed
-- Internal barrel API to make adding new types of barrels stupid easy
-- Upgrade API to further generalize upgrades
+- Refactored barrel/storage APIs
 
 ### Fixed
 - Item barrels not stacking after being crafted (now stack up to 8)

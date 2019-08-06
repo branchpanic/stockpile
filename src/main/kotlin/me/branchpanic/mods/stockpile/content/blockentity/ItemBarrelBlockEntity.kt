@@ -234,4 +234,3 @@ class ItemBarrelBlockEntity(
 
     override fun isValidInvStack(slot: Int, stack: ItemStack?): Boolean = invWrapper.isValidInvStack(slot, stack)
 }
-

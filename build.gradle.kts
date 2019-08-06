@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.3.21"
     id("fabric-loom") version "0.2.5-SNAPSHOT"
+    id("org.jlleitschuh.gradle.ktlint") version "8.2.0"
 }
 
 object Versions {
@@ -30,24 +31,14 @@ java {
 }
 
 repositories {
+    mavenCentral()
+
     maven(url = "https://maven.fabricmc.net/") {
         name = "Fabric"
     }
 
-    maven(url = "https://maven.jamieswhiteshirt.com/libs-release/") {
-        name = "JamiesWhiteShirt"
-    }
-
-    maven(url = "https://minecraft.curseforge.com/api/maven") {
-        name = "CurseForge"
-    }
-
     maven(url = "https://mod-buildcraft.com/maven") {
         name = "BuildCraft"
-    }
-
-    maven(url = "https://jitpack.io") {
-        name = "JitPack"
     }
 }
 

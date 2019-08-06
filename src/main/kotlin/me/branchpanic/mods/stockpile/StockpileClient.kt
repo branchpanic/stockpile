@@ -19,7 +19,6 @@ import net.minecraft.util.hit.HitResult
 import net.minecraft.world.RayTraceContext
 import org.lwjgl.glfw.GLFW
 
-
 @Environment(EnvType.CLIENT)
 object StockpileClient : ClientModInitializer {
     val BARREL_HAT_KEY: FabricKeyBinding = FabricKeyBinding.Builder.create(

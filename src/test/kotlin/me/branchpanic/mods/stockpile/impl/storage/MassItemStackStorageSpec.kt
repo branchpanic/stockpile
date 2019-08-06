@@ -24,12 +24,12 @@ class MassItemStackStorageSpec : StringSpec({
         forall(
             row(ItemA.toQuantizer(64), 1, ItemA.toQuantizer(1), ItemA.toQuantizer(1)),
             row(ItemA.toQuantizer(32), 1, ItemA.toQuantizer(64), ItemA.toQuantizer(32)),
-            row(ItemA.toQuantizer(32), 2, ItemA.toQuantizer(64), ItemStackQuantizer.NONE),
-            row(ItemA.toQuantizer(32), 1, ItemA.toQuantizer(1), ItemStackQuantizer.NONE),
-            row(ItemA.toQuantizer(32), 1, ItemA.toQuantizer(32), ItemStackQuantizer.NONE),
+            row(ItemA.toQuantizer(32), 2, ItemA.toQuantizer(64), ItemA.toQuantizer(0)),
+            row(ItemA.toQuantizer(32), 1, ItemA.toQuantizer(1), ItemA.toQuantizer(0)),
+            row(ItemA.toQuantizer(32), 1, ItemA.toQuantizer(32), ItemA.toQuantizer(0)),
             row(ItemA.toQuantizer(32), 1, ItemB.toQuantizer(1), ItemB.toQuantizer(1)),
-            row(ItemStackQuantizer.NONE, 1, ItemA.toQuantizer(32), ItemStackQuantizer.NONE),
-            row(ItemStackQuantizer.NONE, 1, ItemB.toQuantizer(32), ItemStackQuantizer.NONE),
+            row(ItemStackQuantizer.NONE, 1, ItemA.toQuantizer(32), ItemA.toQuantizer(0)),
+            row(ItemStackQuantizer.NONE, 1, ItemB.toQuantizer(32), ItemB.toQuantizer(0)),
             row(ItemStackQuantizer.NONE, 1, ItemA.toQuantizer(128), ItemA.toQuantizer(64))
         ) { contents, maxStacks, insertedQuantizer, expectedRemainder ->
             booleanArrayOf(true, false).forEach { simulate ->
@@ -67,13 +67,5 @@ class MassItemStackStorageSpec : StringSpec({
                 }
             }
         }
-    }
-
-    "removeAtMost with Quantizer" {
-        // TODO(test)
-    }
-
-    "removeAtMost with Long" {
-        // TODO(test)
     }
 })

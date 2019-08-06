@@ -12,6 +12,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
@@ -60,7 +61,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
         }
 
         (world.getBlockEntity(pos) as ItemBarrelBlockEntity).apply {
-            // TODO(impl): load from stack
+            fromClientTag(stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
             markDirty()
         }
     }
@@ -134,15 +135,14 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
             return mutableListOf()
         }
 
-        val barrel =
-            context[LootContextParameters.BLOCK_ENTITY] as? ItemBarrelBlockEntity ?: return mutableListOf()
+        val barrel = context[LootContextParameters.BLOCK_ENTITY] as? ItemBarrelBlockEntity ?: return mutableListOf()
         val stack = ItemStack(this)
 
         if (barrel.storage.isEmpty) {
-            TODO("barrel.backingStorage.clearInstanceWhenEmpty()")
+            return mutableListOf(stack)
         }
 
-        TODO("barrel.toStack(stack)")
+        stack.putSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(CompoundTag()))
 
         return mutableListOf(stack)
     }
@@ -172,14 +172,11 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
     ) {
         super.buildTooltip(stack, world, lines, context)
 
-        /*
         if (stack == null || lines == null) return
 
-        val barrel = ItemBarrelBlockEntity.loadFromStack(stack)
-
+        val barrel = ItemBarrelBlockEntity.fromStack(stack)
         lines.add(barrel.storage.describeContents().setStyle(CONTENTS_STYLE))
-        lines.addAll(UpgradeRegistry.createTooltip(barrel.upgrades))
-         */
+        // lines.addAll(UpgradeRegistry.createTooltip(barrel.upgrades))
     }
 
     override fun addAllAttributes(world: World?, pos: BlockPos?, state: BlockState?, attributes: AttributeList<*>?) {

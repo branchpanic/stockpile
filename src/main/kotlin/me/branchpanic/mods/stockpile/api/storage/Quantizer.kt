@@ -45,7 +45,7 @@ interface Quantizer<T> {
      * Returns a new Quantizer with the given amount added.
      */
     operator fun plus(amount: Long): Quantizer<T> {
-        require(this.amount + amount > 0) {
+        require(this.amount + amount >= 0) {
             "Attempted to add $amount to a Quantizer representing ${this.amount} objects, which would result in a " +
                     "negative quantity."
         }

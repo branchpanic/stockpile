@@ -71,7 +71,7 @@ object Stockpile : ModInitializer {
             Registry.register(Registry.BLOCK, id, block)
 
             if (ITEMS.keys.none { itemId -> itemId == id }) {
-                Registry.register(Registry.ITEM, id, BlockItem(block, ITEM_SETTINGS))
+                Registry.register(Registry.ITEM, id, BlockItem(block, ITEM_SETTINGS.maxDamage(0).maxCount(8)))
             }
         }
 

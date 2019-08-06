@@ -45,14 +45,16 @@ abstract class AbstractBarrelBlockEntity<T>(
             return
         }
 
+        // Lifting the assignment to userCache out of this statement would result in a pretty weird-looking expression
+        // with side effects.
+        @Suppress("LiftReturnOrAssignment")
         if (player.uuid in userCache) {
             takeFromPlayer(player, BarrelTransactionAmount.ALL)
             userCache = userCache - player.uuid
-            return
+        } else {
+            takeFromPlayer(player, BarrelTransactionAmount.MANY)
+            userCache = userCache + (player.uuid to now)
         }
-
-        takeFromPlayer(player, BarrelTransactionAmount.MANY)
-        userCache = userCache + (player.uuid to now)
 
         showStatusToPlayer(player)
     }

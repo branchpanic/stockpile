@@ -10,7 +10,6 @@ fun ItemStack.canStackWith(other: ItemStack): Boolean = isEmpty ||
             other
         ))
 
-
 fun ItemStack.withCount(count: Int): ItemStack {
     val newStack = copy()
     newStack.count = count

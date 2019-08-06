@@ -36,7 +36,7 @@ object UpgradeRemoverItem : Item(Stockpile.ITEM_SETTINGS) {
         blockEntity.popUpgrade()
 
         if (ctx.player != null) {
-            upgradeToRemove.toStack().giveTo(ctx.player!!, playSound = false)
+            upgradeToRemove.toStack().giveTo(ctx.player!!)
         }
 
         return ActionResult.SUCCESS

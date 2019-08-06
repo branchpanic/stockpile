@@ -20,6 +20,9 @@ import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
@@ -109,32 +112,57 @@ class ItemBarrelBlockEntity(
             BarrelTransactionAmount.ALL -> TODO()
         }
 
+        if (!removedItems.isEmpty) {
+            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.5f, 0.8f)
+        }
+
         storage.removeAtMost(removedItems).toObjects().forEach { it.giveTo(player) }
         markDirty()
     }
 
     override fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount) {
+        var itemsTaken = false
+
         when (amount) {
             BarrelTransactionAmount.ONE -> TODO()
 
             BarrelTransactionAmount.MANY -> {
-                if (!player.mainHandStack.isEmpty) player.setStackInHand(
-                    Hand.MAIN_HAND,
-                    storage.addAtMost(player.mainHandStack.toQuantizer()).firstStack()
-                )
+                if (!player.mainHandStack.isEmpty) {
+                    val result = storage.addAtMost(player.mainHandStack.toQuantizer()).firstStack()
+                    itemsTaken = player.mainHandStack.count != result.count
+
+                    player.setStackInHand(
+                        Hand.MAIN_HAND,
+                        result
+                    )
+                }
             }
 
             BarrelTransactionAmount.ALL -> {
                 player.inventory.main.replaceAll { storage.addAtMost(it.toQuantizer()).firstStack() }
+                itemsTaken = true
             }
+        }
+
+        if (itemsTaken) {
+            player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.5f, 0.65f)
         }
 
         player.inventory.markDirty()
         markDirty()
     }
 
-    override fun changeModes() {
+    override fun changeModes(player: PlayerEntity) {
         clearWhenEmpty = !clearWhenEmpty
+
+        if (clearWhenEmpty) {
+            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_unlocked"), true)
+            player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 1.1f)
+        } else {
+            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_locked"), true)
+            player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 0.9f)
+        }
+
         markDirty()
     }
 

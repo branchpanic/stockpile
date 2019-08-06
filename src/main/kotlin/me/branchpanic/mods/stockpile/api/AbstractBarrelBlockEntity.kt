@@ -41,7 +41,7 @@ abstract class AbstractBarrelBlockEntity<T>(
         userCache = userCache.filterValues { activatedTime -> now - activatedTime < doubleClickThresholdMs }
 
         if (player.isSneaking) {
-            changeModes()
+            changeModes(player)
             return
         }
 
@@ -74,5 +74,5 @@ abstract class AbstractBarrelBlockEntity<T>(
 
     abstract fun giveToPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
     abstract fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
-    abstract fun changeModes()
+    abstract fun changeModes(player: PlayerEntity)
 }

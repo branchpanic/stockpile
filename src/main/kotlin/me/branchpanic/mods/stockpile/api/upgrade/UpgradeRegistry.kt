@@ -1,20 +1,21 @@
-package me.branchpanic.mods.stockpile.impl.upgrade
+package me.branchpanic.mods.stockpile.api.upgrade
 
-import me.branchpanic.mods.stockpile.Stockpile
-import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.MarkerManager
 
 /**
  * The UpgradeRegistry holds a map of Identifiers to UpgradeTypes, and is used for persisting Upgrades.
  */
 object UpgradeRegistry {
+    private val LOGGER = LogManager.getLogger("stockpile")
+    private val MARKER = MarkerManager.getMarker("UPGRADES")
+
     private const val ID_TAG = "ID"
     private const val DATA_TAG = "Data"
 
@@ -52,7 +53,7 @@ object UpgradeRegistry {
         val upgradeData = upgrades[upgrade.id]?.writer?.invoke(upgrade)
 
         if (upgradeData == null) {
-            Stockpile.LOGGER.warn("failed to write upgrade data for ${upgrade.id}")
+            LOGGER.warn(MARKER, "Failed to write upgrade data for ${upgrade.id}!")
             return null
         }
 

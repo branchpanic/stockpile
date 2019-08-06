@@ -3,10 +3,10 @@ package me.branchpanic.mods.stockpile.content.item
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.StockpileClient
-import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.impl.upgrade.UpgradeRegistry
-import me.branchpanic.mods.stockpile.withCount
+import me.branchpanic.mods.stockpile.extension.withCount
+import me.branchpanic.mods.stockpile.impl.storage.toQuantizer
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
@@ -14,6 +14,7 @@ import net.minecraft.item.ArmorItem
 import net.minecraft.item.ArmorMaterial
 import net.minecraft.item.ArmorMaterials
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Style
@@ -30,9 +31,7 @@ object BarrelHatMaterial : ArmorMaterial by ArmorMaterials.LEATHER {
 
 object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpile.ITEM_SETTINGS) {
     private fun getInventoryStacks(player: PlayerEntity): List<ItemStack> {
-        return (0 until player.inventory.invSize).map { i ->
-            player.inventory.getInvStack(i)
-        }
+        return player.inventory.main + player.inventory.offHand + player.inventory.armor
     }
 
     private fun getUsableBarrelStacks(player: PlayerEntity, stacks: List<ItemStack>): List<ItemStack> {
@@ -63,10 +62,10 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         var itemsDeposited = 0
 
         barrelStacks.forEach { barrelStack ->
-            val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
+            val barrel = ItemBarrelBlockEntity.fromStack(barrelStack)
 
             insertableStacks.forEach insertStack@{ insertStack ->
-                if (!barrel.backingStorage.accepts(insertStack) || insertStack.isEmpty) {
+                if (!barrel.storage.contents.canMergeWith(insertStack.toQuantizer()) || insertStack.isEmpty) {
                     return@insertStack
                 }
 
@@ -77,13 +76,13 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                 }
 
                 val maxInsertableStack = insertStack.withCount(amount - 1)
-                val remainder = barrel.backingStorage.offer(maxInsertableStack).count + 1
+                val remainder = barrel.storage.addAtMost(maxInsertableStack.toQuantizer()).amount + 1
 
-                insertStack.count = remainder
-                itemsDeposited += amount - remainder
+                insertStack.count = remainder.toInt()
+                itemsDeposited += amount - remainder.toInt()
             }
 
-            barrel.toStack(barrelStack)
+            barrelStack.putSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(CompoundTag()))
         }
 
         if (itemsDeposited > 0) {
@@ -104,22 +103,22 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
             return
         }
 
-        val restockableStacks = invStacks.filter { s -> s !in barrelStacks && s.item !is UpgradeItem }
+        val restockableStacks = invStacks.filter { s -> s !in barrelStacks }
         var itemsTaken = 0
 
         barrelStacks.forEach { barrelStack ->
-            val barrel = ItemBarrelBlockEntity.loadFromStack(barrelStack)
+            val barrel = ItemBarrelBlockEntity.fromStack(barrelStack)
 
             restockableStacks.forEach restockStack@{ restockStack ->
-                if (!barrel.backingStorage.accepts(restockStack) || barrel.backingStorage.isEmpty) {
+                if (!barrel.storage.contents.canMergeWith(restockStack.toQuantizer()) || barrel.storage.isEmpty) {
                     return@restockStack
                 }
 
                 val amountNeededForFullStack = restockStack.maxCount - restockStack.count
-                val removableAmount = barrel.backingStorage.remove(
+                val removableAmount = barrel.storage.removeAtMost(
                     min(
                         amountNeededForFullStack.toLong(),
-                        barrel.backingStorage.amountStored - 1
+                        barrel.storage.contents.amount - 1
                     )
                 ).toInt()
 
@@ -127,7 +126,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                 itemsTaken += removableAmount
             }
 
-            barrel.toStack(barrelStack)
+            barrelStack.putSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(CompoundTag()))
         }
 
         if (itemsTaken > 0) {

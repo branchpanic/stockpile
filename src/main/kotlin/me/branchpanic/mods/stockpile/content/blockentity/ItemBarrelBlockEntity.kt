@@ -24,7 +24,7 @@ class ItemBarrelBlockEntity(
     internal var clearWhenEmpty: Boolean = true
 ) : AbstractBarrelBlockEntity<ItemStack>(
     storage = MassItemStackStorage(ItemStackQuantizer.NONE, DEFAULT_CAPACITY_STACKS),
-    doubleClickThresholdMs = 3000,
+    doubleClickThresholdMs = 1000,
     type = TYPE
 ), BlockEntityClientSerializable, Inventory {
     companion object {
@@ -36,12 +36,16 @@ class ItemBarrelBlockEntity(
         const val CLEAR_WHEN_EMPTY_TAG = "ClearWhenEmpty"
         const val UPGRADE_TAG = "Upgrades"
 
+        const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
+
         val TYPE: BlockEntityType<ItemBarrelBlockEntity> =
             BlockEntityType.Builder.create(Supplier { ItemBarrelBlockEntity() }, ItemBarrelBlock).build(null)
 
-        const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
-
-        fun loadFromStack(stack: ItemStack): ItemBarrelBlockEntity = ItemBarrelBlockEntity()
+        fun fromStack(stack: ItemStack): ItemBarrelBlockEntity {
+            val barrel = ItemBarrelBlockEntity()
+            barrel.fromClientTag(stack.getOrCreateSubTag(STORED_BLOCK_ENTITY_TAG))
+            return barrel
+        }
     }
 
     val invAttribute = FixedMassItemInv(storage, false)
@@ -56,11 +60,11 @@ class ItemBarrelBlockEntity(
             storage.contents = ItemStackQuantizer.NONE
         }
 
+        super.markDirty()
+
         world?.apply {
             updateListeners(pos, getBlockState(pos), getBlockState(pos), 3)
         }
-
-        super.markDirty()
     }
 
     override fun giveToPlayer(player: PlayerEntity, amount: BarrelTransactionAmount) {

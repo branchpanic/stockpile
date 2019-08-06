@@ -2,6 +2,7 @@ package me.branchpanic.mods.stockpile.content.block
 
 import alexiil.mc.lib.attributes.AttributeList
 import alexiil.mc.lib.attributes.AttributeProvider
+import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
 import net.fabricmc.fabric.api.block.FabricBlockSettings
@@ -176,7 +177,7 @@ object ItemBarrelBlock : Block(FabricBlockSettings.copy(Blocks.CHEST).build()), 
 
         val barrel = ItemBarrelBlockEntity.fromStack(stack)
         lines.add(barrel.storage.describeContents().setStyle(CONTENTS_STYLE))
-        // lines.addAll(UpgradeRegistry.createTooltip(barrel.upgrades))
+        lines.addAll(UpgradeRegistry.createTooltip(barrel))
     }
 
     override fun addAllAttributes(world: World?, pos: BlockPos?, state: BlockState?, attributes: AttributeList<*>?) {

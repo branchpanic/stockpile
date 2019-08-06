@@ -30,5 +30,8 @@ interface UpgradeContainer {
      */
     fun pushUpgrade(u: Upgrade)
 
+    /**
+     * Removes the last upgrade from this UpgradeContainer.
+     */
     fun popUpgrade(): Upgrade
 }

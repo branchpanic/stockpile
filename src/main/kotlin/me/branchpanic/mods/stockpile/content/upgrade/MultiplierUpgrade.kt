@@ -5,6 +5,8 @@ import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
+import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.impl.storage.MassItemStackStorage
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.text.Text
@@ -26,15 +28,14 @@ class MultiplierUpgrade(private val factor: Int) : ItemBarrelUpgrade {
     override fun upgradeMaxStacks(currentMaxStacks: Int): Int = currentMaxStacks * factor
 
     override fun canSafelyBeRemovedFrom(context: UpgradeContainer): Boolean {
-        return true
+        val barrel = context as? ItemBarrelBlockEntity ?: return false
 
-        /*val barrel = context as? LegacyItemBarrelBlockEntity ?: return false
-
-        return barrel.backingStorage.amountStored <=
-                (barrel.backingStorage.maxStacks / factor) * barrel.backingStorage.storedStack.maxCount*/
+        return barrel.storage.contents.amount <=
+                ((barrel.storage as MassItemStackStorage).maxStacks / factor) *
+                barrel.storage.contents.reference.maxCount
     }
 
-    override fun getCorrespondingStack(): ItemStack = when (factor) {
+    override fun toStack(): ItemStack = when (factor) {
         2 -> ItemStack(Stockpile.ITEMS[id("multiplier_upgrade")])
         4 -> ItemStack(Stockpile.ITEMS[id("double_multiplier_upgrade")])
         else -> ItemStack.EMPTY

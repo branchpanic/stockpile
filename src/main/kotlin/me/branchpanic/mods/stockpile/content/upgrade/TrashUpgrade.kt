@@ -24,7 +24,7 @@ class TrashUpgrade : ItemBarrelUpgrade {
         return upgrades.filterIsInstance<TrashUpgrade>()
     }
 
-    override fun getCorrespondingStack(): ItemStack {
+    override fun toStack(): ItemStack {
         return ItemStack(Stockpile.ITEMS[id("trash_upgrade")])
     }
 

@@ -2,23 +2,14 @@ package me.branchpanic.mods.stockpile.api.upgrade
 
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
 
-/**
- * An Upgrade changes the functionality of an UpgradeApplier in some way. This interface is rather useless on its own
- * and should be implemented in conjunction with target-specific interfaces such as
- * [me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade].
- */
 interface Upgrade {
 
     /**
      * The Identifier tying this Upgrade to an [UpgradeType].
      */
     val id: Identifier
-
-    val name: Text
-        get() = TranslatableText("upgrade.${id.namespace}.${id.path}.name")
 
     /**
      * The description of this Upgrade, often used in tooltips.
@@ -30,10 +21,13 @@ interface Upgrade {
      */
     fun getConflictingUpgrades(upgrades: List<Upgrade>): List<Upgrade> = emptyList()
 
-    fun getCorrespondingStack(): ItemStack = ItemStack.EMPTY
+    /**
+     * Gets an ItemStack representing this upgrade, used when removing upgrades with the Screwdriver.
+     */
+    fun toStack(): ItemStack
 
     /**
-     * Determines whether or not an upgrade can safely be removed from an UpgradeApplier without losing data.
+     * Determines whether or not an upgrade can safely be removed from an UpgradeContainer without losing data.
      */
     fun canSafelyBeRemovedFrom(context: UpgradeContainer): Boolean = false
 }

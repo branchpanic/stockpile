@@ -20,7 +20,10 @@ import kotlin.math.min
 /**
  * A FixedMassItemInv wraps a MutableMassStorage of ItemStacks into a FixedItemInv.
  */
-class FixedMassItemInv(internal var storage: MutableMassStorage<ItemStack>, var voidExtraItems: Boolean = false) :
+class FixedMassItemInv(
+    internal var storage: MutableMassStorage<ItemStack>,
+    var voidExtraItems: Boolean = false
+) :
     FixedItemInv,
     ItemTransferable {
     companion object {
@@ -81,8 +84,6 @@ class FixedMassItemInv(internal var storage: MutableMassStorage<ItemStack>, var 
         if (slot == INBOUND_SLOT && storage.isFull && !voidExtraItems) {
             return false
         }
-
-        println("Valid: ${storage.contents.canMergeWith(stack.toQuantizer())}")
 
         return storage.contents.canMergeWith(stack.toQuantizer())
     }

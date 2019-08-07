@@ -9,6 +9,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
 import me.branchpanic.mods.stockpile.extension.giveTo
+import me.branchpanic.mods.stockpile.extension.withCount
 import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
 import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
 import me.branchpanic.mods.stockpile.impl.storage.*
@@ -24,8 +25,6 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 import java.util.function.Supplier
 import kotlin.math.max
 import kotlin.math.min
@@ -179,7 +178,7 @@ class ItemBarrelBlockEntity(
     }
 
     override fun toClientTag(tag: CompoundTag?): CompoundTag = requireNotNull(tag).apply {
-        putString(STORED_ITEM_TAG, Registry.ITEM.getId(storage.contents.reference.item).toString())
+        put(STORED_ITEM_TAG, storage.contents.reference.toTag(CompoundTag()))
         putLong(AMOUNT_STORED_TAG, storage.contents.amount)
         putBoolean(CLEAR_WHEN_EMPTY_TAG, clearWhenEmpty)
         put(UPGRADE_TAG, appliedUpgrades.mapNotNull { u -> UpgradeRegistry.writeUpgrade(u) }.toCollection(ListTag()))
@@ -202,14 +201,12 @@ class ItemBarrelBlockEntity(
         clearWhenEmpty = getBoolean(CLEAR_WHEN_EMPTY_TAG)
 
         // Contents
-        val itemName = getString(STORED_ITEM_TAG)
-        val itemId = Identifier.tryParse(itemName) ?: Registry.ITEM.defaultId
-
-        if (itemName.isNullOrBlank() || itemId == Registry.ITEM.defaultId || !Registry.ITEM.containsId(itemId)) {
+        val item = ItemStack.fromTag(getCompound(STORED_ITEM_TAG))
+        if (item.isEmpty) {
             storage.contents = ItemStackQuantizer.NONE
         } else {
             val itemAmount = min(max(0L, getLong(AMOUNT_STORED_TAG)), storage.capacity)
-            storage.contents = ItemStackQuantizer(ItemStack(Registry.ITEM[itemId], 1), itemAmount)
+            storage.contents = ItemStackQuantizer(item.withCount(1), itemAmount)
         }
     }
 

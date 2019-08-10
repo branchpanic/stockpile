@@ -40,6 +40,10 @@ repositories {
     maven(url = "https://mod-buildcraft.com/maven") {
         name = "BuildCraft"
     }
+
+    maven(url = "https://tehnut.info/maven") {
+        name = "TehNut"
+    }
 }
 
 dependencies {
@@ -48,13 +52,14 @@ dependencies {
 
     modCompile("net.fabricmc:fabric-loader:${Versions.LOADER}")
 
-    // Mod dependencies
     modCompile("net.fabricmc.fabric-api:fabric-api:${Versions.FABRIC}")
     modCompile("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
     modCompile("alexiil.mc.lib:libblockattributes-all:${Versions.LBA}")
     include("alexiil.mc.lib:libblockattributes-core:${Versions.LBA}")
     include("alexiil.mc.lib:libblockattributes-items:${Versions.LBA}")
+
+    modCompile("mcp.mobius.waila:Hwyla:1.14.2-1.9.17-66")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

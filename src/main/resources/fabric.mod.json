@@ -41,5 +41,13 @@
   },
   "mixins": [
     "stockpile.mixins.json"
-  ]
+  ],
+  "custom": {
+    "waila:plugins": [
+      {
+        "id": "stockpile:all",
+        "initializer": "me.branchpanic.mods.stockpile.integration.hwyla.StockpileWailaPlugin"
+      }
+    ]
+  }
 }

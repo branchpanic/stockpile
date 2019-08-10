@@ -2,6 +2,7 @@
   "ui.stockpile.barrel.just_locked": "Locked: this barrel will only accept the current item, even when empty.",
   "ui.stockpile.barrel.just_unlocked": "Unlocked: this barrel will accept any item when empty.",
   "ui.stockpile.barrel.contents": "%s/%s %s (%s/%s stacks)",
+  "ui.stockpile.potion_barrel.contents": "%s/%s bottles of %s",
   "ui.stockpile.apply_upgrade": "Use on block to apply",
   "ui.stockpile.use_to_remove": "Use on block to remove",
   "ui.stockpile.applied_upgrades": "%d/%d upgrades installed",

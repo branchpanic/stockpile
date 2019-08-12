@@ -97,10 +97,11 @@ class PotionBarrelBlockEntity(
             BarrelTransactionAmount.MANY -> {
                 if (player.mainHandStack.item is PotionItem) {
                     val potion = PotionUtil.getPotion(player.mainHandStack)
+                    val quantizer = PotionQuantizer(potion, 1)
 
-                    if (storage.contents.canMergeWith(PotionQuantizer(potion, 1))) {
-                        val remainder = storage.addAtMost(1)
-                        if (remainder < 1) {
+                    if (storage.contents.canMergeWith(quantizer)) {
+                        val remainder = storage.addAtMost(quantizer)
+                        if (remainder.amount < 1) {
                             player.setStackInHand(Hand.MAIN_HAND, ItemStack(Items.GLASS_BOTTLE))
                         }
                     }
@@ -111,11 +112,11 @@ class PotionBarrelBlockEntity(
                 player.inventory.main.replaceAll r@{
                     if (it.item is PotionItem) {
                         val potion = PotionUtil.getPotion(it)
+                        val quantizer = PotionQuantizer(potion, 1)
 
-                        if (storage.contents.canMergeWith(PotionQuantizer(potion, 1))) {
-                            val remainder = storage.addAtMost(1)
-                            if (remainder < 1) {
-                                println("replacing $it => bottle")
+                        if (storage.contents.canMergeWith(quantizer)) {
+                            val remainder = storage.addAtMost(quantizer)
+                            if (remainder.amount < 1) {
                                 return@r ItemStack(Items.GLASS_BOTTLE)
                             }
                         }

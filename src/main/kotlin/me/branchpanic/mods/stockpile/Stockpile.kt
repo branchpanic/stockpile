@@ -3,8 +3,8 @@ package me.branchpanic.mods.stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.content.block.AttackableBlockCallback
+import me.branchpanic.mods.stockpile.content.block.BarrelBlock
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
-import me.branchpanic.mods.stockpile.content.block.PotionBarrelBlock
 import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.blockentity.PotionBarrelBlockEntity
@@ -41,7 +41,7 @@ object Stockpile : ModInitializer {
 
     internal val BLOCKS: Map<Identifier, Block> = mapOf(
         id("item_barrel") to ItemBarrelBlock,
-        id("potion_barrel") to PotionBarrelBlock,
+        id("potion_barrel") to BarrelBlock { PotionBarrelBlockEntity() },
         id("trash_can") to TrashCanBlock
     )
 

@@ -31,6 +31,7 @@
   "upgrade.stockpile.multiplier": "Increased capacity (x%d stacks)",
   "upgrade.stockpile.trash": "Destroys inserted items when full",
   "block.stockpile.item_barrel": "Barrel (Items)",
+  "block.stockpile.potion_barrel": "Barrel (Potions)",
   "block.stockpile.trash_can": "Trash Can",
   "block.stockpile.trash_can.desc": "Destroys items! Right-click to open/close.",
   "item.stockpile.capacity_upgrade": "Capacity Upgrade",

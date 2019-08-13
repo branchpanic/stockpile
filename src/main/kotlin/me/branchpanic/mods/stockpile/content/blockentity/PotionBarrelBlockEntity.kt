@@ -20,8 +20,8 @@ import java.util.function.Supplier
 import kotlin.math.min
 
 class PotionBarrelBlockEntity(
-    var clearWhenEmpty: Boolean = false
 ) : AbstractBarrelBlockEntity<Potion>(
+    clearWhenEmpty = false,
     storage = MassPotionStorage(capacity = 32L, contents = PotionQuantizer.NONE),
     doubleClickThresholdMs = 1000,
     type = TYPE
@@ -129,9 +129,5 @@ class PotionBarrelBlockEntity(
 
         player.inventory.markDirty()
         markDirty()
-    }
-
-    override fun changeModes(player: PlayerEntity) {
-        clearWhenEmpty = !clearWhenEmpty
     }
 }

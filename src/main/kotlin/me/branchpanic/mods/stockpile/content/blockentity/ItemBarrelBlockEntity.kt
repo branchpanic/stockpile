@@ -23,18 +23,17 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Hand
 import java.util.function.Supplier
 import kotlin.math.max
 import kotlin.math.min
 
 class ItemBarrelBlockEntity(
-    internal var clearWhenEmpty: Boolean = true,
     override var appliedUpgrades: List<Upgrade> = emptyList(),
     override var maxUpgrades: Int = DEFAULT_MAX_UPGRADES
 ) : AbstractBarrelBlockEntity<ItemStack>(
     storage = MassItemStackStorage(ItemStackQuantizer.NONE, DEFAULT_CAPACITY_STACKS),
+    clearWhenEmpty = true,
     doubleClickThresholdMs = 1000,
     type = TYPE
 ), BlockEntityClientSerializable, Inventory, UpgradeContainer {
@@ -148,20 +147,6 @@ class ItemBarrelBlockEntity(
         }
 
         player.inventory.markDirty()
-        markDirty()
-    }
-
-    override fun changeModes(player: PlayerEntity) {
-        clearWhenEmpty = !clearWhenEmpty
-
-        if (clearWhenEmpty) {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_unlocked"), true)
-            player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 1.1f)
-        } else {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_locked"), true)
-            player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 0.9f)
-        }
-
         markDirty()
     }
 

@@ -40,8 +40,8 @@ object Stockpile : ModInitializer {
     private val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.build(id("all")) { ItemStack(ItemBarrelBlock) }
 
     internal val BLOCKS: Map<Identifier, Block> = mapOf(
-        id("item_barrel") to ItemBarrelBlock,
-        id("potion_barrel") to BarrelBlock { PotionBarrelBlockEntity() },
+        id("item_barrel") to BarrelBlock.ITEM,
+        id("potion_barrel") to BarrelBlock.POTION,
         id("trash_can") to TrashCanBlock
     )
 

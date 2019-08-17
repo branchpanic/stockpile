@@ -10,7 +10,6 @@ class ItemBarrelRenderer : AbstractBarrelRenderer<ItemBarrelBlockEntity, ItemSta
         MinecraftClient.getInstance().itemRenderer.renderGuiItem(contents.reference, 0, -3)
     }
 
-    override fun shouldSkipRenderingFor(barrel: ItemBarrelBlockEntity): Boolean {
-        return barrel.storage.contents.reference.isEmpty
-    }
+    override fun shouldSkipRenderingFor(barrel: ItemBarrelBlockEntity): Boolean =
+        barrel.storage.contents.reference.isEmpty
 }

@@ -20,4 +20,14 @@ class PotionQuantizer(override val reference: Potion, override val amount: Long)
     override fun toObjects(): List<Potion> {
         return generateSequence { reference }.take(amount.toInt()).toList()
     }
+
+    override fun plus(other: Quantizer<Potion>): Quantizer<Potion> {
+        val untypedResult = super.plus(other)
+
+        return if (reference == Potions.EMPTY) {
+            PotionQuantizer(other.reference, untypedResult.amount)
+        } else {
+            untypedResult
+        }
+    }
 }

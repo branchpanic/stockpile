@@ -150,18 +150,6 @@ class ItemBarrelBlockEntity(
         markDirty()
     }
 
-    override fun toTag(tag: CompoundTag?): CompoundTag {
-        requireNotNull(tag)
-        return toClientTag(super.toTag(tag))
-    }
-
-    override fun fromTag(tag: CompoundTag?) {
-        requireNotNull(tag)
-
-        super.fromTag(tag)
-        fromClientTag(tag)
-    }
-
     override fun toClientTag(tag: CompoundTag?): CompoundTag = requireNotNull(tag).apply {
         put(STORED_ITEM_TAG, storage.contents.reference.toTag(CompoundTag()))
         putLong(AMOUNT_STORED_TAG, storage.contents.amount)

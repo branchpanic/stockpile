@@ -31,6 +31,12 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
 ) :
     Block(FabricBlockSettings.copy(Blocks.CHEST).build()),
     BlockEntityProvider, AttackableBlock {
+
+    companion object {
+        val ITEM = ItemBarrelBlock
+        val POTION = BarrelBlock { PotionBarrelBlockEntity() }
+    }
+
     private val CONTENTS_STYLE = Style().setColor(Formatting.GRAY)
 
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {

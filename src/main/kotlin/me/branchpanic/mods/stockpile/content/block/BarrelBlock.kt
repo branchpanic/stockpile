@@ -4,10 +4,8 @@ import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.content.blockentity.PotionBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
 import net.fabricmc.fabric.api.block.FabricBlockSettings
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
@@ -34,10 +32,9 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
 
     companion object {
         val ITEM = ItemBarrelBlock
-        val POTION = BarrelBlock { PotionBarrelBlockEntity() }
     }
 
-    private val CONTENTS_STYLE = Style().setColor(Formatting.GRAY)
+    private val contentsTooltipStyle = Style().setColor(Formatting.GRAY)
 
     override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
         super.appendProperties(builder)
@@ -125,7 +122,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
     override fun hasComparatorOutput(state: BlockState?): Boolean = true
 
     override fun getComparatorOutput(state: BlockState?, world: World?, pos: BlockPos?): Int {
-        val barrel = (world?.getBlockEntity(pos) as? PotionBarrelBlockEntity) ?: return 0
+        val barrel = (world?.getBlockEntity(pos) as? AbstractBarrelBlockEntity<*>) ?: return 0
         val amountStored = barrel.storage.contents.amount
 
         return if (amountStored <= 0) {
@@ -168,10 +165,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         }
 
         (world.getBlockEntity(pos) as? T)?.apply {
-            if (this is BlockEntityClientSerializable) {
-                fromClientTag(stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
-            }
-
+            fromClientTag(stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
             markDirty()
         }
     }

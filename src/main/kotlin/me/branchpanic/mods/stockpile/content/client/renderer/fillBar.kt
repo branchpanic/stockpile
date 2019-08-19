@@ -32,7 +32,6 @@ fun drawRectangle(x1: Double, y1: Double, x2: Double, y2: Double, color: ArgbCol
     tessellator.draw()
 }
 
-
 // TODO(i18n): Localize quantities
 val NUMBER_SUFFIXES = arrayOf("k", "M", "B", "T", "Q")
 
@@ -48,7 +47,6 @@ fun Long.abbreviate(): String {
 
     return displayNumber + suffix
 }
-
 
 fun renderFillBar(
     settings: FillBarSettings,

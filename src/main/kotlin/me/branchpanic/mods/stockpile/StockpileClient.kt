@@ -1,13 +1,11 @@
 package me.branchpanic.mods.stockpile
 
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.content.blockentity.PotionBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.client.BarrelHatKeyListener
 import me.branchpanic.mods.stockpile.content.client.gui.OverlayRenderer
 import me.branchpanic.mods.stockpile.content.client.gui.UpgradeOverlayRenderer
 import me.branchpanic.mods.stockpile.content.client.gui.UpgradeRemoverOverlayRenderer
 import me.branchpanic.mods.stockpile.content.client.renderer.ItemBarrelRenderer
-import me.branchpanic.mods.stockpile.content.client.renderer.PotionBarrelRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -37,7 +35,6 @@ object StockpileClient : ClientModInitializer {
 
     override fun onInitializeClient() {
         BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity::class.java, ItemBarrelRenderer())
-        BlockEntityRendererRegistry.INSTANCE.register(PotionBarrelBlockEntity::class.java, PotionBarrelRenderer())
 
         KeyBindingRegistry.INSTANCE.addCategory("controls.stockpile")
         KeyBindingRegistry.INSTANCE.register(BARREL_HAT_KEY)

@@ -95,7 +95,6 @@ abstract class AbstractBarrelBlockEntity<T>(
     abstract fun giveToPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
     abstract fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
 
-
     override fun toTag(tag: CompoundTag?): CompoundTag {
         requireNotNull(tag)
         return toClientTag(super.toTag(tag))

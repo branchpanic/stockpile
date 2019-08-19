@@ -7,7 +7,6 @@ import me.branchpanic.mods.stockpile.content.block.BarrelBlock
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.content.blockentity.PotionBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import me.branchpanic.mods.stockpile.content.item.BarrelHatItem
 import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
@@ -31,17 +30,12 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 object Stockpile : ModInitializer {
-    internal val LOGGER: Logger = LogManager.getLogger("stockpile")
-
     private val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.build(id("all")) { ItemStack(ItemBarrelBlock) }
 
     internal val BLOCKS: Map<Identifier, Block> = mapOf(
         id("item_barrel") to BarrelBlock.ITEM,
-        id("potion_barrel") to BarrelBlock.POTION,
         id("trash_can") to TrashCanBlock
     )
 
@@ -58,7 +52,6 @@ object Stockpile : ModInitializer {
 
     internal val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
         id("item_barrel") to ItemBarrelBlockEntity.TYPE,
-        id("potion_barrel") to PotionBarrelBlockEntity.TYPE,
         id("trash_can") to TrashCanBlockEntity.TYPE
     )
 

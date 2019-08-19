@@ -13,10 +13,10 @@ import net.minecraft.util.math.Direction
 @Environment(EnvType.CLIENT)
 abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : BlockEntityRenderer<T>() {
     private val fillBarSettings = FillBarSettings(
-        backgroundColor = 0xFF000000.toInt(),
-        foregroundColor = 0xFFFF0000.toInt(),
+        backgroundColor = 0xB2000000.toInt(),
+        foregroundColor = 0xB20212FF.toInt(),
         textColor = 0xFFFFFFFF.toInt(),
-        textColorFull = 0xFF00FFFF.toInt(),
+        textColorFull = 0xFFFFFF22.toInt(),
         width = 18.0
     )
 

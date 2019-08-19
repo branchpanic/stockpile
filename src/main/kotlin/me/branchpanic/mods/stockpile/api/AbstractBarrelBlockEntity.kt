@@ -1,9 +1,14 @@
 package me.branchpanic.mods.stockpile.api
 
 import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.sound.SoundCategory
+import net.minecraft.sound.SoundEvents
+import net.minecraft.text.TranslatableText
 import java.util.*
 
 /**
@@ -27,9 +32,10 @@ enum class BarrelTransactionAmount {
  */
 abstract class AbstractBarrelBlockEntity<T>(
     open val storage: MutableMassStorage<T>,
+    open var clearWhenEmpty: Boolean,
     private val doubleClickThresholdMs: Long,
     type: BlockEntityType<*>
-) : BlockEntity(type) {
+) : BlockEntity(type), BlockEntityClientSerializable {
     private var userCache: Map<UUID, Long> = emptyMap()
 
     fun onRightClicked(player: PlayerEntity) {
@@ -72,7 +78,32 @@ abstract class AbstractBarrelBlockEntity<T>(
         player.addChatMessage(storage.describeContents(), true)
     }
 
+    private fun changeModes(player: PlayerEntity) {
+        clearWhenEmpty = !clearWhenEmpty
+
+        if (clearWhenEmpty) {
+            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_unlocked"), true)
+            player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 1.1f)
+        } else {
+            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_locked"), true)
+            player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 0.9f)
+        }
+
+        markDirty()
+    }
+
     abstract fun giveToPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
     abstract fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
-    abstract fun changeModes(player: PlayerEntity)
+
+    override fun toTag(tag: CompoundTag?): CompoundTag {
+        requireNotNull(tag)
+        return toClientTag(super.toTag(tag))
+    }
+
+    override fun fromTag(tag: CompoundTag?) {
+        requireNotNull(tag)
+
+        super.fromTag(tag)
+        fromClientTag(tag)
+    }
 }

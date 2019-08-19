@@ -34,7 +34,7 @@ object StockpileClient : ClientModInitializer {
     )
 
     override fun onInitializeClient() {
-        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity::class.java, ItemBarrelRenderer)
+        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity::class.java, ItemBarrelRenderer())
 
         KeyBindingRegistry.INSTANCE.addCategory("controls.stockpile")
         KeyBindingRegistry.INSTANCE.register(BARREL_HAT_KEY)

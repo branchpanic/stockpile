@@ -3,6 +3,7 @@ package me.branchpanic.mods.stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.content.block.AttackableBlockCallback
+import me.branchpanic.mods.stockpile.content.block.BarrelBlock
 import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
@@ -29,16 +30,12 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 object Stockpile : ModInitializer {
-    internal val LOGGER: Logger = LogManager.getLogger("stockpile")
-
     private val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.build(id("all")) { ItemStack(ItemBarrelBlock) }
 
     internal val BLOCKS: Map<Identifier, Block> = mapOf(
-        id("item_barrel") to ItemBarrelBlock,
+        id("item_barrel") to BarrelBlock.ITEM,
         id("trash_can") to TrashCanBlock
     )
 

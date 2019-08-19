@@ -53,7 +53,17 @@ interface Quantizer<T> {
     }
 
     /**
-     * Returns a new Quantizer with the contents of another added.
+     * Returns a new Quantizer with the contents of another added. This method must be implemented manually so it can
+     * respect the following:
+     *
+     *      Given:
+     *          T_0 = an "empty" T, i.e. ItemStack.EMPTY
+     *          T_1 = any unique "non-empty" T, i.e. an ItemStack of 1x stone
+     *          X of Y = a quantizer with reference Y and amount X
+     *      Then:
+     *          n of T_0 + m of T_1 = (n + m) of T_1
+     *      However, note that:
+     *          n of T_1 - n of T_1 = 0 of T_1, not 0 of T_0
      *
      * @throws [IllegalArgumentException] if canMergeWith(other) is false.
      */

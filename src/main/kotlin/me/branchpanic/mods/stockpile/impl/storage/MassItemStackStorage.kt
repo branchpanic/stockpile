@@ -12,8 +12,6 @@ class MassItemStackStorage(override var contents: Quantizer<ItemStack>, var maxS
     override val capacity: Long
         get() = (maxStacks * contents.reference.maxCount).toLong()
 
-    private val numberFormat = NumberFormat.getNumberInstance()
-
     override fun describeContents(): Text =
         if (!isEmpty) TranslatableText(
             "ui.stockpile.barrel.contents",
@@ -28,5 +26,5 @@ class MassItemStackStorage(override var contents: Quantizer<ItemStack>, var maxS
         )
 }
 
-private fun Long.format(): String = NumberFormat.getNumberInstance().format(this)
+internal fun Long.format(): String = NumberFormat.getNumberInstance().format(this)
 private fun Int.format(): String = NumberFormat.getNumberInstance().format(this)

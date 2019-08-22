@@ -110,24 +110,23 @@ class ItemBarrelBlockEntity(
             BarrelTransactionAmount.ALL -> TODO()
         }
 
-        if (!removedItems.isEmpty) {
+        val initialAmount = storage.contents.amount
+        storage.removeAtMost(removedItems).toObjects().forEach { it.giveTo(player) }
+        if (storage.contents.amount != initialAmount) {
             player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.5f, 0.8f)
         }
 
-        storage.removeAtMost(removedItems).toObjects().forEach { it.giveTo(player) }
         markDirty()
     }
 
     override fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount) {
-        var itemsTaken = false
-
+        val initialAmount = storage.contents.amount
         when (amount) {
             BarrelTransactionAmount.ONE -> TODO()
 
             BarrelTransactionAmount.MANY -> {
                 if (!player.mainHandStack.isEmpty) {
                     val result = storage.addAtMost(player.mainHandStack.toQuantizer()).firstStack()
-                    itemsTaken = player.mainHandStack.count != result.count
 
                     player.setStackInHand(
                         Hand.MAIN_HAND,
@@ -138,11 +137,10 @@ class ItemBarrelBlockEntity(
 
             BarrelTransactionAmount.ALL -> {
                 player.inventory.main.replaceAll { storage.addAtMost(it.toQuantizer()).firstStack() }
-                itemsTaken = true
             }
         }
 
-        if (itemsTaken) {
+        if (initialAmount != storage.contents.amount) {
             player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.5f, 0.65f)
         }
 

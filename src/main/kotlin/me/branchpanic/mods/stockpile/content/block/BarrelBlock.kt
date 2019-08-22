@@ -13,6 +13,7 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.state.StateFactory
 import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
@@ -23,6 +24,8 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
+import net.minecraft.world.loot.context.LootContext
+import net.minecraft.world.loot.context.LootContextParameters
 
 open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
     private val supplier: () -> T
@@ -54,6 +57,22 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
             ?: throw NullPointerException("attempted to mirror null barrel")
 
     override fun createBlockEntity(world: BlockView?): BlockEntity? = supplier()
+
+    override fun getDroppedStacks(state: BlockState?, context: LootContext.Builder?): MutableList<ItemStack> {
+        if (context == null) {
+            return mutableListOf()
+        }
+
+        val barrel = context[LootContextParameters.BLOCK_ENTITY] as? T ?: return mutableListOf()
+        val stack = ItemStack(this)
+
+        if (barrel.storage.isEmpty) {
+            barrel.clearWhenEmpty = true
+        }
+
+        stack.putSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(CompoundTag()))
+        return mutableListOf(stack)
+    }
 
     override fun onBlockAttacked(
         player: PlayerEntity,
@@ -148,7 +167,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
 
         val barrel = supplier()
         barrel.fromTag(stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
-        lines.add(barrel.storage.describeContents())
+        lines.add(barrel.storage.describeContents().setStyle(contentsTooltipStyle))
 
         if (barrel is UpgradeContainer) lines.addAll(UpgradeRegistry.createTooltip(barrel))
     }

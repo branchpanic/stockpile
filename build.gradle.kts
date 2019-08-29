@@ -9,7 +9,7 @@ plugins {
 object Versions {
     // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
     // added.
-    const val STOCKPILE = "1.1.0"
+    const val STOCKPILE = "1.1.1"
 
     const val MINECRAFT = "1.14.4"
     const val YARN = "$MINECRAFT+build.2"

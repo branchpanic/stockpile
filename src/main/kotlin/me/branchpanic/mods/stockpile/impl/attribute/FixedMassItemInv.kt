@@ -132,7 +132,7 @@ class FixedMassItemInv(
     }
 
     override fun attemptExtraction(filter: ItemFilter?, amount: Int, simulation: Simulation?): ItemStack {
-        if (filter == null || !filter.matches(storage.contents.reference)) return ItemStack.EMPTY
+        if (filter == null || storage.contents.isEmpty || !filter.matches(storage.contents.reference)) return ItemStack.EMPTY
 
         fireListeners(-1, ItemStack.EMPTY, ItemStack.EMPTY)
         val extractedAmount = storage.removeAtMost(amount.toLong(), simulation == Simulation.SIMULATE)

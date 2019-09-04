@@ -12,11 +12,11 @@ object Versions {
     const val STOCKPILE = "1.1.1"
 
     const val MINECRAFT = "1.14.4"
-    const val YARN = "$MINECRAFT+build.2"
-    const val LOADER = "0.4.8+build.157"
+    const val YARN = "$MINECRAFT+build.12"
+    const val LOADER = "0.6.1+build.165"
 
-    const val FABRIC = "0.3.0+build.200"
-    const val FABRIC_KT = "1.3.30+build.2"
+    const val FABRIC = "0.3.2+build.218-1.14"
+    const val FABRIC_KT = "1.3.50+build.1"
     const val LBA = "0.4.9"
 
     const val SIMPLE_PIPES = "0.1.8"

@@ -5,6 +5,7 @@ import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.StockpileClient
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.extension.giveTo
 import me.branchpanic.mods.stockpile.extension.withCount
 import me.branchpanic.mods.stockpile.impl.storage.toQuantizer
 import net.minecraft.client.item.TooltipContext
@@ -34,34 +35,39 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         return player.inventory.main + player.inventory.offHand + player.inventory.armor
     }
 
-    private fun getUsableBarrelStacks(player: PlayerEntity, stacks: List<ItemStack>): List<ItemStack> {
+    private fun getBarrelStacks(player: PlayerEntity, warnOnStacked: Boolean = true): List<ItemStack> {
+        val stacks = getInventoryStacks(player)
+
+        // TODO: Replace with barrel hat interface
         val potentialStacks = stacks.filter { s -> s.item == Registry.ITEM[id("item_barrel")] }
 
-        if (potentialStacks.any { s -> s.count > 1 }) {
+        if (warnOnStacked && potentialStacks.any { s -> s.count > 1 }) {
             player.addChatMessage(
-                TranslatableText("ui.stockpile.barrel_hat.stacked_warning").setStyle(
-                    Style().setColor(
-                        Formatting.GRAY
-                    )
-                ), false
+                TranslatableText("ui.stockpile.barrel_hat.stacked_warning").setStyle(Style().setColor(Formatting.GRAY)),
+                false
             )
         }
 
         return potentialStacks.filter { s -> s.count == 1 }
     }
 
+    private fun getTransferableStacks(player: PlayerEntity): List<ItemStack> {
+        val barrelStacks = getBarrelStacks(player, warnOnStacked = false)
+        return getInventoryStacks(player).filterNot { s -> s in barrelStacks }
+    }
+
     fun pushInventoryToBarrels(player: PlayerEntity) {
-        val invStacks = getInventoryStacks(player)
-        val barrelStacks = getUsableBarrelStacks(player, invStacks)
+        val barrelStacks = getBarrelStacks(player)
 
         if (barrelStacks.isEmpty()) {
             return
         }
 
-        val insertableStacks = invStacks.filter { s -> s !in barrelStacks }
+        val insertableStacks = getTransferableStacks(player)
         var itemsDeposited = 0
 
         barrelStacks.forEach { barrelStack ->
+            // Can't map because it may change in this loop
             val barrel = ItemBarrelBlockEntity.fromStack(barrelStack)
 
             insertableStacks.forEach insertStack@{ insertStack ->
@@ -97,7 +103,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
 
     fun pullInventoryFromBarrels(player: PlayerEntity) {
         val invStacks = getInventoryStacks(player)
-        val barrelStacks = getUsableBarrelStacks(player, invStacks)
+        val barrelStacks = getBarrelStacks(player)
 
         if (barrelStacks.isEmpty()) {
             return
@@ -115,6 +121,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                 }
 
                 val amountNeededForFullStack = restockStack.maxCount - restockStack.count
+                val dispensedStack = barrel.storage.contents.reference.copy()
                 val removableAmount = barrel.storage.removeAtMost(
                     min(
                         amountNeededForFullStack.toLong(),
@@ -122,7 +129,12 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                     )
                 ).toInt()
 
-                restockStack.count += removableAmount
+                if (!restockStack.isEmpty) {
+                    restockStack.count += removableAmount
+                } else {
+                    dispensedStack.withCount(removableAmount).giveTo(player)
+                }
+
                 itemsTaken += removableAmount
             }
 

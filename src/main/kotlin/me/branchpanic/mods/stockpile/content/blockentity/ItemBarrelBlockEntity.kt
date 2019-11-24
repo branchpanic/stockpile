@@ -157,7 +157,7 @@ class ItemBarrelBlockEntity(
 
     override fun fromClientTag(tag: CompoundTag?) = requireNotNull(tag).run {
         // Upgrades
-        maxUpgrades = if (containsKey(MAX_UPGRADES_TAG)) {
+        maxUpgrades = if (contains(MAX_UPGRADES_TAG)) {
             getInt(MAX_UPGRADES_TAG)
         } else {
             DEFAULT_MAX_UPGRADES

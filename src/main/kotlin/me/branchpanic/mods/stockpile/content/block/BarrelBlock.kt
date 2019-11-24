@@ -13,8 +13,10 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
+import net.minecraft.loot.context.LootContext
+import net.minecraft.loot.context.LootContextParameters
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.state.StateFactory
+import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -24,8 +26,6 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
-import net.minecraft.world.loot.context.LootContext
-import net.minecraft.world.loot.context.LootContextParameters
 
 open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
     private val supplier: () -> T
@@ -39,7 +39,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
 
     private val contentsTooltipStyle = Style().setColor(Formatting.GRAY)
 
-    override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
+    override fun appendProperties(builder: StateManager.Builder<Block, BlockState>?) {
         super.appendProperties(builder)
         builder?.add(Properties.FACING)
     }
@@ -106,14 +106,14 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         world?.removeBlockEntity(pos)
     }
 
-    override fun activate(
+    override fun onUse(
         state: BlockState?,
         world: World?,
         pos: BlockPos?,
         player: PlayerEntity?,
         hand: Hand?,
         hit: BlockHitResult?
-    ): Boolean {
+    ): ActionResult {
         if (world == null ||
             player == null ||
             pos == null ||
@@ -122,20 +122,18 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
             hand != Hand.MAIN_HAND ||
             hit.side != state[Properties.FACING]
         ) {
-            return false
+            return ActionResult.FAIL
         }
 
         if (player.getStackInHand(Hand.MAIN_HAND).item == UpgradeRemoverItem) {
-            return false
+            return ActionResult.FAIL
         }
 
-        if (world.isClient) {
-            return true
+        if (!world.isClient) {
+            (world.getBlockEntity(pos) as? T)?.onRightClicked(player)
         }
 
-        (world.getBlockEntity(pos) as? T)?.onRightClicked(player)
-
-        return true
+        return ActionResult.SUCCESS
     }
 
     override fun hasComparatorOutput(state: BlockState?): Boolean = true
@@ -152,8 +150,6 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
     }
 
     override fun getRenderType(state: BlockState?): BlockRenderType = BlockRenderType.MODEL
-
-    override fun getRenderLayer(): BlockRenderLayer = BlockRenderLayer.CUTOUT_MIPPED
 
     override fun buildTooltip(
         stack: ItemStack?,

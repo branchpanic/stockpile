@@ -27,7 +27,7 @@ inline fun transformToPlane(x: Double, y: Double, z: Double, face: Direction, dr
             GlStateManager.rotated(-90.0, 0.0, 1.0, 0.0)
         }
         Direction.UP -> {
-            GlStateManager.translated(x + 0.75, y + 1 - COFH_TRANSFORM_OFFSET * 145, z + 0.75)
+            GlStateManager.translate(x + 0.75, y + 1 - COFH_TRANSFORM_OFFSET * 145, z + 0.75)
             GlStateManager.rotated(90.0, 1.0, 0.0, 0.0)
         }
         Direction.DOWN -> {

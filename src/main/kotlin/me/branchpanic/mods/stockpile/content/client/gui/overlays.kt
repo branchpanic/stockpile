@@ -36,15 +36,15 @@ fun fill4f(x1: Float, y1: Float, x2: Float, y2: Float, color: Int) {
     val b = (color and 255).toFloat() / 255.0f
 
     val tess = Tessellator.getInstance()
-    val buf = tess.bufferBuilder
+    val buf = tess.buffer
 
     GlStateManager.enableBlend()
     GlStateManager.disableTexture()
     GlStateManager.blendFuncSeparate(
-        GlStateManager.SourceFactor.SRC_ALPHA,
-        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-        GlStateManager.SourceFactor.ONE,
-        GlStateManager.DestFactor.ZERO
+        GlStateManager.SourceFactor.SRC_ALPHA.value,
+        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value,
+        GlStateManager.SourceFactor.ONE.value,
+        GlStateManager.DestFactor.ZERO.value
     )
 
     GlStateManager.color4f(r, g, b, a)

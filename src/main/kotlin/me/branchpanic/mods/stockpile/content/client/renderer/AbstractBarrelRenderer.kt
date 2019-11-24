@@ -6,7 +6,9 @@ import me.branchpanic.mods.stockpile.api.storage.Quantizer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.render.GuiLighting
+import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
+import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.Direction
 
@@ -25,22 +27,22 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : Blo
 
     override fun render(
         barrel: T,
-        x: Double,
-        y: Double,
-        z: Double,
-        partialTicks: Float,
-        breakStage: Int
+        f: Float,
+        matrixStack: MatrixStack?,
+        vertexConsumerProvider: VertexConsumerProvider?,
+        i: Int,
+        j: Int
     ) {
-        super.render(barrel, x, y, z, partialTicks, breakStage)
-
         val face = barrel.cachedState[Properties.FACING]
         val obscuringPos = barrel.pos.offset(face)
-        val state = world.getBlockState(obscuringPos)
+        val world = barrel.world
+        val state = world?.getBlockState(obscuringPos) ?: return
 
         if (state.isFullOpaque(world, obscuringPos) || shouldSkipRenderingFor(barrel)) return
 
         renderDisplay(barrel, face, x, y, z)
     }
+
 
     private fun renderDisplay(
         barrel: T,

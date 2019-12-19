@@ -11,11 +11,11 @@ object Versions {
     // added.
     const val STOCKPILE = "1.1.3-beta.0"
 
-    const val MINECRAFT = "1.15-pre1"
-    const val YARN = "$MINECRAFT+build.6:v2"
-    const val LOADER = "0.7.1+build.173"
+    const val MINECRAFT = "1.15.1"
+    const val YARN = "$MINECRAFT+build.1:v2"
+    const val LOADER = "0.7.2+build.175"
 
-    const val FABRIC = "0.4.13+build.264-1.15"
+    const val FABRIC = "0.4.24+build.279-1.15"
     const val FABRIC_KT = "1.3.50+build.1"
     const val LBA = "0.4.14"
 
@@ -23,7 +23,7 @@ object Versions {
 }
 
 group = "me.branchpanic.mods"
-version = Versions.STOCKPILE + "+" + Versions.MINECRAFT.replace(" Pre-Release ", "-Pre")
+version = Versions.STOCKPILE + "+" + Versions.MINECRAFT
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -59,7 +59,7 @@ dependencies {
     include("alexiil.mc.lib:libblockattributes-core:${Versions.LBA}")
     include("alexiil.mc.lib:libblockattributes-items:${Versions.LBA}")
 
-    modCompile("mcp.mobius.waila:Hwyla:1.14.2-1.9.17-66")
+    modCompile("mcp.mobius.waila:Hwyla:1.15-pre4-1.9.19-70")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")

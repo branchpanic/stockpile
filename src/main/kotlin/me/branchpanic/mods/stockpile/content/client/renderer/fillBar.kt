@@ -41,7 +41,7 @@ fun Long.abbreviate(): String {
     return displayNumber + suffix
 }
 
-fun renderFillBar(
+fun drawFillBar(
     matrixStack: MatrixStack,
     vertexConsumerProvider: VertexConsumerProvider,
     settings: FillBarSettings,
@@ -54,8 +54,6 @@ fun renderFillBar(
     i: Int,
     j: Int
 ) {
-    matrixStack.translate(0.0, 0.0, 0.3 * 1 / COFH_TRANSFORM_OFFSET)
-    matrixStack.scale(0.5f, 0.5f, 1.0f)
 
     val filledAmount = value.toDouble() / maxValue
 

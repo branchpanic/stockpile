@@ -1,18 +1,16 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
-import com.mojang.blaze3d.platform.GlStateManager
-import com.mojang.blaze3d.systems.RenderSystem
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
+import me.branchpanic.mods.stockpile.api.storage.MassStorage
 import me.branchpanic.mods.stockpile.api.storage.Quantizer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
+import net.minecraft.client.resource.language.I18n
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.state.property.Properties
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Quaternion
 
@@ -45,8 +43,6 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         val state = world?.getBlockState(obscuringPos) ?: return
 
         if (state.isFullOpaque(world, obscuringPos) || shouldSkipRenderingFor(barrel)) return
-
-        matrixStack.push()
         renderDisplay(barrel, face, matrixStack, vertexConsumerProvider, i, j)
     }
 
@@ -59,27 +55,33 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         i: Int,
         j: Int
     ) {
-        transformToPlane(matrixStack, 0.0, 0.0, 0.0, orientation) {
-            matrixStack.scale(0.03125f, 0.03125f, (-COFH_TRANSFORM_OFFSET).toFloat())
-            matrixStack.multiply(Quaternion(0.0f, 0.0f, 180.0f, true))
-            matrixStack.translate(0.0, 0.0, 6.0)
+        matrixStack.push()
 
-            drawIcon(matrixStack, vertexConsumerProvider, barrel.storage.contents, i, j)
+        matrixStack.translate(0.5, 0.5, 0.5)
+        matrixStack.multiply(orientation.rotationQuaternion)
+        matrixStack.multiply(Quaternion(-90f, 0f, 0f, true))
+        matrixStack.translate(-0.5, -0.5, 0.51)
 
-            matrixStack.translate(0.0, 0.0, -6.0)
-            renderFillBar(
-                matrixStack,
-                vertexConsumerProvider,
-                fillBarSettings,
-                dispatcher.textRenderer,
-                barrel.storage.contents.amount,
-                barrel.storage.capacity,
-                barrel.clearWhenEmpty,
-                xCenter = 8.0,
-                yCenter = 16.0,
-                i=i, j=j
-            )
-        }
+        matrixStack.push()
+        drawIcon(matrixStack, vertexConsumerProvider, barrel.storage.contents, i, j)
+        matrixStack.pop()
+
+        matrixStack.push()
+        matrixStack.translate(2.0, 2.0, 0.0)
+        matrixStack.pop()
+
+        drawFillBar(
+            matrixStack,
+            vertexConsumerProvider,
+            fillBarSettings,
+            dispatcher.textRenderer,
+            barrel.storage.contents.amount,
+            barrel.storage.capacity,
+            barrel.clearWhenEmpty,
+            xCenter = 8.0,
+            yCenter = 16.0,
+            i = i, j = j
+        )
 
         matrixStack.pop()
     }
@@ -93,4 +95,12 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
     )
 
     override fun rendersOutsideBoundingBox(blockEntity: T): Boolean = true
+
+    private val T.fillBarText: String
+        get() = if ((storage.contents.amount / storage.capacity.toDouble()) <= 0) {
+            I18n.translate("ui.stockpile.empty")
+        } else {
+            storage.contents.amount.abbreviate() + if (clearWhenEmpty) "*" else ""
+        }
 }
+

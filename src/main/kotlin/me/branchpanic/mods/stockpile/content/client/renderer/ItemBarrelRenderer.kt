@@ -19,14 +19,17 @@ class ItemBarrelRenderer(dispatcher: BlockEntityRenderDispatcher) :
         i: Int,
         j: Int
     ) {
+        matrixStack.translate(0.5, 0.5, 0.0)
+        matrixStack.scale(0.8f, 0.8f, 0.01f)
+
         MinecraftClient.getInstance().itemRenderer.renderItem(
             contents.reference,
-            Type.FIXED,
-            i,
+            Type.GUI,
+            0xFF,
             OverlayTexture.DEFAULT_UV,
             matrixStack,
             vertexConsumerProvider
-        );
+        )
     }
 
     override fun shouldSkipRenderingFor(barrel: ItemBarrelBlockEntity): Boolean =

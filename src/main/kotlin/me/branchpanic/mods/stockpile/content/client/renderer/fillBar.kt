@@ -1,11 +1,10 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
-import com.mojang.blaze3d.platform.GlStateManager
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.font.TextRenderer
-import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexFormats
+import net.minecraft.client.render.*
 import net.minecraft.client.resource.language.I18n
-import org.lwjgl.opengl.GL11
+import net.minecraft.client.util.math.MatrixStack
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.min
@@ -19,17 +18,11 @@ data class FillBarSettings(
     val width: Double
 )
 
-fun drawRectangle(x1: Double, y1: Double, x2: Double, y2: Double, color: ArgbColor) {
-    val tessellator = Tessellator.getInstance()
-    val bufferBuilder = tessellator.bufferBuilder
-
-    bufferBuilder.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR)
-    bufferBuilder.vertex(x2, y1, 0.0).color(color.red, color.green, color.blue, color.alpha).next()
-    bufferBuilder.vertex(x2, y2, 0.0).color(color.red, color.green, color.blue, color.alpha).next()
-    bufferBuilder.vertex(x1, y2, 0.0).color(color.red, color.green, color.blue, color.alpha).next()
-    bufferBuilder.vertex(x1, y1, 0.0).color(color.red, color.green, color.blue, color.alpha).next()
-
-    tessellator.draw()
+fun drawRectangle(buffer: VertexConsumer, x1: Double, y1: Double, x2: Double, y2: Double, color: ArgbColor) {
+    buffer.vertex(x2, y1, 0.0).color(color.red, color.green, color.blue, color.alpha).texture(0f, 0f).light(0).normal(0f, 0f, 0f).next()
+    buffer.vertex(x2, y2, 0.0).color(color.red, color.green, color.blue, color.alpha).texture(0f, 0f).light(0).normal(0f, 0f, 0f).next()
+    buffer.vertex(x1, y2, 0.0).color(color.red, color.green, color.blue, color.alpha).texture(0f, 0f).light(0).normal(0f, 0f, 0f).next()
+    buffer.vertex(x1, y1, 0.0).color(color.red, color.green, color.blue, color.alpha).texture(0f, 0f).light(0).normal(0f, 0f, 0f).next()
 }
 
 // TODO(i18n): Localize quantities
@@ -49,16 +42,20 @@ fun Long.abbreviate(): String {
 }
 
 fun renderFillBar(
+    matrixStack: MatrixStack,
+    vertexConsumerProvider: VertexConsumerProvider,
     settings: FillBarSettings,
     textRenderer: TextRenderer,
     value: Long,
     maxValue: Long,
     clearWhenEmpty: Boolean,
     xCenter: Double,
-    yCenter: Double
+    yCenter: Double,
+    i: Int,
+    j: Int
 ) {
-    GlStateManager.translated(0.0, 0.0, 0.3 * 1 / COFH_TRANSFORM_OFFSET)
-    GlStateManager.scaled(0.5, 0.5, 1.0)
+    matrixStack.translate(0.0, 0.0, 0.3 * 1 / COFH_TRANSFORM_OFFSET)
+    matrixStack.scale(0.5f, 0.5f, 1.0f)
 
     val filledAmount = value.toDouble() / maxValue
 
@@ -83,10 +80,10 @@ fun renderFillBar(
     val filledBarWidth = totalBarWidth * min(filledAmount, 1.0)
     val unfilledBarWidth = totalBarWidth - filledBarWidth
 
-    GlStateManager.disableTexture()
-
+    val buffer = vertexConsumerProvider.getBuffer(RenderLayer.getEndPortal(1))
     if (filledBarWidth > 0) {
         drawRectangle(
+            buffer,
             -0.25 * settings.width,
             textCenterY + textHeight,
             filledBarWidth - 0.25 * settings.width,
@@ -97,6 +94,7 @@ fun renderFillBar(
 
     if (unfilledBarWidth > 0) {
         drawRectangle(
+            buffer,
             filledBarWidth - 0.25 * settings.width,
             textCenterY + textHeight,
             filledBarWidth + unfilledBarWidth - 0.25 * settings.width,
@@ -105,8 +103,9 @@ fun renderFillBar(
         )
     }
 
-    GlStateManager.enableTexture()
-
-    GlStateManager.translated(0.0, 0.0, 0.02)
-    textRenderer.draw(displayText, textCenterX.toFloat(), textCenterY.toFloat(), textColor)
+    matrixStack.translate(0.0, 0.0, 0.02)
+    textRenderer.draw(
+        displayText, textCenterX.toFloat(), textCenterY.toFloat(),
+        textColor, false, matrixStack.peek().model, vertexConsumerProvider, false, 0, i
+    )
 }

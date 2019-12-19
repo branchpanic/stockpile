@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.util.InputUtil
 import net.minecraft.util.hit.HitResult
 import net.minecraft.world.RayTraceContext
@@ -34,7 +35,7 @@ object StockpileClient : ClientModInitializer {
     )
 
     override fun onInitializeClient() {
-        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity.TYPE, ItemBarrelRenderer())
+        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity.TYPE) { d -> ItemBarrelRenderer(d) }
 
         KeyBindingRegistry.INSTANCE.addCategory("controls.stockpile")
         KeyBindingRegistry.INSTANCE.register(BARREL_HAT_KEY)

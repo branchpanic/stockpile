@@ -1,6 +1,7 @@
 package me.branchpanic.mods.stockpile.content.client.gui
 
 import com.mojang.blaze3d.platform.GlStateManager
+import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.Tessellator
@@ -38,24 +39,24 @@ fun fill4f(x1: Float, y1: Float, x2: Float, y2: Float, color: Int) {
     val tess = Tessellator.getInstance()
     val buf = tess.buffer
 
-    GlStateManager.enableBlend()
-    GlStateManager.disableTexture()
-    GlStateManager.blendFuncSeparate(
-        GlStateManager.SourceFactor.SRC_ALPHA.value,
-        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value,
-        GlStateManager.SourceFactor.ONE.value,
-        GlStateManager.DestFactor.ZERO.value
+    RenderSystem.enableBlend()
+    RenderSystem.disableTexture()
+    RenderSystem.blendFuncSeparate(
+        GlStateManager.SrcFactor.SRC_ALPHA,
+        GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA,
+        GlStateManager.SrcFactor.ONE,
+        GlStateManager.DstFactor.ZERO
     )
 
-    GlStateManager.color4f(r, g, b, a)
+    RenderSystem.color4f(r, g, b, a)
     buf.begin(7, VertexFormats.POSITION)
     buf.vertex(x1.toDouble(), y2.toDouble(), 0.0).next()
     buf.vertex(x2.toDouble(), y2.toDouble(), 0.0).next()
     buf.vertex(x2.toDouble(), y1.toDouble(), 0.0).next()
     buf.vertex(x1.toDouble(), y1.toDouble(), 0.0).next()
     tess.draw()
-    GlStateManager.enableTexture()
-    GlStateManager.disableBlend()
+    RenderSystem.enableTexture()
+    RenderSystem.disableBlend()
 }
 
 data class OverlayTextComponent(val text: String, val foregroundColor: Int, val backgroundColor: Int = 0x70000000)

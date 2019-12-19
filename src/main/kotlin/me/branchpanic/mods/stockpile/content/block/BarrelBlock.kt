@@ -168,6 +168,8 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         if (barrel is UpgradeContainer) lines.addAll(UpgradeRegistry.createTooltip(barrel))
     }
 
+    override fun isTranslucent(state: BlockState?, view: BlockView?, pos: BlockPos?): Boolean = true
+
     override fun onPlaced(
         world: World?,
         pos: BlockPos?,

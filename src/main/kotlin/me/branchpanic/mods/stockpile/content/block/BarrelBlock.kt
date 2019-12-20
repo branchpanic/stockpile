@@ -149,7 +149,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         }
     }
 
-    override fun getRenderType(state: BlockState?): BlockRenderType = BlockRenderType.INVISIBLE // TODO: For debug
+    override fun getRenderType(state: BlockState?): BlockRenderType = BlockRenderType.MODEL
 
     override fun buildTooltip(
         stack: ItemStack?,

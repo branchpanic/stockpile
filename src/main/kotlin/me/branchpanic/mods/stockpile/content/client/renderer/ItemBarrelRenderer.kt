@@ -16,16 +16,16 @@ class ItemBarrelRenderer(dispatcher: BlockEntityRenderDispatcher) :
         matrixStack: MatrixStack,
         vertexConsumerProvider: VertexConsumerProvider,
         contents: Quantizer<ItemStack>,
-        i: Int,
-        j: Int
+        light: Int,
+        overlay: Int
     ) {
-        matrixStack.translate(0.5, 0.5, 0.0)
-        matrixStack.scale(0.8f, 0.8f, 0.01f)
+        matrixStack.translate(0.5, 0.6, 0.0)
+        matrixStack.scale(0.53f, 0.53f, 0.01f)
 
         MinecraftClient.getInstance().itemRenderer.renderItem(
             contents.reference,
             Type.GUI,
-            0xFF,
+            light,
             OverlayTexture.DEFAULT_UV,
             matrixStack,
             vertexConsumerProvider

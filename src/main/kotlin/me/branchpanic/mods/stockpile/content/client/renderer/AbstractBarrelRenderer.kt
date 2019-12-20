@@ -1,10 +1,10 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
-import me.branchpanic.mods.stockpile.api.storage.MassStorage
 import me.branchpanic.mods.stockpile.api.storage.Quantizer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
@@ -30,11 +30,11 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
 
     override fun render(
         barrel: T,
-        f: Float,
+        tickDelta: Float,
         matrixStack: MatrixStack,
         vertexConsumerProvider: VertexConsumerProvider,
-        i: Int,
-        j: Int
+        light: Int,
+        overlay: Int
     ) {
         val face = barrel.cachedState[Properties.FACING]
         val pos = barrel.pos
@@ -43,7 +43,7 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         val state = world?.getBlockState(obscuringPos) ?: return
 
         if (state.isFullOpaque(world, obscuringPos) || shouldSkipRenderingFor(barrel)) return
-        renderDisplay(barrel, face, matrixStack, vertexConsumerProvider, i, j)
+        renderDisplay(barrel, face, matrixStack, vertexConsumerProvider, light, overlay)
     }
 
 
@@ -52,8 +52,8 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         orientation: Direction,
         matrixStack: MatrixStack,
         vertexConsumerProvider: VertexConsumerProvider,
-        i: Int,
-        j: Int
+        light: Int,
+        overlay: Int
     ) {
         matrixStack.push()
 
@@ -63,25 +63,35 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         matrixStack.translate(-0.5, -0.5, 0.51)
 
         matrixStack.push()
-        drawIcon(matrixStack, vertexConsumerProvider, barrel.storage.contents, i, j)
+        drawIcon(matrixStack, vertexConsumerProvider, barrel.storage.contents, 0xF000F0, overlay)
         matrixStack.pop()
 
         matrixStack.push()
-        matrixStack.translate(2.0, 2.0, 0.0)
-        matrixStack.pop()
+        matrixStack.translate(0.0, 0.15, 0.0)
 
-        drawFillBar(
-            matrixStack,
-            vertexConsumerProvider,
-            fillBarSettings,
-            dispatcher.textRenderer,
-            barrel.storage.contents.amount,
-            barrel.storage.capacity,
-            barrel.clearWhenEmpty,
-            xCenter = 8.0,
-            yCenter = 16.0,
-            i = i, j = j
+        // TODO: Is the textRenderer supposed to draw upside-down and backwards or are the previous transformations
+        //   too specific to items?
+
+        matrixStack.scale(1 / 56f, -1 / 56f, -1f)
+        val textWidth = dispatcher.textRenderer.getStringWidth(barrel.fillBarText)
+        matrixStack.translate(
+            (56 - textWidth.toDouble()) / 2.0,
+            (-dispatcher.textRenderer.fontHeight).toDouble(),
+            -0.01
         )
+        dispatcher.textRenderer.draw(
+            barrel.fillBarText,
+            0f,
+            0f,
+            0xFFFFFFFF.toInt(),
+            false,
+            matrixStack.peek().model,
+            vertexConsumerProvider,
+            false,
+            0,
+            0xF000F0
+        )
+        matrixStack.pop()
 
         matrixStack.pop()
     }
@@ -90,8 +100,8 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         matrixStack: MatrixStack,
         vertexConsumerProvider: VertexConsumerProvider,
         contents: Quantizer<U>,
-        i: Int,
-        j: Int
+        light: Int,
+        overlay: Int
     )
 
     override fun rendersOutsideBoundingBox(blockEntity: T): Boolean = true

@@ -1,6 +1,7 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
-import me.branchpanic.mods.stockpile.api.storage.Quantizer
+import com.mojang.blaze3d.systems.RenderSystem
+import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.OverlayTexture
@@ -15,13 +16,15 @@ class ItemBarrelRenderer(dispatcher: BlockEntityRenderDispatcher) :
     override fun drawIcon(
         matrixStack: MatrixStack,
         vertexConsumerProvider: VertexConsumerProvider,
-        contents: Quantizer<ItemStack>,
+        contents: Quantifier<ItemStack>,
         light: Int,
         overlay: Int
     ) {
         matrixStack.translate(0.5, 0.6, 0.0)
-        matrixStack.scale(0.53f, 0.53f, 0.01f)
+        matrixStack.scale(0.48f, 0.48f, 0.01f)
 
+        RenderSystem.pushLightingAttributes()
+        RenderSystem.setupGuiFlatDiffuseLighting()
         MinecraftClient.getInstance().itemRenderer.renderItem(
             contents.reference,
             Type.GUI,
@@ -30,6 +33,7 @@ class ItemBarrelRenderer(dispatcher: BlockEntityRenderDispatcher) :
             matrixStack,
             vertexConsumerProvider
         )
+        RenderSystem.popAttributes()
     }
 
     override fun shouldSkipRenderingFor(barrel: ItemBarrelBlockEntity): Boolean =

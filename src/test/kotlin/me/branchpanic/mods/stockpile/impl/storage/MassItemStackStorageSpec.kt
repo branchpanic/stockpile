@@ -28,9 +28,9 @@ class MassItemStackStorageSpec : StringSpec({
             row(ItemA.toQuantizer(32), 1, ItemA.toQuantizer(1), ItemA.toQuantizer(0)),
             row(ItemA.toQuantizer(32), 1, ItemA.toQuantizer(32), ItemA.toQuantizer(0)),
             row(ItemA.toQuantizer(32), 1, ItemB.toQuantizer(1), ItemB.toQuantizer(1)),
-            row(ItemStackQuantizer.NONE, 1, ItemA.toQuantizer(32), ItemA.toQuantizer(0)),
-            row(ItemStackQuantizer.NONE, 1, ItemB.toQuantizer(32), ItemB.toQuantizer(0)),
-            row(ItemStackQuantizer.NONE, 1, ItemA.toQuantizer(128), ItemA.toQuantizer(64))
+            row(ItemStackQuantifier.NONE, 1, ItemA.toQuantizer(32), ItemA.toQuantizer(0)),
+            row(ItemStackQuantifier.NONE, 1, ItemB.toQuantizer(32), ItemB.toQuantizer(0)),
+            row(ItemStackQuantifier.NONE, 1, ItemA.toQuantizer(128), ItemA.toQuantizer(64))
         ) { contents, maxStacks, insertedQuantizer, expectedRemainder ->
             booleanArrayOf(true, false).forEach { simulate ->
                 val storage = MassItemStackStorage(contents, maxStacks)

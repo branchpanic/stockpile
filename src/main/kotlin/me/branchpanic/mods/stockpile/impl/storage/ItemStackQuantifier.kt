@@ -1,21 +1,21 @@
 package me.branchpanic.mods.stockpile.impl.storage
 
-import me.branchpanic.mods.stockpile.api.storage.Quantizer
+import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import me.branchpanic.mods.stockpile.extension.canStackWith
 import me.branchpanic.mods.stockpile.extension.withCount
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 
-class ItemStackQuantizer(override val reference: ItemStack, override val amount: Long) : Quantizer<ItemStack> {
+class ItemStackQuantifier(override val reference: ItemStack, override val amount: Long) : Quantifier<ItemStack> {
     companion object {
-        val NONE = ItemStackQuantizer(reference = ItemStack.EMPTY, amount = 0L)
+        val NONE = ItemStackQuantifier(reference = ItemStack.EMPTY, amount = 0L)
     }
 
-    override fun withAmount(amount: Long): Quantizer<ItemStack> {
-        return ItemStackQuantizer(reference, amount)
+    override fun withAmount(amount: Long): Quantifier<ItemStack> {
+        return ItemStackQuantifier(reference, amount)
     }
 
-    override fun canMergeWith(other: Quantizer<ItemStack>): Boolean {
+    override fun canMergeWith(other: Quantifier<ItemStack>): Boolean {
         return reference.canStackWith(other.reference)
     }
 
@@ -37,7 +37,7 @@ class ItemStackQuantizer(override val reference: ItemStack, override val amount:
     override fun toString(): String = "ItemStackQuantizer(reference = $reference, amount = $amount)"
 
     override fun equals(other: Any?): Boolean {
-        val otherQuantizer = other as? ItemStackQuantizer ?: return false
+        val otherQuantizer = other as? ItemStackQuantifier ?: return false
         return ItemStack.areItemsEqual(reference, other.reference) &&
                 ItemStack.areTagsEqual(reference, other.reference) &&
                 amount == otherQuantizer.amount
@@ -49,7 +49,7 @@ class ItemStackQuantizer(override val reference: ItemStack, override val amount:
         return result
     }
 
-    override fun plus(other: Quantizer<ItemStack>): Quantizer<ItemStack> {
+    override fun plus(other: Quantifier<ItemStack>): Quantifier<ItemStack> {
         val untypedResult = super.plus(other)
 
         // Note that:
@@ -57,18 +57,18 @@ class ItemStackQuantizer(override val reference: ItemStack, override val amount:
         // However:
         // n of something - n of something = 0 of something
         return if (reference.isEmpty) {
-            ItemStackQuantizer(other.reference, untypedResult.amount)
+            ItemStackQuantifier(other.reference, untypedResult.amount)
         } else {
             untypedResult
         }
     }
 }
 
-fun Quantizer<ItemStack>.firstStack(): ItemStack = toObjects().getOrElse(0) { ItemStack.EMPTY }
+fun Quantifier<ItemStack>.firstStack(): ItemStack = toObjects().getOrElse(0) { ItemStack.EMPTY }
 
-fun ItemStack.toQuantizer(amount: Long = count.toLong()): Quantizer<ItemStack> =
-    ItemStackQuantizer(this.withCount(1), amount)
+fun ItemStack.toQuantizer(amount: Long = count.toLong()): Quantifier<ItemStack> =
+    ItemStackQuantifier(this.withCount(1), amount)
 
-fun ItemStack.oneStackToQuantizer(): Quantizer<ItemStack> = toQuantizer(maxCount.toLong())
+fun ItemStack.oneStackToQuantizer(): Quantifier<ItemStack> = toQuantizer(maxCount.toLong())
 
-fun Item.toQuantizer(amount: Long): Quantizer<ItemStack> = ItemStackQuantizer(ItemStack(this, 1), amount)
+fun Item.toQuantizer(amount: Long): Quantifier<ItemStack> = ItemStackQuantifier(ItemStack(this, 1), amount)

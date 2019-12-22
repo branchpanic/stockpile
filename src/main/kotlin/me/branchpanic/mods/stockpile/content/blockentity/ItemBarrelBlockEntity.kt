@@ -32,7 +32,7 @@ class ItemBarrelBlockEntity(
     override var appliedUpgrades: List<Upgrade> = emptyList(),
     override var maxUpgrades: Int = DEFAULT_MAX_UPGRADES
 ) : AbstractBarrelBlockEntity<ItemStack>(
-    storage = MassItemStackStorage(ItemStackQuantizer.NONE, DEFAULT_CAPACITY_STACKS),
+    storage = MassItemStackStorage(ItemStackQuantifier.NONE, DEFAULT_CAPACITY_STACKS),
     clearWhenEmpty = true,
     doubleClickThresholdMs = 1000,
     type = TYPE
@@ -78,12 +78,12 @@ class ItemBarrelBlockEntity(
     private val invWrapper = UnrestrictedInventoryFixedWrapper(invAttribute)
 
     init {
-        invAttribute.addListener({ _, _, _, _ -> markDirty() }, { })
+        invAttribute.addListener({ markDirty() }, { })
     }
 
     override fun markDirty() {
         if (clearWhenEmpty && storage.isEmpty) {
-            storage.contents = ItemStackQuantizer.NONE
+            storage.contents = ItemStackQuantifier.NONE
         }
 
         handleUpgradeChanges()
@@ -126,7 +126,7 @@ class ItemBarrelBlockEntity(
 
             BarrelTransactionAmount.MANY -> {
                 if (!player.mainHandStack.isEmpty) {
-                    val result = storage.addAtMost(player.mainHandStack.toQuantizer()).firstStack()
+                    val result = storage.addAtMost(player.mainHandStack.toQuantifier()).firstStack()
 
                     player.setStackInHand(
                         Hand.MAIN_HAND,
@@ -136,7 +136,7 @@ class ItemBarrelBlockEntity(
             }
 
             BarrelTransactionAmount.ALL -> {
-                player.inventory.main.replaceAll { storage.addAtMost(it.toQuantizer()).firstStack() }
+                player.inventory.main.replaceAll { storage.addAtMost(it.toQuantifier()).firstStack() }
             }
         }
 
@@ -157,7 +157,7 @@ class ItemBarrelBlockEntity(
 
     override fun fromClientTag(tag: CompoundTag?) = requireNotNull(tag).run {
         // Upgrades
-        maxUpgrades = if (containsKey(MAX_UPGRADES_TAG)) {
+        maxUpgrades = if (contains(MAX_UPGRADES_TAG)) {
             getInt(MAX_UPGRADES_TAG)
         } else {
             DEFAULT_MAX_UPGRADES
@@ -174,10 +174,10 @@ class ItemBarrelBlockEntity(
         // Contents
         val item = ItemStack.fromTag(getCompound(STORED_ITEM_TAG))
         if (item.isEmpty) {
-            storage.contents = ItemStackQuantizer.NONE
+            storage.contents = ItemStackQuantifier.NONE
         } else {
             val itemAmount = min(max(0L, getLong(AMOUNT_STORED_TAG)), storage.capacity)
-            storage.contents = ItemStackQuantizer(item.withCount(1), itemAmount)
+            storage.contents = ItemStackQuantifier(item.withCount(1), itemAmount)
         }
     }
 

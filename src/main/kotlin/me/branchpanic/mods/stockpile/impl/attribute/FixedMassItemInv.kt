@@ -3,15 +3,16 @@ package me.branchpanic.mods.stockpile.impl.attribute
 import alexiil.mc.lib.attributes.ListenerRemovalToken
 import alexiil.mc.lib.attributes.ListenerToken
 import alexiil.mc.lib.attributes.Simulation
+import alexiil.mc.lib.attributes.item.AbstractItemInvView
 import alexiil.mc.lib.attributes.item.FixedItemInv
-import alexiil.mc.lib.attributes.item.ItemInvSlotChangeListener
+import alexiil.mc.lib.attributes.item.InvMarkDirtyListener
 import alexiil.mc.lib.attributes.item.ItemTransferable
 import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
 import me.branchpanic.mods.stockpile.extension.withCount
 import me.branchpanic.mods.stockpile.impl.storage.firstStack
 import me.branchpanic.mods.stockpile.impl.storage.oneStackToQuantizer
-import me.branchpanic.mods.stockpile.impl.storage.toQuantizer
+import me.branchpanic.mods.stockpile.impl.storage.toQuantifier
 import net.minecraft.item.ItemStack
 import kotlin.math.abs
 import kotlin.math.max
@@ -31,10 +32,13 @@ class FixedMassItemInv(
         const val OUTBOUND_SLOT = 1
     }
 
-    private var listeners: List<ItemInvSlotChangeListener> = emptyList()
+    private var listeners: List<InvMarkDirtyListener> = emptyList()
+    private var changes: Int = 0
 
-    private fun fireListeners(slot: Int, before: ItemStack, after: ItemStack) =
-        listeners.forEach { l -> l.onChange(this, slot, before, after) }
+    private fun fireListeners(view: AbstractItemInvView) {
+        changes++
+        listeners.forEach { l -> l.onMarkDirty(view) }
+    }
 
     override fun getInvStack(slot: Int): ItemStack =
         when (slot) {
@@ -52,7 +56,7 @@ class FixedMassItemInv(
         }
 
         if (storage.isEmpty) {
-            return storage.addAtMost(stack.toQuantizer()).isEmpty
+            return storage.addAtMost(stack.toQuantifier()).isEmpty
         }
 
         if (storage.isFull && voidExtraItems) {
@@ -72,7 +76,7 @@ class FixedMassItemInv(
             change < 0 -> storage.removeAtMost(abs(change).toLong())
         }
 
-        fireListeners(slot, before, getInvStack(slot))
+        fireListeners(this)
         return true
     }
 
@@ -85,10 +89,12 @@ class FixedMassItemInv(
             return false
         }
 
-        return storage.contents.canMergeWith(stack.toQuantizer())
+        return storage.contents.canMergeWith(stack.toQuantifier())
     }
 
-    override fun addListener(listener: ItemInvSlotChangeListener?, removalToken: ListenerRemovalToken?): ListenerToken {
+    override fun getChangeValue(): Int = changes
+
+    override fun addListener(listener: InvMarkDirtyListener?, removalToken: ListenerRemovalToken?): ListenerToken {
         if (listener == null || removalToken == null) {
             throw NullPointerException("null parameter when trying to add a listener")
         }
@@ -104,7 +110,7 @@ class FixedMassItemInv(
     override fun getSlotCount(): Int = 2
 
     override fun getMaxAmount(slot: Int, stack: ItemStack?): Int {
-        if (stack == null || !storage.contents.canMergeWith(stack.toQuantizer())) {
+        if (stack == null || !storage.contents.canMergeWith(stack.toQuantifier())) {
             return 0
         }
 
@@ -127,14 +133,14 @@ class FixedMassItemInv(
     override fun attemptInsertion(stack: ItemStack?, simulation: Simulation?): ItemStack {
         if (stack == null) return ItemStack.EMPTY
 
-        fireListeners(-1, ItemStack.EMPTY, ItemStack.EMPTY)
-        return storage.addAtMost(stack.toQuantizer(), simulation == Simulation.SIMULATE).firstStack()
+        fireListeners(this)
+        return storage.addAtMost(stack.toQuantifier(), simulation == Simulation.SIMULATE).firstStack()
     }
 
     override fun attemptExtraction(filter: ItemFilter?, amount: Int, simulation: Simulation?): ItemStack {
         if (filter == null || storage.contents.isEmpty || !filter.matches(storage.contents.reference)) return ItemStack.EMPTY
 
-        fireListeners(-1, ItemStack.EMPTY, ItemStack.EMPTY)
+        fireListeners(this)
         val extractedAmount = storage.removeAtMost(amount.toLong(), simulation == Simulation.SIMULATE)
 
         return if (extractedAmount <= 0) {

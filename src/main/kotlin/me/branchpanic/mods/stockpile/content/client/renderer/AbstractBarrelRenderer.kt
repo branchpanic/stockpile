@@ -1,85 +1,148 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
-import com.mojang.blaze3d.platform.GlStateManager
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
-import me.branchpanic.mods.stockpile.api.storage.Quantizer
+import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.client.render.GuiLighting
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.VertexConsumer
+import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.render.WorldRenderer
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
+import net.minecraft.client.resource.language.I18n
+import net.minecraft.client.util.math.Matrix4f
+import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.Quaternion
 
 @Environment(EnvType.CLIENT)
-abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : BlockEntityRenderer<T>() {
+abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispatcher: BlockEntityRenderDispatcher) :
+    BlockEntityRenderer<T>(dispatcher) {
+
     private val fillBarSettings = FillBarSettings(
-        backgroundColor = 0xB2000000.toInt(),
+        backgroundColor = 0xB20A0A0A.toInt(),
         foregroundColor = 0xB20212FF.toInt(),
         textColor = 0xFFFFFFFF.toInt(),
         textColorFull = 0xFFFFFF22.toInt(),
         width = 18.0
     )
 
-    abstract fun drawIcon(contents: Quantizer<U>)
     abstract fun shouldSkipRenderingFor(barrel: T): Boolean
+    abstract fun drawIcon(
+        matrixStack: MatrixStack,
+        vertexConsumerProvider: VertexConsumerProvider,
+        contents: Quantifier<U>,
+        light: Int,
+        overlay: Int
+    )
 
     override fun render(
         barrel: T,
-        x: Double,
-        y: Double,
-        z: Double,
-        partialTicks: Float,
-        breakStage: Int
+        tickDelta: Float,
+        matrixStack: MatrixStack,
+        vertexConsumerProvider: VertexConsumerProvider,
+        light: Int,
+        overlay: Int
     ) {
-        super.render(barrel, x, y, z, partialTicks, breakStage)
-
         val face = barrel.cachedState[Properties.FACING]
+        val world = barrel.world
         val obscuringPos = barrel.pos.offset(face)
-        val state = world.getBlockState(obscuringPos)
+        val obscuringState = world?.getBlockState(obscuringPos) ?: return
 
-        if (state.isFullOpaque(world, obscuringPos) || shouldSkipRenderingFor(barrel)) return
+        if (obscuringState.isFullOpaque(world, obscuringPos) || shouldSkipRenderingFor(barrel)) return
 
-        renderDisplay(barrel, face, x, y, z)
+        renderDisplay(
+            barrel,
+            face,
+            matrixStack,
+            vertexConsumerProvider,
+            WorldRenderer.getLightmapCoordinates(world, obscuringPos),
+            overlay
+        )
     }
 
     private fun renderDisplay(
         barrel: T,
         orientation: Direction,
-        x: Double,
-        y: Double,
-        z: Double
+        matrixStack: MatrixStack,
+        vertexConsumerProvider: VertexConsumerProvider,
+        light: Int,
+        overlay: Int
     ) {
-        GlStateManager.enableRescaleNormal()
-        GlStateManager.alphaFunc(516, 0.1F)
-        GlStateManager.enableBlend()
-        GuiLighting.enable()
-        GlStateManager.blendFuncSeparate(
-            GlStateManager.SourceFactor.SRC_ALPHA,
-            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-            GlStateManager.SourceFactor.ONE,
-            GlStateManager.DestFactor.ZERO
+        matrixStack.push()
+
+        // WIP, will make part of FillBarSettings
+        val padding = 0.18
+        val barWidth = 1.0f - 2 * padding.toFloat()
+        val barHeight = dispatcher.textRenderer.fontHeight / 64f + 0.02f
+
+        // Translate to be coplanar to barrel with (0, 0, 0) being bottom-left corner.
+        matrixStack.translate(0.5, 0.5, 0.5)
+        matrixStack.multiply(orientation.rotationQuaternion)
+        matrixStack.multiply(Quaternion(-90f, 0f, 0f, true))
+        matrixStack.translate(-0.5, -0.5, 0.51)
+
+        // Draw barrel-specific icon.
+        matrixStack.push()
+        drawIcon(matrixStack, vertexConsumerProvider, barrel.storage.contents, light, overlay)
+        matrixStack.pop()
+
+        // Draw fill bar.
+        matrixStack.push()
+        matrixStack.translate(padding, padding, 0.0)
+        val buf = vertexConsumerProvider.getBuffer(RenderLayer.getLeash())
+        val mx = matrixStack.peek().model
+        val fillAmount = barrel.storage.contents.amount.toFloat() / barrel.storage.capacity
+        val filledWidth = barWidth * fillAmount
+        buf.rect(mx, 0f, 0f, filledWidth, barHeight, fillBarSettings.foregroundColor, light)
+        buf.rect(mx, filledWidth, 0f, barWidth, barHeight, fillBarSettings.backgroundColor, light)
+        matrixStack.pop()
+
+        // Draw text.
+        val textWidth = dispatcher.textRenderer.getStringWidth(barrel.fillBarText)
+        matrixStack.push()
+        matrixStack.translate(0.0, padding, 0.01)
+        matrixStack.scale(1 / 64f, -1 / 64f, -1f)
+        matrixStack.translate(
+            (64 - textWidth.toDouble()) / 2.0,
+            (-dispatcher.textRenderer.fontHeight).toDouble(),
+            0.0
         )
+        dispatcher.textRenderer.draw(
+            barrel.fillBarText, 0f, 0f, when {
+                barrel.storage.isFull -> fillBarSettings.textColorFull
+                else -> fillBarSettings.textColor
+            }, false, matrixStack.peek().model, vertexConsumerProvider, false, 0, light
+        )
+        matrixStack.pop()
 
-        transformToPlane(x, y, z, orientation) {
-            GlStateManager.scaled(0.03125, 0.03125, -COFH_TRANSFORM_OFFSET)
-            GlStateManager.rotated(180.0, 0.0, 0.0, 1.0)
-            GlStateManager.translated(0.0, 0.0, 6.0)
+        matrixStack.pop()
+    }
 
-            drawIcon(barrel.storage.contents)
+    override fun rendersOutsideBoundingBox(blockEntity: T): Boolean = true
 
-            GlStateManager.translated(0.0, 0.0, -6.0)
-            renderFillBar(
-                fillBarSettings,
-                fontRenderer,
-                barrel.storage.contents.amount,
-                barrel.storage.capacity,
-                barrel.clearWhenEmpty,
-                xCenter = 8.0,
-                yCenter = 16.0
-            )
+    private val T.fillBarText: String
+        get() = if ((storage.contents.amount / storage.capacity.toDouble()) <= 0) {
+            I18n.translate("ui.stockpile.empty")
+        } else {
+            storage.contents.amount.abbreviate() + if (clearWhenEmpty) "*" else ""
         }
 
-        GlStateManager.disableRescaleNormal()
-        GlStateManager.disableBlend()
+    private fun VertexConsumer.rect(
+        mx: Matrix4f,
+        x1: Float,
+        y1: Float,
+        x2: Float,
+        y2: Float,
+        color: ArgbColor,
+        light: Int
+    ) {
+        this.vertex(mx, x2, y1, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
+        this.vertex(mx, x2, y2, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
+        this.vertex(mx, x1, y2, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
+        this.vertex(mx, x1, y1, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
     }
 }
+

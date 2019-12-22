@@ -1,13 +1,13 @@
 package me.branchpanic.mods.stockpile.impl.storage
 
 import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
-import me.branchpanic.mods.stockpile.api.storage.Quantizer
+import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import java.text.NumberFormat
 
-class MassItemStackStorage(override var contents: Quantizer<ItemStack>, var maxStacks: Int) :
+class MassItemStackStorage(override var contents: Quantifier<ItemStack>, var maxStacks: Int) :
     MutableMassStorage<ItemStack> {
     override val capacity: Long
         get() = (maxStacks * contents.reference.maxCount).toLong()

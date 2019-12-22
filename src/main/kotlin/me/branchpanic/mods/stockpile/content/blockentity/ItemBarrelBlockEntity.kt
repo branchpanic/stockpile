@@ -78,7 +78,7 @@ class ItemBarrelBlockEntity(
     private val invWrapper = UnrestrictedInventoryFixedWrapper(invAttribute)
 
     init {
-        invAttribute.addListener({ _, _, _, _ -> markDirty() }, { })
+        invAttribute.addListener({ markDirty() }, { })
     }
 
     override fun markDirty() {
@@ -126,7 +126,7 @@ class ItemBarrelBlockEntity(
 
             BarrelTransactionAmount.MANY -> {
                 if (!player.mainHandStack.isEmpty) {
-                    val result = storage.addAtMost(player.mainHandStack.toQuantizer()).firstStack()
+                    val result = storage.addAtMost(player.mainHandStack.toQuantifier()).firstStack()
 
                     player.setStackInHand(
                         Hand.MAIN_HAND,
@@ -136,7 +136,7 @@ class ItemBarrelBlockEntity(
             }
 
             BarrelTransactionAmount.ALL -> {
-                player.inventory.main.replaceAll { storage.addAtMost(it.toQuantizer()).firstStack() }
+                player.inventory.main.replaceAll { storage.addAtMost(it.toQuantifier()).firstStack() }
             }
         }
 

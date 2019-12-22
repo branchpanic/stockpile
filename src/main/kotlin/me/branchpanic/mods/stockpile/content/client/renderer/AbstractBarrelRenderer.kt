@@ -4,7 +4,10 @@ import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.client.render.*
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.VertexConsumer
+import net.minecraft.client.render.VertexConsumerProvider
+import net.minecraft.client.render.WorldRenderer
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.resource.language.I18n
@@ -55,7 +58,7 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
             face,
             matrixStack,
             vertexConsumerProvider,
-            0xF000F0 /* `light` param is always 0? */,
+            WorldRenderer.getLightmapCoordinates(world, obscuringPos),
             overlay
         )
     }

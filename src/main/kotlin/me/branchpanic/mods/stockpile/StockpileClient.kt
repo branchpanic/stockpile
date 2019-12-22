@@ -1,6 +1,5 @@
 package me.branchpanic.mods.stockpile
 
-import me.branchpanic.mods.stockpile.content.block.BarrelBlock
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.client.BarrelHatKeyListener
 import me.branchpanic.mods.stockpile.content.client.gui.OverlayRenderer
@@ -10,14 +9,11 @@ import me.branchpanic.mods.stockpile.content.client.renderer.ItemBarrelRenderer
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.render.RenderLayer
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.util.InputUtil
 import net.minecraft.util.hit.HitResult
 import net.minecraft.world.RayTraceContext
@@ -38,8 +34,7 @@ object StockpileClient : ClientModInitializer {
     )
 
     override fun onInitializeClient() {
-        BlockRenderLayerMap.INSTANCE.putBlock(BarrelBlock.ITEM, RenderLayer.getCutoutMipped())
-        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity.TYPE) { d -> ItemBarrelRenderer(d) }
+        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity.TYPE, ::ItemBarrelRenderer)
 
         KeyBindingRegistry.INSTANCE.addCategory("controls.stockpile")
         KeyBindingRegistry.INSTANCE.register(BARREL_HAT_KEY)

@@ -66,9 +66,9 @@ class ItemStackQuantifier(override val reference: ItemStack, override val amount
 
 fun Quantifier<ItemStack>.firstStack(): ItemStack = toObjects().getOrElse(0) { ItemStack.EMPTY }
 
-fun ItemStack.toQuantizer(amount: Long = count.toLong()): Quantifier<ItemStack> =
+fun ItemStack.toQuantifier(amount: Long = count.toLong()): Quantifier<ItemStack> =
     ItemStackQuantifier(this.withCount(1), amount)
 
-fun ItemStack.oneStackToQuantizer(): Quantifier<ItemStack> = toQuantizer(maxCount.toLong())
+fun ItemStack.oneStackToQuantizer(): Quantifier<ItemStack> = toQuantifier(maxCount.toLong())
 
-fun Item.toQuantizer(amount: Long): Quantifier<ItemStack> = ItemStackQuantifier(ItemStack(this, 1), amount)
+fun Item.toQuantifier(amount: Long): Quantifier<ItemStack> = ItemStackQuantifier(ItemStack(this, 1), amount)

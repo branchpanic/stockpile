@@ -16,7 +16,7 @@ jobs:
           java-version: 1.8
       - name: Build
         run: |
-          - ./gradlew build
+          ./gradlew build
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1

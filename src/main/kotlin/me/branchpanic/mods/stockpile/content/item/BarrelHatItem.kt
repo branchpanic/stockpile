@@ -7,7 +7,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.extension.giveTo
 import me.branchpanic.mods.stockpile.extension.withCount
-import me.branchpanic.mods.stockpile.impl.storage.toQuantizer
+import me.branchpanic.mods.stockpile.impl.storage.toQuantifier
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
@@ -71,7 +71,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
             val barrel = ItemBarrelBlockEntity.fromStack(barrelStack)
 
             insertableStacks.forEach insertStack@{ insertStack ->
-                if (!barrel.storage.contents.canMergeWith(insertStack.toQuantizer()) || insertStack.isEmpty) {
+                if (!barrel.storage.contents.canMergeWith(insertStack.toQuantifier()) || insertStack.isEmpty) {
                     return@insertStack
                 }
 
@@ -82,7 +82,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                 }
 
                 val maxInsertableStack = insertStack.withCount(amount - 1)
-                val remainder = barrel.storage.addAtMost(maxInsertableStack.toQuantizer()).amount + 1
+                val remainder = barrel.storage.addAtMost(maxInsertableStack.toQuantifier()).amount + 1
 
                 insertStack.count = remainder.toInt()
                 itemsDeposited += amount - remainder.toInt()
@@ -116,7 +116,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
             val barrel = ItemBarrelBlockEntity.fromStack(barrelStack)
 
             restockableStacks.forEach restockStack@{ restockStack ->
-                if (!barrel.storage.contents.canMergeWith(restockStack.toQuantizer()) || barrel.storage.isEmpty) {
+                if (!barrel.storage.contents.canMergeWith(restockStack.toQuantifier()) || barrel.storage.isEmpty) {
                     return@restockStack
                 }
 

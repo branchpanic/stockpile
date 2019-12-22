@@ -1,10 +1,8 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
-import com.mojang.blaze3d.systems.RenderSystem
 import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.render.OverlayTexture
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.model.json.ModelTransformation.Type
@@ -20,20 +18,17 @@ class ItemBarrelRenderer(dispatcher: BlockEntityRenderDispatcher) :
         light: Int,
         overlay: Int
     ) {
-        matrixStack.translate(0.5, 0.6, 0.0)
-        matrixStack.scale(0.48f, 0.48f, 0.01f)
+        matrixStack.translate(0.5, 0.6, 0.01)
+        matrixStack.scale(0.48f, 0.48f, 0.05f)
 
-        RenderSystem.pushLightingAttributes()
-        RenderSystem.setupGuiFlatDiffuseLighting()
         MinecraftClient.getInstance().itemRenderer.renderItem(
             contents.reference,
             Type.GUI,
             light,
-            OverlayTexture.DEFAULT_UV,
+            overlay,
             matrixStack,
             vertexConsumerProvider
         )
-        RenderSystem.popAttributes()
     }
 
     override fun shouldSkipRenderingFor(barrel: ItemBarrelBlockEntity): Boolean =

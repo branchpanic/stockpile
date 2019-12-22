@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).  
 
+## [Unreleased]
+### Fixed
+- Compatibility with 1.15
+
+### Changed
+- Make barrel rendering code less gruesome
+- Removed transparency from fill bars (this is a temporary regression)
+  - On a related note, I'm aware of item lighting issues on barrels
+- Updated Fabric and all mods to 1.15 versions
+
 ## [1.1.2] - 2019-09-08
 
 ### Fixed

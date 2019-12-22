@@ -14,12 +14,13 @@ import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
-import net.minecraft.state.StateFactory
+import net.minecraft.state.StateManager
 import net.minecraft.state.property.BooleanProperty
 import net.minecraft.state.property.Properties
 import net.minecraft.tag.FluidTags
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
@@ -32,7 +33,7 @@ import net.minecraft.world.World
 val IS_OPEN: BooleanProperty = BooleanProperty.of("is_open")
 
 object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()), BlockEntityProvider, Waterloggable {
-    override fun appendProperties(builder: StateFactory.Builder<Block, BlockState>?) {
+    override fun appendProperties(builder: StateManager.Builder<Block, BlockState>?) {
         builder?.add(IS_OPEN, Properties.WATERLOGGED)
     }
 
@@ -53,20 +54,20 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         context: EntityContext
     ): VoxelShape = createCuboidShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
 
-    override fun activate(
+    override fun onUse(
         state: BlockState?,
         world: World?,
         pos: BlockPos?,
         player: PlayerEntity?,
         hand: Hand?,
         hit: BlockHitResult?
-    ): Boolean {
+    ): ActionResult {
         if (world != null && state != null && !world.isClient) {
             world.setBlockState(pos, state.with(IS_OPEN, !state[IS_OPEN]), 3)
             world.playSound(null, pos, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 0.5f, 0.8f)
         }
 
-        return true
+        return ActionResult.SUCCESS
     }
 
     override fun createBlockEntity(world: BlockView?): BlockEntity? = TrashCanBlockEntity()

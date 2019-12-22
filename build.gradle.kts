@@ -3,27 +3,26 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.3.21"
     id("fabric-loom") version "0.2.6-SNAPSHOT"
-    id("org.jlleitschuh.gradle.ktlint") version "8.2.0"
 }
 
 object Versions {
-    // When updating Stockpile's version, just change this constant. The MC version in the metadata is automatically
-    // added.
-    const val STOCKPILE = "1.1.3"
+    // Mod
+    const val STOCKPILE = "1.1.3-beta.0"
 
-    const val MINECRAFT = "1.14.4"
-    const val YARN = "$MINECRAFT+build.15:v2"
-    const val LOADER = "0.7.1+build.173"
+    // Toolchain dependencies
+    const val MINECRAFT = "1.15.1"
+    const val YARN = "$MINECRAFT+build.1:v2"
+    const val LOADER = "0.7.2+build.175"
+    const val FABRIC = "0.4.24+build.279-1.15"
 
-    const val FABRIC = "0.4.1+build.245-1.14"
+    // Mod dependencies
     const val FABRIC_KT = "1.3.50+build.1"
-    const val LBA = "0.4.14"
-
-    const val SIMPLE_PIPES = "0.1.8"
+    const val LBA = "0.5.0"
+    const val HWYLA = "1.15-pre4-1.9.19-70"
 }
 
 group = "me.branchpanic.mods"
-version = Versions.STOCKPILE + "+" + Versions.MINECRAFT.replace(" Pre-Release ", "-Pre")
+version = Versions.STOCKPILE + "+" + Versions.MINECRAFT
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -59,12 +58,12 @@ dependencies {
     include("alexiil.mc.lib:libblockattributes-core:${Versions.LBA}")
     include("alexiil.mc.lib:libblockattributes-items:${Versions.LBA}")
 
-    modCompile("mcp.mobius.waila:Hwyla:1.14.2-1.9.17-66")
+    modCompile("mcp.mobius.waila:Hwyla:${Versions.HWYLA}")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("io.kotlintest:kotlintest-runner-junit4:3.3.2")
-    testImplementation("org.powermock:powermock-module-junit4:1.7.1")
-    testImplementation("org.powermock:powermock-api-mockito2:1.7.1")
+    testImplementation("io.kotlintest:kotlintest-runner-junit4:3.4.2")
+    testImplementation("org.powermock:powermock-module-junit4:2.0.2")
+    testImplementation("org.powermock:powermock-api-mockito2:2.0.2")
 }
 
 task("sourcesJar", Jar::class) {

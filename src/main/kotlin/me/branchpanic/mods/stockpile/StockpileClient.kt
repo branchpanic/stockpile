@@ -11,7 +11,7 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry
-import net.fabricmc.fabric.api.client.render.BlockEntityRendererRegistry
+import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry
 import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.util.InputUtil
@@ -34,7 +34,7 @@ object StockpileClient : ClientModInitializer {
     )
 
     override fun onInitializeClient() {
-        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity::class.java, ItemBarrelRenderer())
+        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity.TYPE, ::ItemBarrelRenderer)
 
         KeyBindingRegistry.INSTANCE.addCategory("controls.stockpile")
         KeyBindingRegistry.INSTANCE.register(BARREL_HAT_KEY)
@@ -48,10 +48,12 @@ object StockpileClient : ClientModInitializer {
         // https://github.com/TehNut/HWYLA/blob/9d83ceb1d36733f11f9502378426626de246a7bf/src/main/java/mcp/mobius/waila/overlay/RayTracing.java#L62
 
         val mc = MinecraftClient.getInstance()
-        val player = mc.player
-        val world = mc.world
 
-        val playerReach = mc.interactionManager.reachDistance
+        val interactionManager = mc.interactionManager ?: return
+        val player = mc.player ?: return
+        val world = mc.world ?: return
+
+        val playerReach = interactionManager.reachDistance
         val eyePosition = player.getCameraPosVec(partialTicks)
         val lookVector = player.getRotationVec(partialTicks)
         val traceEnd =

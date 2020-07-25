@@ -42,8 +42,8 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         val potentialStacks = stacks.filter { s -> s.item == Registry.ITEM[id("item_barrel")] }
 
         if (warnOnStacked && potentialStacks.any { s -> s.count > 1 }) {
-            player.addChatMessage(
-                TranslatableText("ui.stockpile.barrel_hat.stacked_warning").setStyle(Style().setColor(Formatting.GRAY)),
+            player.sendMessage(
+                TranslatableText("ui.stockpile.barrel_hat.stacked_warning").setStyle(Style.EMPTY.withColor(Formatting.GRAY)),
                 false
             )
         }
@@ -92,10 +92,10 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         }
 
         if (itemsDeposited > 0) {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel_hat.pushed_items", itemsDeposited), true)
+            player.sendMessage(TranslatableText("ui.stockpile.barrel_hat.pushed_items", itemsDeposited), true)
             player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 0.5f, 0.9f)
         } else {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel_hat.no_pushed_items"), true)
+            player.sendMessage(TranslatableText("ui.stockpile.barrel_hat.no_pushed_items"), true)
             player.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.MASTER, 0.5f, 1.0f)
         }
         player.inventory.markDirty()
@@ -142,10 +142,10 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         }
 
         if (itemsTaken > 0) {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel_hat.pulled_items", itemsTaken), true)
+            player.sendMessage(TranslatableText("ui.stockpile.barrel_hat.pulled_items", itemsTaken), true)
             player.playSound(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.MASTER, 0.5f, 1.1f)
         } else {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel_hat.no_pulled_items"), true)
+            player.sendMessage(TranslatableText("ui.stockpile.barrel_hat.no_pulled_items"), true)
             player.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.MASTER, 0.5f, 1.0f)
         }
 
@@ -158,7 +158,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         tooltip: MutableList<Text>?,
         context: TooltipContext?
     ) {
-        val keyName = StockpileClient.BARREL_HAT_KEY.localizedName.toUpperCase()
+        val keyName = StockpileClient.BARREL_HAT_KEY.boundKeyLocalizedText.string.toUpperCase()
 
         tooltip?.add(TranslatableText("ui.stockpile.barrel_hat").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
 

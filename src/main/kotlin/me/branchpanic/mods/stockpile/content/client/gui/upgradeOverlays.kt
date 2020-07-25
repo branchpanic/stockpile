@@ -27,7 +27,7 @@ fun getUpgradeList(
         val prefix = if (u in removals) Formatting.STRIKETHROUGH.toString() else ""
 
         OverlayTextComponent(
-            "${i + 1}. ${prefix + u.description.asFormattedString()}", if (u in conflicts) {
+            "${i + 1}. ${prefix + u.description.string}", if (u in conflicts) {
                 Formatting.RED.colorValue!!
             } else {
                 Formatting.GRAY.colorValue!!

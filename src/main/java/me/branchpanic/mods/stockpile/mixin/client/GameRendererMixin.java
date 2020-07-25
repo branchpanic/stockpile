@@ -14,8 +14,10 @@ public class GameRendererMixin {
     // Adapted from HWYLA:
     // https://github.com/TehNut/HWYLA/blob/9d83ceb1d36733f11f9502378426626de246a7bf/src/main/java/mcp/mobius/waila/mixin/client/MixinGameRenderer.java#L14
 
-    @Inject(method = "render", slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;render(F)V")), at = @At(value = "INVOKE", ordinal = 0))
-    public void renderOverlay(float partialTicks, long long_1, boolean boolean_1, CallbackInfo ci) {
+    @Inject(method = {"render"},
+            slice = {@Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;render(Lnet/minecraft/client/util/math/MatrixStack;F)V"))},
+            at = {@At(value = "INVOKE", ordinal = 0)})
+    private void renderOverlay(float partialTicks, long nanoTime, boolean var4, CallbackInfo callbackInfo) {
         StockpileClient.INSTANCE.drawOverlays(partialTicks);
     }
 }

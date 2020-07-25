@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.event.client.ClientTickCallback
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.EquipmentSlot
-import net.minecraft.util.PacketByteBuf
+import net.minecraft.network.PacketByteBuf
 
 @Environment(EnvType.CLIENT)
 object BarrelHatKeyListener : ClientTickCallback {

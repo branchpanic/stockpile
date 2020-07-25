@@ -19,8 +19,8 @@ object UpgradeRegistry {
     private const val ID_TAG = "ID"
     private const val DATA_TAG = "Data"
 
-    val UPGRADE_HEADER_STYLE: Style = Style().setColor(Formatting.GREEN)
-    val UPGRADE_TOOLTIP_STYLE: Style = Style().setColor(Formatting.GRAY)
+    val UPGRADE_HEADER_STYLE: Style = Style.EMPTY.withColor(Formatting.GREEN)
+    val UPGRADE_TOOLTIP_STYLE: Style = Style.EMPTY.withColor(Formatting.GRAY)
 
     private var upgrades = emptyMap<Identifier, UpgradeType>()
 
@@ -79,6 +79,6 @@ object UpgradeRegistry {
                 container.appliedUpgrades.size,
                 container.maxUpgrades
             ).setStyle(UPGRADE_HEADER_STYLE)
-        ) + upgrades.map { u -> u.description.setStyle(UPGRADE_TOOLTIP_STYLE) }
+        ) + upgrades.map { u -> u.description.shallowCopy().setStyle(UPGRADE_TOOLTIP_STYLE) }
     }
 }

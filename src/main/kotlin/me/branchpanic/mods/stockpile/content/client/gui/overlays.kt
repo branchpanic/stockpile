@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.render.Tessellator
 import net.minecraft.client.render.VertexFormats
+import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.ItemStack
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
@@ -17,7 +18,8 @@ fun TextRenderer.drawWithBackground(
     boxWidth: Float,
     foregroundColor: Int,
     backgroundColor: Int = 0x70000000,
-    padding: Float = 1f
+    padding: Float = 1f,
+    matrices: MatrixStack = MatrixStack()
 ) {
     fill4f(
         x,
@@ -27,7 +29,7 @@ fun TextRenderer.drawWithBackground(
         backgroundColor
     )
 
-    draw(text, (x + padding), (y + padding), foregroundColor)
+    draw(matrices, text, (x + padding), (y + padding), foregroundColor)
 }
 
 fun fill4f(x1: Float, y1: Float, x2: Float, y2: Float, color: Int) {
@@ -87,7 +89,7 @@ interface TextOverlayRenderer : OverlayRenderer {
         val textHeight = lines.size * (2 * padding + font.fontHeight)
         val textY = ((mc.window.scaledHeight - textHeight) / 2f) - padding
 
-        val longestLine = lines.map { c -> font.getStringWidth(c.text) }.max() ?: throw IllegalStateException()
+        val longestLine = lines.map { c -> font.getWidth(c.text) }.max() ?: throw IllegalStateException()
 
         lines.forEachIndexed { i, c ->
             font.drawWithBackground(

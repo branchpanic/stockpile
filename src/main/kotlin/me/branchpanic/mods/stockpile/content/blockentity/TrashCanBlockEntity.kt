@@ -35,27 +35,27 @@ class TrashCanBlockEntity : BlockEntity(TYPE), SidedInventory, Tickable {
             ?.forEach { e -> e.kill() }
     }
 
-    override fun getInvStack(slot: Int): ItemStack = ItemStack.EMPTY
+    override fun getStack(slot: Int): ItemStack = ItemStack.EMPTY
 
     override fun markDirty() = Unit
 
     override fun clear() = Unit
 
-    override fun setInvStack(slot: Int, stack: ItemStack?) = Unit
+    override fun setStack(slot: Int, stack: ItemStack?) = Unit
 
-    override fun removeInvStack(slot: Int): ItemStack = ItemStack.EMPTY
+    override fun removeStack(slot: Int): ItemStack = ItemStack.EMPTY
 
-    override fun canPlayerUseInv(player: PlayerEntity?): Boolean = true
+    override fun canPlayerUse(player: PlayerEntity?): Boolean = true
 
-    override fun getInvAvailableSlots(side: Direction?): IntArray = intArrayOf(0)
+    override fun getAvailableSlots(side: Direction?): IntArray = intArrayOf(0)
 
-    override fun getInvSize(): Int = 1
+    override fun size(): Int = 1
 
-    override fun canExtractInvStack(slot: Int, stack: ItemStack?, side: Direction?): Boolean = true
+    override fun canExtract(slot: Int, stack: ItemStack?, side: Direction?): Boolean = true
 
-    override fun takeInvStack(slot: Int, amount: Int): ItemStack = ItemStack.EMPTY
+    override fun removeStack(slot: Int, amount: Int): ItemStack = ItemStack.EMPTY
 
-    override fun isInvEmpty(): Boolean = false
+    override fun isEmpty(): Boolean = false
 
-    override fun canInsertInvStack(slot: Int, stack: ItemStack?, side: Direction?): Boolean = true
+    override fun canInsert(slot: Int, stack: ItemStack?, side: Direction?): Boolean = true
 }

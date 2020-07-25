@@ -44,7 +44,7 @@ object UpgradeInstallerCallback : UseBlockCallback {
         heldItem.count--
         player.inventory.markDirty()
 
-        player.addChatMessage(TranslatableText("ui.stockpile.upgrade_applied"), true)
+        player.sendMessage(TranslatableText("ui.stockpile.upgrade_applied"), true)
 
         return ActionResult.SUCCESS
     }

@@ -184,21 +184,21 @@ class ItemBarrelBlockEntity(
     // Delegation of Inventory to invAttribute. As far as I know we can't use Kotlin's implementation by delegation
     // because the implementation can change.
 
-    override fun getInvStack(slot: Int): ItemStack = invWrapper.getInvStack(slot)
+    override fun getStack(slot: Int): ItemStack = invWrapper.getStack(slot)
 
     override fun clear() = invWrapper.clear()
 
-    override fun setInvStack(slot: Int, stack: ItemStack?) = invWrapper.setInvStack(slot, stack)
+    override fun setStack(slot: Int, stack: ItemStack?) = invWrapper.setStack(slot, stack)
 
-    override fun removeInvStack(slot: Int): ItemStack = invWrapper.removeInvStack(slot)
+    override fun removeStack(slot: Int): ItemStack = invWrapper.removeStack(slot)
 
-    override fun canPlayerUseInv(player: PlayerEntity?): Boolean = invWrapper.canPlayerUseInv(player)
+    override fun canPlayerUse(player: PlayerEntity?): Boolean = invWrapper.canPlayerUse(player)
 
-    override fun getInvSize(): Int = invWrapper.invSize
+    override fun size(): Int = invWrapper.size()
 
-    override fun takeInvStack(slot: Int, amount: Int): ItemStack = invWrapper.takeInvStack(slot, amount)
+    override fun removeStack(slot: Int, amount: Int): ItemStack = invWrapper.removeStack(slot, amount)
 
-    override fun isInvEmpty(): Boolean = invWrapper.isInvEmpty
+    override fun isEmpty(): Boolean = invWrapper.isEmpty
 
-    override fun isValidInvStack(slot: Int, stack: ItemStack?): Boolean = invWrapper.isValidInvStack(slot, stack)
+    override fun isValid(slot: Int, stack: ItemStack?): Boolean = invWrapper.isValid(slot, stack)
 }

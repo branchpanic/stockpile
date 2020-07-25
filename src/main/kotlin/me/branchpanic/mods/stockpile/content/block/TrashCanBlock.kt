@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
-import net.minecraft.entity.EntityContext
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.FluidState
 import net.minecraft.fluid.Fluids
@@ -27,8 +26,8 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.BlockView
-import net.minecraft.world.IWorld
 import net.minecraft.world.World
+import net.minecraft.world.WorldAccess
 
 val IS_OPEN: BooleanProperty = BooleanProperty.of("is_open")
 
@@ -42,16 +41,16 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
             ?: throw NullPointerException("Received null item placement context!")
 
         return super.getPlacementState(context)?.with(IS_OPEN, false)
-            ?.with(Properties.WATERLOGGED, fluid.matches(FluidTags.WATER) && fluid.level == 8)
+            ?.with(Properties.WATERLOGGED, fluid.isIn(FluidTags.WATER) && fluid.level == 8)
     }
 
-    override fun isSimpleFullBlock(state: BlockState?, world: BlockView?, pos: BlockPos?): Boolean = false
+    override fun isTranslucent(state: BlockState?, world: BlockView?, pos: BlockPos?): Boolean = true
 
-    override fun getOutlineShape(
+    override fun getVisualShape(
         state: BlockState?,
         world: BlockView?,
         pos: BlockPos?,
-        context: EntityContext
+        context: ShapeContext?
     ): VoxelShape = createCuboidShape(2.0, 0.0, 2.0, 14.0, 13.0, 14.0)
 
     override fun onUse(
@@ -76,11 +75,11 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         state: BlockState?,
         side: Direction?,
         neighborState: BlockState?,
-        world: IWorld?,
+        world: WorldAccess?,
         pos: BlockPos?,
         neighborPos: BlockPos?
-    ): BlockState {
-        if (state?.get<Boolean>(Properties.WATERLOGGED) == true) {
+    ): BlockState? {
+        if (state?.get(Properties.WATERLOGGED) == true) {
             world?.fluidTickScheduler?.schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world))
         }
 

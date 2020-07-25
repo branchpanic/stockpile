@@ -11,10 +11,10 @@ import net.minecraft.client.render.WorldRenderer
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.resource.language.I18n
-import net.minecraft.client.util.math.Matrix4f
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.Matrix4f
 import net.minecraft.util.math.Quaternion
 
 @Environment(EnvType.CLIENT)
@@ -51,7 +51,7 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         val obscuringPos = barrel.pos.offset(face)
         val obscuringState = world?.getBlockState(obscuringPos) ?: return
 
-        if (obscuringState.isFullOpaque(world, obscuringPos) || shouldSkipRenderingFor(barrel)) return
+        if (obscuringState.isOpaqueFullCube(world, obscuringPos) || shouldSkipRenderingFor(barrel)) return
 
         renderDisplay(
             barrel,
@@ -101,7 +101,7 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U>(dispa
         matrixStack.pop()
 
         // Draw text.
-        val textWidth = dispatcher.textRenderer.getStringWidth(barrel.fillBarText)
+        val textWidth = dispatcher.textRenderer.getWidth(barrel.fillBarText)
         matrixStack.push()
         matrixStack.translate(0.0, padding, 0.01)
         matrixStack.scale(1 / 64f, -1 / 64f, -1f)

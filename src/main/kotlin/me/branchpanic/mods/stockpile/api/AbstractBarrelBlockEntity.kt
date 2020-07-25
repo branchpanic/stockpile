@@ -2,6 +2,7 @@ package me.branchpanic.mods.stockpile.api
 
 import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
+import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
@@ -75,17 +76,17 @@ abstract class AbstractBarrelBlockEntity<T>(
     }
 
     private fun showStatusToPlayer(player: PlayerEntity) {
-        player.addChatMessage(storage.describeContents(), true)
+        player.sendMessage(storage.describeContents(), true)
     }
 
     private fun changeModes(player: PlayerEntity) {
         clearWhenEmpty = !clearWhenEmpty
 
         if (clearWhenEmpty) {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_unlocked"), true)
+            player.sendMessage(TranslatableText("ui.stockpile.barrel.just_unlocked"), true)
             player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 1.1f)
         } else {
-            player.addChatMessage(TranslatableText("ui.stockpile.barrel.just_locked"), true)
+            player.sendMessage(TranslatableText("ui.stockpile.barrel.just_locked"), true)
             player.playSound(SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 0.5f, 0.9f)
         }
 
@@ -100,10 +101,13 @@ abstract class AbstractBarrelBlockEntity<T>(
         return toClientTag(super.toTag(tag))
     }
 
-    override fun fromTag(tag: CompoundTag?) {
+    override fun fromTag(state: BlockState?, tag: CompoundTag?) {
         requireNotNull(tag)
 
-        super.fromTag(tag)
+        if (state != null) {
+            super.fromTag(state, tag)
+        }
+
         fromClientTag(tag)
     }
 }

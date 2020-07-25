@@ -8,5 +8,5 @@ import net.minecraft.entity.player.PlayerEntity
  * An UnrestrictedInventoryFixedWrapper extends a InventoryFixedWrapper, allowing it to be used by any player.
  */
 class UnrestrictedInventoryFixedWrapper(inv: FixedItemInv) : InventoryFixedWrapper(inv) {
-    override fun canPlayerUseInv(player: PlayerEntity?): Boolean = true
+    override fun canPlayerUse(player: PlayerEntity?): Boolean = true
 }

@@ -77,7 +77,7 @@ object Stockpile : ModInitializer {
         }
 
         BLOCK_ENTITIES.forEach { (id, blockEntityType) ->
-            Registry.register(Registry.BLOCK_ENTITY, id, blockEntityType)
+            Registry.register(Registry.BLOCK_ENTITY_TYPE, id, blockEntityType)
         }
 
         UPGRADES.forEach { (id, upgradeEntry) ->

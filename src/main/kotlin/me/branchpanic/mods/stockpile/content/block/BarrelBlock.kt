@@ -5,7 +5,6 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
-import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
@@ -30,14 +29,14 @@ import net.minecraft.world.World
 open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
     private val supplier: () -> T
 ) :
-    Block(FabricBlockSettings.copy(Blocks.CHEST).build()),
+    Block(Settings.copy(Blocks.CHEST)),
     BlockEntityProvider, AttackableBlock {
 
     companion object {
         val ITEM = ItemBarrelBlock
     }
 
-    private val contentsTooltipStyle = Style().setColor(Formatting.GRAY)
+    private val contentsTooltipStyle = Style.EMPTY.withColor(Formatting.GRAY)
 
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>?) {
         super.appendProperties(builder)
@@ -96,14 +95,14 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         return ActionResult.PASS
     }
 
-    override fun onBlockRemoved(
+    override fun onStateReplaced(
         state: BlockState?,
         world: World?,
         pos: BlockPos?,
         newState: BlockState?,
-        unknown: Boolean
+        moved: Boolean
     ) {
-        world?.removeBlockEntity(pos)
+        world?.removeBlockEntity(pos)  // TODO(1.16): Still needed?
     }
 
     override fun onUse(
@@ -162,8 +161,8 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         if (stack == null || lines == null) return
 
         val barrel = supplier()
-        barrel.fromTag(stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
-        lines.add(barrel.storage.describeContents().setStyle(contentsTooltipStyle))
+        barrel.fromTag(null, stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
+        lines.add(barrel.storage.describeContents().shallowCopy().setStyle(contentsTooltipStyle))
 
         if (barrel is UpgradeContainer) lines.addAll(UpgradeRegistry.createTooltip(barrel))
     }

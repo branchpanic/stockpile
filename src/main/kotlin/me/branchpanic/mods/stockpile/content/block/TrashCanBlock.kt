@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext
+import net.minecraft.entity.ai.pathing.NavigationType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.fluid.FluidState
 import net.minecraft.fluid.Fluids
@@ -44,9 +45,14 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
             ?.with(Properties.WATERLOGGED, fluid.isIn(FluidTags.WATER) && fluid.level == 8)
     }
 
-    override fun isTranslucent(state: BlockState?, world: BlockView?, pos: BlockPos?): Boolean = true
+    override fun canPathfindThrough(
+        state: BlockState?,
+        world: BlockView?,
+        pos: BlockPos?,
+        type: NavigationType?
+    ): Boolean = false
 
-    override fun getVisualShape(
+    override fun getOutlineShape(
         state: BlockState?,
         world: BlockView?,
         pos: BlockPos?,

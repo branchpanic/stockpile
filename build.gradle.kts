@@ -59,11 +59,6 @@ dependencies {
     include("alexiil.mc.lib:libblockattributes-items:${Versions.LBA}")
 
     modImplementation("mcp.mobius.waila:Hwyla:${Versions.HWYLA}")
-
-    testImplementation("junit:junit:4.12")
-    testImplementation("io.kotlintest:kotlintest-runner-junit4:3.4.2")
-    testImplementation("org.powermock:powermock-module-junit4:2.0.2")
-    testImplementation("org.powermock:powermock-api-mockito2:2.0.2")
 }
 
 task("sourcesJar", Jar::class) {

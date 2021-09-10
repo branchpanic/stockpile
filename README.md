@@ -1,11 +1,3 @@
-## Project Status
-
-Unfortunately I'm no longer able or willing to maintain Stockpile on a regular basis. I'd be happy to transfer the repo and Curse page if any maintainers are interested (inquire in a GitHub issue).
-
-Patches under version 1.1 may still be made to preserve worlds in the event of game-crashing bugs and conflicts. The original README text follows below.
-
----
-
 # stockpile
 
 [![Build Status](https://travis-ci.org/branchpanic/stockpile.svg?branch=master)](https://travis-ci.org/branchpanic/stockpile)

@@ -8,7 +8,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStackStorage
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
@@ -19,7 +19,7 @@ class MultiplierUpgrade(private val factor: Int) : ItemBarrelUpgrade {
         const val FACTOR_KEY = "Factor"
         val TYPE = UpgradeType({ t -> fromTag(t) }, { u -> (u as MultiplierUpgrade).toTag() })
 
-        fun fromTag(tag: CompoundTag): MultiplierUpgrade = MultiplierUpgrade(max(1, tag.getInt(FACTOR_KEY)))
+        fun fromTag(tag: NbtCompound): MultiplierUpgrade = MultiplierUpgrade(max(1, tag.getInt(FACTOR_KEY)))
     }
 
     override val id: Identifier = id("multiplier")
@@ -41,8 +41,8 @@ class MultiplierUpgrade(private val factor: Int) : ItemBarrelUpgrade {
         else -> ItemStack.EMPTY
     }
 
-    fun toTag(): CompoundTag {
-        return CompoundTag().apply {
+    fun toTag(): NbtCompound {
+        return NbtCompound().apply {
             putInt(FACTOR_KEY, factor)
         }
     }

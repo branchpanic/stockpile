@@ -8,7 +8,7 @@ import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStackStorage
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 
@@ -20,7 +20,7 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
             writer = { u -> (u as CapacityUpgrade).toTag() }
         )
 
-        private fun fromTag(tag: CompoundTag): CapacityUpgrade = CapacityUpgrade(tag.getInt(AMOUNT_KEY))
+        private fun fromTag(tag: NbtCompound): CapacityUpgrade = CapacityUpgrade(tag.getInt(AMOUNT_KEY))
     }
 
     override val id = id("capacity")
@@ -42,8 +42,8 @@ class CapacityUpgrade(private val amount: Int) : ItemBarrelUpgrade {
         else -> ItemStack.EMPTY
     }
 
-    fun toTag(): CompoundTag {
-        return CompoundTag().apply {
+    fun toTag(): NbtCompound {
+        return NbtCompound().apply {
             putInt(AMOUNT_KEY, amount)
         }
     }

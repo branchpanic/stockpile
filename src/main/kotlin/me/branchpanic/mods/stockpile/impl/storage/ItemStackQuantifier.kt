@@ -39,7 +39,7 @@ class ItemStackQuantifier(override val reference: ItemStack, override val amount
     override fun equals(other: Any?): Boolean {
         val otherQuantizer = other as? ItemStackQuantifier ?: return false
         return ItemStack.areItemsEqual(reference, other.reference) &&
-                ItemStack.areTagsEqual(reference, other.reference) &&
+                ItemStack.areNbtEqual(reference, other.reference) &&
                 amount == otherQuantizer.amount
     }
 

@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile.api.upgrade
 
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.text.Style
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -34,7 +34,7 @@ object UpgradeRegistry {
     /**
      * Reads a registered Upgrade from the given CompoundTag or returns null if it does not exist.
      */
-    fun readUpgrade(tag: CompoundTag): Upgrade? = upgrades[Identifier(
+    fun readUpgrade(tag: NbtCompound): Upgrade? = upgrades[Identifier(
         tag.getString(
             ID_TAG
         )
@@ -45,7 +45,7 @@ object UpgradeRegistry {
     /**
      * Writes the given registered Upgrade to a new CompoundTag.
      */
-    fun writeUpgrade(upgrade: Upgrade): CompoundTag? {
+    fun writeUpgrade(upgrade: Upgrade): NbtCompound? {
         if (upgrade.id !in upgrades) {
             return null
         }
@@ -57,7 +57,7 @@ object UpgradeRegistry {
             return null
         }
 
-        return CompoundTag().apply {
+        return NbtCompound().apply {
             putString(ID_TAG, upgrade.id.toString())
             put(DATA_TAG, upgradeData)
         }

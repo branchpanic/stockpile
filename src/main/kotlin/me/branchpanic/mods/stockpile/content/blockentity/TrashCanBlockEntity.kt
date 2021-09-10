@@ -2,25 +2,42 @@ package me.branchpanic.mods.stockpile.content.blockentity
 
 import me.branchpanic.mods.stockpile.content.block.IS_OPEN
 import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
+import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SidedInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.predicate.entity.EntityPredicates
-import net.minecraft.util.Tickable
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Direction
-import java.util.function.Supplier
+import net.minecraft.world.World
 
-class TrashCanBlockEntity : BlockEntity(TYPE), SidedInventory, Tickable {
+class TrashCanBlockEntity(blockPos: BlockPos?, blockState: BlockState?) : BlockEntity(TYPE, blockPos, blockState), SidedInventory {
     companion object {
         val TYPE: BlockEntityType<TrashCanBlockEntity> =
-            BlockEntityType.Builder.create(Supplier { TrashCanBlockEntity() }, TrashCanBlock).build(null)
+            BlockEntityType.Builder.create({ blockPos: BlockPos, blockState: BlockState -> TrashCanBlockEntity(blockPos, blockState) }, TrashCanBlock).build(null)
+
+            fun <T: BlockEntity?> tick(world: World, pos: BlockPos, state: BlockState, entity: BlockEntity?) {
+                if (world.isClient) {
+                    return
+                }
+
+                val currentState = world.getBlockState(pos) ?: return
+
+                if (currentState.block != TrashCanBlock || !currentState[IS_OPEN]) {
+                    return
+                }
+
+                world.getEntitiesByType(EntityType.ITEM, Box(pos.up()), EntityPredicates.VALID_ENTITY)
+                    ?.forEach { e -> e.kill() }
+            }
     }
 
-    override fun tick() {
+    fun tick() {
         if (world == null || world?.isClient != false) {
             return
         }
@@ -31,7 +48,7 @@ class TrashCanBlockEntity : BlockEntity(TYPE), SidedInventory, Tickable {
             return
         }
 
-        world?.getEntities(EntityType.ITEM, Box(pos.up()), EntityPredicates.VALID_ENTITY)
+        world?.getEntitiesByType(EntityType.ITEM, Box(pos.up()), EntityPredicates.VALID_ENTITY)
             ?.forEach { e -> e.kill() }
     }
 
@@ -58,4 +75,6 @@ class TrashCanBlockEntity : BlockEntity(TYPE), SidedInventory, Tickable {
     override fun isEmpty(): Boolean = false
 
     override fun canInsert(slot: Int, stack: ItemStack?, side: Direction?): Boolean = true
+
+
 }

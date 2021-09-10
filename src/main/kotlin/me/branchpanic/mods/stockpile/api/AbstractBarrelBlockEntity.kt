@@ -6,10 +6,11 @@ import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.TranslatableText
+import net.minecraft.util.math.BlockPos
 import java.util.*
 
 /**
@@ -35,8 +36,8 @@ abstract class AbstractBarrelBlockEntity<T>(
     open val storage: MutableMassStorage<T>,
     open var clearWhenEmpty: Boolean,
     private val doubleClickThresholdMs: Long,
-    type: BlockEntityType<*>
-) : BlockEntity(type), BlockEntityClientSerializable {
+    type: BlockEntityType<*>, blockPos: BlockPos, blockState: BlockState
+) : BlockEntity(type, blockPos, blockState), BlockEntityClientSerializable {
     private var userCache: Map<UUID, Long> = emptyMap()
 
     fun onRightClicked(player: PlayerEntity) {
@@ -96,17 +97,17 @@ abstract class AbstractBarrelBlockEntity<T>(
     abstract fun giveToPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
     abstract fun takeFromPlayer(player: PlayerEntity, amount: BarrelTransactionAmount)
 
-    override fun toTag(tag: CompoundTag?): CompoundTag {
+    override fun writeNbt(tag: NbtCompound?): NbtCompound {
         requireNotNull(tag)
-        return toClientTag(super.toTag(tag))
+        return toClientTag(super.writeNbt(tag))
     }
 
-    override fun fromTag(state: BlockState?, tag: CompoundTag?) {
+    override fun readNbt(tag: NbtCompound?) {
         requireNotNull(tag)
 
-        if (state != null) {
-            super.fromTag(state, tag)
-        }
+//        if (state != null) {
+            super.readNbt(tag)
+//        }
 
         fromClientTag(tag)
     }

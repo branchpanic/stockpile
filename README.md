@@ -1,7 +1,5 @@
 # stockpile
 
-[![Build Status](https://travis-ci.org/branchpanic/stockpile.svg?branch=master)](https://travis-ci.org/branchpanic/stockpile)
-
 > A Minecraft mod all about storage.
 
 ## Releases

@@ -15,7 +15,7 @@ import net.minecraft.item.ArmorItem
 import net.minecraft.item.ArmorMaterial
 import net.minecraft.item.ArmorMaterials
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.text.Style
@@ -88,7 +88,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                 itemsDeposited += amount - remainder.toInt()
             }
 
-            barrelStack.putSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(CompoundTag()))
+            barrelStack.setSubNbt(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(NbtCompound()))
         }
 
         if (itemsDeposited > 0) {
@@ -138,7 +138,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
                 itemsTaken += removableAmount
             }
 
-            barrelStack.putSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(CompoundTag()))
+            barrelStack.setSubNbt(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(NbtCompound()))
         }
 
         if (itemsTaken > 0) {

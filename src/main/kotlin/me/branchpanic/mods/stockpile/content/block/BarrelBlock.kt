@@ -14,7 +14,7 @@ import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
 import net.minecraft.loot.context.LootContext
 import net.minecraft.loot.context.LootContextParameters
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
 import net.minecraft.text.Style
@@ -55,7 +55,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         state?.with(Properties.FACING, mirror?.apply(state.get(Properties.FACING)) ?: Direction.NORTH)
             ?: throw NullPointerException("attempted to mirror null barrel")
 
-    override fun createBlockEntity(world: BlockView?): BlockEntity? = supplier()
+    override fun createBlockEntity(blockPos: BlockPos?, blockState: BlockState?): BlockEntity? = supplier()
 
     override fun getDroppedStacks(state: BlockState?, context: LootContext.Builder?): MutableList<ItemStack> {
         if (context == null) {
@@ -69,7 +69,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
             barrel.clearWhenEmpty = true
         }
 
-        stack.putSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(CompoundTag()))
+        stack.setSubNbt(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG, barrel.toClientTag(NbtCompound()))
         return mutableListOf(stack)
     }
 
@@ -150,18 +150,18 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
 
     override fun getRenderType(state: BlockState?): BlockRenderType = BlockRenderType.MODEL
 
-    override fun buildTooltip(
+    override fun appendTooltip(
         stack: ItemStack?,
         world: BlockView?,
         lines: MutableList<Text>?,
         context: TooltipContext?
     ) {
-        super.buildTooltip(stack, world, lines, context)
+        super.appendTooltip(stack, world, lines, context)
 
         if (stack == null || lines == null) return
 
         val barrel = supplier()
-        barrel.fromTag(null, stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
+        barrel.readNbt(stack.getOrCreateSubNbt(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
         lines.add(barrel.storage.describeContents().shallowCopy().setStyle(contentsTooltipStyle))
 
         if (barrel is UpgradeContainer) lines.addAll(UpgradeRegistry.createTooltip(barrel))
@@ -181,7 +181,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         }
 
         (world.getBlockEntity(pos) as? T)?.apply {
-            fromClientTag(stack.getOrCreateSubTag(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
+            fromClientTag(stack.getOrCreateSubNbt(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
             markDirty()
         }
     }

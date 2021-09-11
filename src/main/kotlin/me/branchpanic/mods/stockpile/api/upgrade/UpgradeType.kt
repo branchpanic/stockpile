@@ -1,9 +1,9 @@
 package me.branchpanic.mods.stockpile.api.upgrade
 
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 
-typealias UpgradeReader = (CompoundTag) -> Upgrade
-typealias UpgradeWriter = (Upgrade) -> CompoundTag
+typealias UpgradeReader = (NbtCompound) -> Upgrade
+typealias UpgradeWriter = (Upgrade) -> NbtCompound
 
 /**
  * An UpgradeType is used to serialize and deserialize a family of Upgrades (registered in the UpgradeRegistry) to and

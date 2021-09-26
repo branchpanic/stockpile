@@ -71,7 +71,7 @@ class ItemBarrelBlockEntity(
             BlockEntityType.Builder.create({ blockPos: BlockPos ,  blockState: BlockState -> ItemBarrelBlockEntity(blockPos, blockState) }, ItemBarrelBlock).build(null)
 
         fun fromStack(stack: ItemStack): ItemBarrelBlockEntity {
-            val barrel = ItemBarrelBlockEntity(null, null)
+            val barrel = ItemBarrelBlockEntity(BlockPos.ORIGIN, ItemBarrelBlock.defaultState)
             barrel.fromClientTag(stack.getOrCreateSubNbt(STORED_BLOCK_ENTITY_TAG))
             return barrel
         }

@@ -41,7 +41,7 @@
     "libblockattributes_items": ">=0.9.0"
   },
   "suggests": {
-    "waila": ">=1.9.22"
+    "wthit": ">=3.9.0"
   },
   "mixins": [
     "stockpile.mixins.json"

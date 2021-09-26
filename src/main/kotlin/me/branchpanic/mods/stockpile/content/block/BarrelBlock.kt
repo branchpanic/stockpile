@@ -27,7 +27,7 @@ import net.minecraft.world.BlockView
 import net.minecraft.world.World
 
 open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
-    private val supplier: () -> T
+    private val supplier: (BlockPos, BlockState) -> T
 ) :
     Block(Settings.copy(Blocks.CHEST)),
     BlockEntityProvider, AttackableBlock {
@@ -55,7 +55,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
         state?.with(Properties.FACING, mirror?.apply(state.get(Properties.FACING)) ?: Direction.NORTH)
             ?: throw NullPointerException("attempted to mirror null barrel")
 
-    override fun createBlockEntity(blockPos: BlockPos?, blockState: BlockState?): BlockEntity? = supplier()
+    override fun createBlockEntity(blockPos: BlockPos, blockState: BlockState): BlockEntity? = supplier.invoke(blockPos, blockState)
 
     override fun getDroppedStacks(state: BlockState?, context: LootContext.Builder?): MutableList<ItemStack> {
         if (context == null) {
@@ -160,7 +160,7 @@ open class BarrelBlock<T : AbstractBarrelBlockEntity<*>>(
 
         if (stack == null || lines == null) return
 
-        val barrel = supplier()
+        val barrel = supplier.invoke(BlockPos.ORIGIN, ITEM.defaultState)
         barrel.readNbt(stack.getOrCreateSubNbt(ItemBarrelBlockEntity.STORED_BLOCK_ENTITY_TAG))
         lines.add(barrel.storage.describeContents().shallowCopy().setStyle(contentsTooltipStyle))
 

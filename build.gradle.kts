@@ -57,8 +57,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
     modImplementation("alexiil.mc.lib:libblockattributes-all:${Versions.LBA}")
-    include("alexiil.mc.lib:libblockattributes-core:${Versions.LBA}")
-    include("alexiil.mc.lib:libblockattributes-items:${Versions.LBA}")
+    include("alexiil.mc.lib:libblockattributes-all:${Versions.LBA}")
 
     modRuntime("mcp.mobius.waila:wthit:fabric-${Versions.WTHIT}")
     modCompileOnly("mcp.mobius.waila:wthit-api:fabric-${Versions.WTHIT}")

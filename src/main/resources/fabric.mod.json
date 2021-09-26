@@ -38,7 +38,8 @@
     "fabricloader": ">=0.9.0",
     "fabric-language-kotlin": ">=1.3.72",
     "libblockattributes_core": ">=0.9.0",
-    "libblockattributes_items": ">=0.9.0"
+    "libblockattributes_items": ">=0.9.0",
+    "libblockattributes_fluids": ">=0.9.0"
   },
   "suggests": {
     "wthit": ">=3.9.0"

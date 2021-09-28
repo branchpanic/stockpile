@@ -1,5 +1,6 @@
 package me.branchpanic.mods.stockpile.content.client.renderer
 
+import com.mojang.blaze3d.systems.RenderSystem
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import net.fabricmc.api.EnvType
@@ -90,6 +91,7 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : Blo
         drawIcon(matrixStack, vertexConsumerProvider, barrel.storage.contents, light, overlay)
         matrixStack.pop()
 
+
         // Draw fill bar.
         matrixStack.push()
         matrixStack.translate(padding, padding, 0.0)
@@ -97,8 +99,8 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : Blo
         val mx = matrixStack.peek().model
         val fillAmount = barrel.storage.contents.amount.toFloat() / barrel.storage.capacity
         val filledWidth = barWidth * fillAmount
-        buf.rect(mx, 0f, 0f, filledWidth, barHeight, fillBarSettings.foregroundColor, light)
-        buf.rect(mx, filledWidth, 0f, barWidth, barHeight, fillBarSettings.backgroundColor, light)
+        buf.rect(mx, 0f, 0f, filledWidth, barHeight, 0.009f, fillBarSettings.foregroundColor, light)
+        buf.rect(mx, filledWidth, 0f, barWidth, barHeight, 0.008f, fillBarSettings.backgroundColor, light)
         matrixStack.pop()
 
         // Draw text.
@@ -137,13 +139,14 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : Blo
         y1: Float,
         x2: Float,
         y2: Float,
+        z: Float,
         color: ArgbColor,
         light: Int
     ) {
-        this.vertex(mx, x2, y1, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
-        this.vertex(mx, x2, y2, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
-        this.vertex(mx, x1, y2, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
-        this.vertex(mx, x1, y1, 0f).color(color.red, color.green, color.blue, color.alpha).light(light).next()
+        this.vertex(mx, x2, y1, z).color(color.red, color.green, color.blue, color.alpha).light(light).next()
+        this.vertex(mx, x2, y2, z).color(color.red, color.green, color.blue, color.alpha).light(light).next()
+        this.vertex(mx, x1, y1, z).color(color.red, color.green, color.blue, color.alpha).light(light).next()
+        this.vertex(mx, x1, y2, z).color(color.red, color.green, color.blue, color.alpha).light(light).next()
     }
 }
 

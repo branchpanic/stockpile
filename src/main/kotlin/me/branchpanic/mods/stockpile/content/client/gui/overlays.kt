@@ -4,7 +4,9 @@ import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.font.TextRenderer
+import net.minecraft.client.render.GameRenderer
 import net.minecraft.client.render.Tessellator
+import net.minecraft.client.render.VertexFormat
 import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.ItemStack
@@ -50,8 +52,9 @@ fun fill4f(x1: Float, y1: Float, x2: Float, y2: Float, color: Int) {
         GlStateManager.DstFactor.ZERO
     )
 
-    RenderSystem.color4f(r, g, b, a)
-    buf.begin(7, VertexFormats.POSITION)
+    RenderSystem.setShaderColor(r, g, b, a)
+    RenderSystem.setShader(GameRenderer::getPositionShader)
+    buf.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION)
     buf.vertex(x1.toDouble(), y2.toDouble(), 0.0).next()
     buf.vertex(x2.toDouble(), y2.toDouble(), 0.0).next()
     buf.vertex(x2.toDouble(), y1.toDouble(), 0.0).next()
@@ -89,7 +92,7 @@ interface TextOverlayRenderer : OverlayRenderer {
         val textHeight = lines.size * (2 * padding + font.fontHeight)
         val textY = ((mc.window.scaledHeight - textHeight) / 2f) - padding
 
-        val longestLine = lines.map { c -> font.getWidth(c.text) }.max() ?: throw IllegalStateException()
+        val longestLine = lines.map { c -> font.getWidth(c.text) }.maxOrNull() ?: throw IllegalStateException()
 
         lines.forEachIndexed { i, c ->
             font.drawWithBackground(

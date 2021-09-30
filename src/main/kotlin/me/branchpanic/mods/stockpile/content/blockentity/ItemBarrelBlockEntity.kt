@@ -15,28 +15,31 @@ import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWr
 import me.branchpanic.mods.stockpile.impl.storage.*
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.util.NbtType
+import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.ListTag
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtList
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Hand
+import net.minecraft.util.math.BlockPos
 import java.util.function.Supplier
 import kotlin.math.max
 import kotlin.math.min
 
 class ItemBarrelBlockEntity(
     override var appliedUpgrades: List<Upgrade> = emptyList(),
-    override var maxUpgrades: Int = DEFAULT_MAX_UPGRADES
+    override var maxUpgrades: Int = DEFAULT_MAX_UPGRADES, blockPos: BlockPos, blockState: BlockState
 ) : AbstractBarrelBlockEntity<ItemStack>(
     storage = MassItemStackStorage(ItemStackQuantifier.NONE, DEFAULT_CAPACITY_STACKS),
     clearWhenEmpty = true,
     doubleClickThresholdMs = 1000,
-    type = TYPE
+    type = TYPE, blockPos, blockState
 ), BlockEntityClientSerializable, Inventory, UpgradeContainer {
+    constructor(blockPos: BlockPos, blockState: BlockState) : this(emptyList(), DEFAULT_MAX_UPGRADES, blockPos, blockState)
 
     override fun isUpgradeTypeAllowed(u: Upgrade): Boolean = u is ItemBarrelUpgrade
 
@@ -65,11 +68,11 @@ class ItemBarrelBlockEntity(
         const val STORED_BLOCK_ENTITY_TAG = "StoredBlockEntity"
 
         val TYPE: BlockEntityType<ItemBarrelBlockEntity> =
-            BlockEntityType.Builder.create(Supplier { ItemBarrelBlockEntity() }, ItemBarrelBlock).build(null)
+            BlockEntityType.Builder.create({ blockPos: BlockPos ,  blockState: BlockState -> ItemBarrelBlockEntity(blockPos, blockState) }, ItemBarrelBlock).build(null)
 
         fun fromStack(stack: ItemStack): ItemBarrelBlockEntity {
-            val barrel = ItemBarrelBlockEntity()
-            barrel.fromClientTag(stack.getOrCreateSubTag(STORED_BLOCK_ENTITY_TAG))
+            val barrel = ItemBarrelBlockEntity(BlockPos.ORIGIN, ItemBarrelBlock.defaultState)
+            barrel.fromClientTag(stack.getOrCreateSubNbt(STORED_BLOCK_ENTITY_TAG))
             return barrel
         }
     }
@@ -148,14 +151,14 @@ class ItemBarrelBlockEntity(
         markDirty()
     }
 
-    override fun toClientTag(tag: CompoundTag?): CompoundTag = requireNotNull(tag).apply {
-        put(STORED_ITEM_TAG, storage.contents.reference.toTag(CompoundTag()))
+    override fun toClientTag(tag: NbtCompound?): NbtCompound = requireNotNull(tag).apply {
+        put(STORED_ITEM_TAG, storage.contents.reference.writeNbt(NbtCompound()))
         putLong(AMOUNT_STORED_TAG, storage.contents.amount)
         putBoolean(CLEAR_WHEN_EMPTY_TAG, clearWhenEmpty)
-        put(UPGRADE_TAG, appliedUpgrades.mapNotNull { u -> UpgradeRegistry.writeUpgrade(u) }.toCollection(ListTag()))
+        put(UPGRADE_TAG, appliedUpgrades.mapNotNull { u -> UpgradeRegistry.writeUpgrade(u) }.toCollection(NbtList()))
     }
 
-    override fun fromClientTag(tag: CompoundTag?) = requireNotNull(tag).run {
+    override fun fromClientTag(tag: NbtCompound?) = requireNotNull(tag).run {
         // Upgrades
         maxUpgrades = if (contains(MAX_UPGRADES_TAG)) {
             getInt(MAX_UPGRADES_TAG)
@@ -165,14 +168,14 @@ class ItemBarrelBlockEntity(
 
         appliedUpgrades = getList(UPGRADE_TAG, NbtType.COMPOUND)
             .take(maxUpgrades)
-            .mapNotNull { t -> UpgradeRegistry.readUpgrade(t as? CompoundTag ?: return@mapNotNull null) }
+            .mapNotNull { t -> UpgradeRegistry.readUpgrade(t as? NbtCompound ?: return@mapNotNull null) }
 
         // State
         handleUpgradeChanges()
         clearWhenEmpty = getBoolean(CLEAR_WHEN_EMPTY_TAG)
 
         // Contents
-        val item = ItemStack.fromTag(getCompound(STORED_ITEM_TAG))
+        val item = ItemStack.fromNbt(getCompound(STORED_ITEM_TAG))
         if (item.isEmpty) {
             storage.contents = ItemStackQuantifier.NONE
         } else {

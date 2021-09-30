@@ -5,6 +5,8 @@ import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
+import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.ai.pathing.NavigationType
 import net.minecraft.entity.player.PlayerEntity
@@ -75,7 +77,26 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         return ActionResult.SUCCESS
     }
 
-    override fun createBlockEntity(world: BlockView?): BlockEntity? = TrashCanBlockEntity()
+    override fun createBlockEntity(blockPos: BlockPos?, blockState: BlockState?): BlockEntity = TrashCanBlockEntity(blockPos, blockState)
+
+    override fun <T : BlockEntity?> getTicker(
+        world: World?,
+        blockState: BlockState?,
+        blockEntityType: BlockEntityType<T>?
+    ): BlockEntityTicker<T>? {
+        return when (blockEntityType) {
+            TrashCanBlockEntity.TYPE -> BlockEntityTicker<T> { world, pos, state, entity ->
+                TrashCanBlockEntity.tick<T>(world,
+                    pos,
+                    state,
+                    entity)
+            }
+            else -> {
+                null;
+            }
+        }
+    }
+
 
     override fun getStateForNeighborUpdate(
         state: BlockState?,
@@ -99,7 +120,7 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
         )
     }
 
-    override fun buildTooltip(
+    override fun appendTooltip(
         stack: ItemStack?,
         world: BlockView?,
         tooltip: MutableList<Text>?,

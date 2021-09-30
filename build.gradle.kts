@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.21"
-    id("fabric-loom") version "0.4-SNAPSHOT"
+    kotlin("jvm") version "1.5.0"
+    id("fabric-loom") version "0.9-SNAPSHOT"
 }
 
 object Versions {
@@ -10,15 +10,15 @@ object Versions {
     const val STOCKPILE = "1.1.5"
 
     // Toolchain dependencies
-    const val MINECRAFT = "1.16.1"
-    const val YARN = "$MINECRAFT+build.21:v2"
-    const val LOADER = "0.9.0+build.204"
-    const val FABRIC = "0.16.0+build.384-1.16.1"
+    const val MINECRAFT = "1.17.1"
+    const val YARN = "$MINECRAFT+build.59"
+    const val LOADER = "0.11.6"
+    const val FABRIC = "0.40.0+1.17"
 
     // Mod dependencies
-    const val FABRIC_KT = "1.3.72+build.1"
-    const val LBA = "0.7.0"
-    const val HWYLA = "1.16.1-1.9.22-75"
+    const val FABRIC_KT = "1.6.4+kotlin.1.5.30"
+    const val LBA = "0.9.0"
+    const val WTHIT = "3.9.0"
 }
 
 group = "me.branchpanic.mods"
@@ -43,6 +43,8 @@ repositories {
     maven(url = "https://maven.tehnut.info/") {
         name = "TehNut"
     }
+
+    maven(url = "https://maven.bai.lol")
 }
 
 dependencies {
@@ -55,10 +57,10 @@ dependencies {
     modImplementation("net.fabricmc:fabric-language-kotlin:${Versions.FABRIC_KT}")
 
     modImplementation("alexiil.mc.lib:libblockattributes-all:${Versions.LBA}")
-    include("alexiil.mc.lib:libblockattributes-core:${Versions.LBA}")
-    include("alexiil.mc.lib:libblockattributes-items:${Versions.LBA}")
+    include("alexiil.mc.lib:libblockattributes-all:${Versions.LBA}")
 
-    modImplementation("mcp.mobius.waila:Hwyla:${Versions.HWYLA}")
+    modRuntime("mcp.mobius.waila:wthit:fabric-${Versions.WTHIT}")
+    modCompileOnly("mcp.mobius.waila:wthit-api:fabric-${Versions.WTHIT}")
 }
 
 task("sourcesJar", Jar::class) {
@@ -74,5 +76,5 @@ tasks.withType<ProcessResources>().all {
 }
 
 tasks.withType<KotlinCompile>().all {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "16"
 }

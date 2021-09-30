@@ -9,8 +9,8 @@ import net.minecraft.client.render.model.json.ModelTransformation
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.ItemStack
 
-class ItemBarrelRenderer(dispatcher: BlockEntityRenderDispatcher) :
-    AbstractBarrelRenderer<ItemBarrelBlockEntity, ItemStack>(dispatcher) {
+class ItemBarrelRenderer : AbstractBarrelRenderer<ItemBarrelBlockEntity, ItemStack>() {
+
     override fun drawIcon(
         matrixStack: MatrixStack,
         vertexConsumerProvider: VertexConsumerProvider,
@@ -27,7 +27,8 @@ class ItemBarrelRenderer(dispatcher: BlockEntityRenderDispatcher) :
             light,
             overlay,
             matrixStack,
-            vertexConsumerProvider
+            vertexConsumerProvider,
+            0
         )
     }
 

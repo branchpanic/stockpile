@@ -7,14 +7,14 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
 
 class TrashUpgrade : ItemBarrelUpgrade {
     companion object {
-        val TYPE = UpgradeType({ TrashUpgrade() }, { CompoundTag() })
+        val TYPE = UpgradeType({ TrashUpgrade() }, { NbtCompound() })
     }
 
     override val id: Identifier = id("trash")

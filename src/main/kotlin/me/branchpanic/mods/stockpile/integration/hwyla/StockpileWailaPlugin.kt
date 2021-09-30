@@ -9,13 +9,13 @@ import net.minecraft.text.TranslatableText
 
 object BarrelInfoComponent : IComponentProvider {
     override fun appendBody(tooltip: MutableList<Text>?, accessor: IDataAccessor?, config: IPluginConfig?) {
-        tooltip?.add((accessor?.blockEntity as? AbstractBarrelBlockEntity<*>)?.storage?.describeContents() ?: return)
+        tooltip?.add((accessor?.getBlockEntity() as? AbstractBarrelBlockEntity<*>)?.storage?.describeContents() ?: return)
     }
 }
 
 object UpgradeInfoComponent : IComponentProvider {
     override fun appendBody(tooltip: MutableList<Text>?, accessor: IDataAccessor?, config: IPluginConfig?) {
-        val blockEntity = accessor?.blockEntity as? UpgradeContainer ?: return
+        val blockEntity = accessor?.getBlockEntity() as? UpgradeContainer ?: return
         tooltip?.add(
             TranslatableText(
                 "ui.stockpile.applied_upgrades",

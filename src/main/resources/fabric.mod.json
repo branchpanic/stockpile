@@ -12,7 +12,8 @@
   "contributors": [
     "Yanis48",
     "XuyuEre",
-    "Juuxel"
+    "Juuxel",
+    "Waterpicker"
   ],
   "license": "MIT",
   "version": "$version",
@@ -36,11 +37,12 @@
     "fabric": ">=0.16.0",
     "fabricloader": ">=0.9.0",
     "fabric-language-kotlin": ">=1.3.72",
-    "libblockattributes_core": ">=0.7.0",
-    "libblockattributes_items": ">=0.7.0"
+    "libblockattributes_core": ">=0.9.0",
+    "libblockattributes_items": ">=0.9.0",
+    "libblockattributes_fluids": ">=0.9.0"
   },
   "suggests": {
-    "waila": ">=1.9.22"
+    "wthit": ">=3.9.0"
   },
   "mixins": [
     "stockpile.mixins.json"

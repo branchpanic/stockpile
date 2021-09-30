@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack
 
 fun ItemStack.canStackWith(other: ItemStack): Boolean = isEmpty ||
         other.isEmpty ||
-        (ItemStack.areItemsEqual(withCount(1), other.withCount(1)) && ItemStack.areTagsEqual(
+        (ItemStack.areItemsEqual(withCount(1), other.withCount(1)) && ItemStack.areNbtEqual(
             this,
             other
         ))
@@ -17,5 +17,5 @@ fun ItemStack.withCount(count: Int): ItemStack {
 }
 
 fun ItemStack.giveTo(player: PlayerEntity) {
-    player.inventory.offerOrDrop(player.world, this)
+    player.inventory.offerOrDrop(this)
 }

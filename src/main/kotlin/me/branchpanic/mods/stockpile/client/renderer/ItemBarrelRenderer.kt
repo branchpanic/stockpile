@@ -1,10 +1,9 @@
-package me.branchpanic.mods.stockpile.content.client.renderer
+package me.branchpanic.mods.stockpile.client.renderer
 
 import me.branchpanic.mods.stockpile.api.storage.Quantifier
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.model.json.ModelTransformation
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.item.ItemStack

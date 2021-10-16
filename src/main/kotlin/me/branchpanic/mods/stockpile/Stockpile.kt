@@ -2,24 +2,26 @@ package me.branchpanic.mods.stockpile
 
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
-import me.branchpanic.mods.stockpile.content.block.AttackableBlockCallback
-import me.branchpanic.mods.stockpile.content.block.BarrelBlock
-import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
-import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
-import me.branchpanic.mods.stockpile.content.item.BarrelHatItem
-import me.branchpanic.mods.stockpile.content.item.BasicUpgradeItem
-import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
-import me.branchpanic.mods.stockpile.content.upgrade.CapacityUpgrade
-import me.branchpanic.mods.stockpile.content.upgrade.MultiplierUpgrade
-import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
-import me.branchpanic.mods.stockpile.content.upgrade.UpgradeInstallerCallback
+import me.branchpanic.mods.stockpile.block.AttackableBlockCallback
+import me.branchpanic.mods.stockpile.block.BarrelBlock
+import me.branchpanic.mods.stockpile.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.block.TrashCanBlock
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.TrashCanBlockEntity
+import me.branchpanic.mods.stockpile.item.BarrelHatItem
+import me.branchpanic.mods.stockpile.item.BasicUpgradeItem
+import me.branchpanic.mods.stockpile.item.UpgradeRemoverItem
+import me.branchpanic.mods.stockpile.upgrade.CapacityUpgrade
+import me.branchpanic.mods.stockpile.upgrade.MultiplierUpgrade
+import me.branchpanic.mods.stockpile.upgrade.TrashUpgrade
+import me.branchpanic.mods.stockpile.upgrade.UpgradeInstallerCallback
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
+import net.fabricmc.fabric.api.networking.v1.PacketSender
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.block.Block
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
@@ -28,6 +30,10 @@ import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
+import net.minecraft.network.PacketByteBuf
+import net.minecraft.server.MinecraftServer
+import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
@@ -87,15 +93,17 @@ object Stockpile : ModInitializer {
         UseBlockCallback.EVENT.register(UpgradeInstallerCallback)
         AttackBlockCallback.EVENT.register(AttackableBlockCallback)
 
-        ServerSidePacketRegistry.INSTANCE.register(id("barrel_hat_restock")) { ctx, _ ->
-            if (ctx.player?.getEquippedStack(EquipmentSlot.HEAD)?.item != BarrelHatItem) {
-                return@register
-            }
+        ServerPlayNetworking.registerGlobalReceiver(id("barrel_hat_restock")) { _: MinecraftServer,
+                                                                                player: ServerPlayerEntity,
+                                                                                _: ServerPlayNetworkHandler,
+                                                                                _: PacketByteBuf,
+                                                                                _: PacketSender ->
+            if (player.getEquippedStack(EquipmentSlot.HEAD)?.item != BarrelHatItem) return@registerGlobalReceiver
 
-            if (ctx.player.isSneaking) {
-                BarrelHatItem.pullInventoryFromBarrels(ctx.player)
+            if (player.isSneaking) {
+                BarrelHatItem.pullInventoryFromBarrels(player)
             } else {
-                BarrelHatItem.pushInventoryToBarrels(ctx.player)
+                BarrelHatItem.pushInventoryToBarrels(player)
             }
         }
     }

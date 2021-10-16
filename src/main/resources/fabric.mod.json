@@ -29,7 +29,7 @@
     "client": [
       {
         "adapter": "kotlin",
-        "value": "me.branchpanic.mods.stockpile.StockpileClient"
+        "value": "me.branchpanic.mods.stockpile.client.StockpileClient"
       }
     ]
   },

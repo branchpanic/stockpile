@@ -1,6 +1,5 @@
-package me.branchpanic.mods.stockpile.content.client.renderer
+package me.branchpanic.mods.stockpile.client.renderer
 
-import com.mojang.blaze3d.systems.RenderSystem
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.storage.Quantifier
 import net.fabricmc.api.EnvType
@@ -10,7 +9,6 @@ import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.WorldRenderer
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.client.util.math.MatrixStack
@@ -21,8 +19,9 @@ import net.minecraft.util.math.Quaternion
 
 @Environment(EnvType.CLIENT)
 abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : BlockEntityRenderer<T> {
-    val dispatcher: MinecraftClient
+    private val dispatcher: MinecraftClient
         get() = MinecraftClient.getInstance()
+
     private val fillBarSettings = FillBarSettings(
         backgroundColor = 0xB20A0A0A.toInt(),
         foregroundColor = 0xB20212FF.toInt(),

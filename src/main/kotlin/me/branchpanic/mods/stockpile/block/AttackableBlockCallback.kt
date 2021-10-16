@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.block
+package me.branchpanic.mods.stockpile.block
 
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.minecraft.entity.player.PlayerEntity

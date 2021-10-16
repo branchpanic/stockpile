@@ -1,6 +1,6 @@
 package me.branchpanic.mods.stockpile.mixin.client;
 
-import me.branchpanic.mods.stockpile.StockpileClient;
+import me.branchpanic.mods.stockpile.client.StockpileClient;
 import net.minecraft.client.render.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

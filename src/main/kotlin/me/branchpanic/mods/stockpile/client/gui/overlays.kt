@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.client.gui
+package me.branchpanic.mods.stockpile.client.gui
 
 import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.systems.RenderSystem

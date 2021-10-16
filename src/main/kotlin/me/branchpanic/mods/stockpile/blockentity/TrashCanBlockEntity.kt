@@ -1,10 +1,9 @@
-package me.branchpanic.mods.stockpile.content.blockentity
+package me.branchpanic.mods.stockpile.blockentity
 
-import me.branchpanic.mods.stockpile.content.block.IS_OPEN
-import me.branchpanic.mods.stockpile.content.block.TrashCanBlock
+import me.branchpanic.mods.stockpile.block.IS_OPEN
+import me.branchpanic.mods.stockpile.block.TrashCanBlock
 import net.minecraft.block.BlockState
 import net.minecraft.block.entity.BlockEntity
-import net.minecraft.block.entity.BlockEntityTicker
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.player.PlayerEntity

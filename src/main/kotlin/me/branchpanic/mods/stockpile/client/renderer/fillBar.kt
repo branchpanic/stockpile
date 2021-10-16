@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.client.renderer
+package me.branchpanic.mods.stockpile.client.renderer
 
 import kotlin.math.abs
 import kotlin.math.log10

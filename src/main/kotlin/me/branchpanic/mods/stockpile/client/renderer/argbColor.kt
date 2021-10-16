@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.client.renderer
+package me.branchpanic.mods.stockpile.client.renderer
 
 typealias ArgbColor = Int
 

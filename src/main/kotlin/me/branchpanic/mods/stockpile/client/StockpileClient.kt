@@ -1,45 +1,48 @@
-package me.branchpanic.mods.stockpile
+package me.branchpanic.mods.stockpile.client
 
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.content.client.BarrelHatKeyListener
-import me.branchpanic.mods.stockpile.content.client.gui.OverlayRenderer
-import me.branchpanic.mods.stockpile.content.client.gui.UpgradeOverlayRenderer
-import me.branchpanic.mods.stockpile.content.client.gui.UpgradeRemoverOverlayRenderer
-import me.branchpanic.mods.stockpile.content.client.renderer.ItemBarrelRenderer
+import io.netty.buffer.Unpooled
+import me.branchpanic.mods.stockpile.Stockpile
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.client.gui.UpgradeOverlayRenderer
+import me.branchpanic.mods.stockpile.client.gui.UpgradeRemoverOverlayRenderer
+import me.branchpanic.mods.stockpile.client.renderer.ItemBarrelRenderer
+import me.branchpanic.mods.stockpile.item.BarrelHatItem
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding
-import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry
-import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry
-import net.fabricmc.fabric.api.event.client.ClientTickCallback
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
+import net.minecraft.entity.EquipmentSlot
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.hit.HitResult
 import net.minecraft.world.RaycastContext
 import org.lwjgl.glfw.GLFW
 
 @Environment(EnvType.CLIENT)
 object StockpileClient : ClientModInitializer {
-    val BARREL_HAT_KEY: FabricKeyBinding = FabricKeyBinding.Builder.create(
-        Stockpile.id("barrel_hat"),
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_G,
-        "controls.stockpile"
-    ).build()
+    val barrelHatBinding =
+        KeyBinding(Stockpile.id("barrel_hat").toString(), InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G, "controls.stockpile")
 
-    private val overlays: List<OverlayRenderer> = listOf(
+    private val overlays = listOf(
         UpgradeOverlayRenderer(),
         UpgradeRemoverOverlayRenderer()
     )
 
     override fun onInitializeClient() {
-        BlockEntityRendererRegistry.INSTANCE.register(ItemBarrelBlockEntity.TYPE, { ItemBarrelRenderer() } )
+        KeyBindingHelper.registerKeyBinding(barrelHatBinding)
+        BlockEntityRendererRegistry.register(ItemBarrelBlockEntity.TYPE) { ItemBarrelRenderer() }
 
-        KeyBindingRegistry.INSTANCE.addCategory("controls.stockpile")
-        KeyBindingRegistry.INSTANCE.register(BARREL_HAT_KEY)
+        ClientTickEvents.START_CLIENT_TICK.register { client ->
+            if (!barrelHatBinding.wasPressed()) return@register
+            if (client?.player?.getEquippedStack(EquipmentSlot.HEAD)?.item != BarrelHatItem) return@register
 
-        ClientTickCallback.EVENT.register(BarrelHatKeyListener)
+            ClientPlayNetworking.send(Stockpile.id("barrel_hat_restock"), PacketByteBuf(Unpooled.buffer()))
+        }
     }
 
     fun drawOverlays(partialTicks: Float) {

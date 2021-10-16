@@ -1,11 +1,11 @@
-package me.branchpanic.mods.stockpile.content.upgrade
+package me.branchpanic.mods.stockpile.upgrade
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.impl.storage.MassItemStackStorage
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound

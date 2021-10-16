@@ -3,7 +3,7 @@ package me.branchpanic.mods.stockpile.integration.hwyla
 import mcp.mobius.waila.api.*
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 

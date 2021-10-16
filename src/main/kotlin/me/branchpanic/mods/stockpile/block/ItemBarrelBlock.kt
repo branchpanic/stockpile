@@ -1,8 +1,8 @@
-package me.branchpanic.mods.stockpile.content.block
+package me.branchpanic.mods.stockpile.block
 
 import alexiil.mc.lib.attributes.AttributeList
 import alexiil.mc.lib.attributes.AttributeProvider
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
 import net.minecraft.block.BlockState
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World

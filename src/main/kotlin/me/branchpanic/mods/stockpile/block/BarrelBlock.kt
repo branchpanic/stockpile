@@ -1,10 +1,10 @@
-package me.branchpanic.mods.stockpile.content.block
+package me.branchpanic.mods.stockpile.block
 
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.item.UpgradeRemoverItem
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.item.TooltipContext

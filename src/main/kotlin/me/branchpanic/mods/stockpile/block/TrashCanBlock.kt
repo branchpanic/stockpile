@@ -1,7 +1,7 @@
-package me.branchpanic.mods.stockpile.content.block
+package me.branchpanic.mods.stockpile.block
 
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
-import me.branchpanic.mods.stockpile.content.blockentity.TrashCanBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.TrashCanBlockEntity
 import net.fabricmc.fabric.api.block.FabricBlockSettings
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
@@ -92,7 +92,7 @@ object TrashCanBlock : Block(FabricBlockSettings.copy(Blocks.IRON_BLOCK).build()
                     entity)
             }
             else -> {
-                null;
+                null
             }
         }
     }

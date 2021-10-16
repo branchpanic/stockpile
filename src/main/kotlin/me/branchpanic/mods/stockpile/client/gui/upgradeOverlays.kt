@@ -1,9 +1,9 @@
-package me.branchpanic.mods.stockpile.content.client.gui
+package me.branchpanic.mods.stockpile.client.gui
 
 import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeItem
-import me.branchpanic.mods.stockpile.content.item.UpgradeRemoverItem
+import me.branchpanic.mods.stockpile.item.UpgradeRemoverItem
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Formatting

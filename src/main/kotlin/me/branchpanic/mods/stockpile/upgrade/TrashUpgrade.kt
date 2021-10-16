@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.upgrade
+package me.branchpanic.mods.stockpile.upgrade
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.Stockpile.id

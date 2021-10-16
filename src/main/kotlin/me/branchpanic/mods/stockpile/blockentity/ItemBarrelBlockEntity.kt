@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.blockentity
+package me.branchpanic.mods.stockpile.blockentity
 
 import me.branchpanic.mods.stockpile.api.AbstractBarrelBlockEntity
 import me.branchpanic.mods.stockpile.api.BarrelTransactionAmount
@@ -6,8 +6,8 @@ import me.branchpanic.mods.stockpile.api.upgrade.Upgrade
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
-import me.branchpanic.mods.stockpile.content.block.ItemBarrelBlock
-import me.branchpanic.mods.stockpile.content.upgrade.TrashUpgrade
+import me.branchpanic.mods.stockpile.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.upgrade.TrashUpgrade
 import me.branchpanic.mods.stockpile.extension.giveTo
 import me.branchpanic.mods.stockpile.extension.withCount
 import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
@@ -26,7 +26,6 @@ import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvents
 import net.minecraft.util.Hand
 import net.minecraft.util.math.BlockPos
-import java.util.function.Supplier
 import kotlin.math.max
 import kotlin.math.min
 

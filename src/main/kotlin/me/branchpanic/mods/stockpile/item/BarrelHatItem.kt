@@ -1,10 +1,10 @@
-package me.branchpanic.mods.stockpile.content.item
+package me.branchpanic.mods.stockpile.item
 
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.Stockpile.id
-import me.branchpanic.mods.stockpile.StockpileClient
+import me.branchpanic.mods.stockpile.client.StockpileClient
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
-import me.branchpanic.mods.stockpile.content.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.extension.giveTo
 import me.branchpanic.mods.stockpile.extension.withCount
 import me.branchpanic.mods.stockpile.impl.storage.toQuantifier
@@ -24,6 +24,7 @@ import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
+import java.util.*
 import kotlin.math.min
 
 object BarrelHatMaterial : ArmorMaterial by ArmorMaterials.LEATHER {
@@ -158,7 +159,7 @@ object BarrelHatItem : ArmorItem(BarrelHatMaterial, EquipmentSlot.HEAD, Stockpil
         tooltip: MutableList<Text>?,
         context: TooltipContext?
     ) {
-        val keyName = StockpileClient.BARREL_HAT_KEY.boundKeyLocalizedText.string.toUpperCase()
+        val keyName = StockpileClient.barrelHatBinding.boundKeyLocalizedText.string.uppercase()
 
         tooltip?.add(TranslatableText("ui.stockpile.barrel_hat").setStyle(UpgradeRegistry.UPGRADE_TOOLTIP_STYLE))
 

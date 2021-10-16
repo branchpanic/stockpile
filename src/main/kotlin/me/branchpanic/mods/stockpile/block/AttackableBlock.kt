@@ -1,4 +1,4 @@
-package me.branchpanic.mods.stockpile.content.block
+package me.branchpanic.mods.stockpile.block
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.ActionResult

@@ -1,9 +1,6 @@
 package me.branchpanic.mods.stockpile.api.storage
 
-/**
- * A Quantifier standardizes objects with a discrete quantity (i.e. ItemStacks). Quantifiers may represent a quantity of
- * zero, but will never represent negative values.
- */
+@Deprecated("Use Fabric Transfer API (TransferVariant<O>)")
 interface Quantifier<T> {
     /**
      * Object counted by this Quantifier.

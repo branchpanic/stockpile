@@ -1,8 +1,6 @@
 package me.branchpanic.mods.stockpile.api.storage
 
-/**
- * A MutableMassStorage defines a MassStorage that can be modified in-place.
- */
+@Deprecated("Use Fabric Transfer API (Storage<T>)")
 interface MutableMassStorage<T> : MassStorage<T> {
     /**
      * The modifiable contents of this MassStorage.

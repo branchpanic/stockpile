@@ -18,9 +18,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-/**
- * A FixedMassItemInv wraps a MutableMassStorage of ItemStacks into a FixedItemInv.
- */
+@Deprecated("No longer needed")
 class FixedMassItemInv(
     internal var storage: MutableMassStorage<ItemStack>,
     var voidExtraItems: Boolean = false

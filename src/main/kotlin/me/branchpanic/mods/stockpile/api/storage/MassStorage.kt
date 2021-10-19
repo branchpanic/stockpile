@@ -2,10 +2,7 @@ package me.branchpanic.mods.stockpile.api.storage
 
 import net.minecraft.text.Text
 
-/**
- * A MassStorage tracks a large quantity (one Long's worth, but this will most likely never be reached) of a given
- * instance.
- */
+@Deprecated("Use Fabric Transfer API (Storage<T>)")
 interface MassStorage<T> {
     /**
      * The contents of this MassStorage.

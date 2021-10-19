@@ -6,6 +6,7 @@ import me.branchpanic.mods.stockpile.extension.withCount
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 
+@Deprecated("Use Fabric Transfer API (ItemVariant)")
 class ItemStackQuantifier(override val reference: ItemStack, override val amount: Long) : Quantifier<ItemStack> {
     companion object {
         val NONE = ItemStackQuantifier(reference = ItemStack.EMPTY, amount = 0L)

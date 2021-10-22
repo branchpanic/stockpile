@@ -2,11 +2,9 @@ package me.branchpanic.mods.stockpile
 
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
-import me.branchpanic.mods.stockpile.block.AttackableBlockCallback
-import me.branchpanic.mods.stockpile.block.BarrelBlock
-import me.branchpanic.mods.stockpile.block.ItemBarrelBlock
-import me.branchpanic.mods.stockpile.block.TrashCanBlock
+import me.branchpanic.mods.stockpile.block.*
 import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.ItemStorageDeviceBlockEntity
 import me.branchpanic.mods.stockpile.blockentity.TrashCanBlockEntity
 import me.branchpanic.mods.stockpile.item.BarrelHatItem
 import me.branchpanic.mods.stockpile.item.BasicUpgradeItem
@@ -22,6 +20,8 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant
 import net.minecraft.block.Block
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
@@ -42,7 +42,8 @@ object Stockpile : ModInitializer {
 
     internal val BLOCKS: Map<Identifier, Block> = mapOf(
         id("item_barrel") to BarrelBlock.ITEM,
-        id("trash_can") to TrashCanBlock
+        id("trash_can") to TrashCanBlock,
+        id("test_barrel") to StorageDeviceBlock(ItemStorageDeviceBlockEntity.TYPE)
     )
 
     internal val ITEM_SETTINGS = Item.Settings().group(ITEM_GROUP)
@@ -58,7 +59,8 @@ object Stockpile : ModInitializer {
 
     internal val BLOCK_ENTITIES: Map<Identifier, BlockEntityType<out BlockEntity>> = mapOf(
         id("item_barrel") to ItemBarrelBlockEntity.TYPE,
-        id("trash_can") to TrashCanBlockEntity.TYPE
+        id("trash_can") to TrashCanBlockEntity.TYPE,
+        id("test_barrel") to ItemStorageDeviceBlockEntity.TYPE
     )
 
     internal val UPGRADES: Map<Identifier, UpgradeType> = mapOf(
@@ -92,6 +94,8 @@ object Stockpile : ModInitializer {
 
         UseBlockCallback.EVENT.register(UpgradeInstallerCallback)
         AttackBlockCallback.EVENT.register(AttackableBlockCallback)
+
+        ItemStorage.SIDED.registerForBlockEntity({ ent, _ -> ent.storage }, ItemStorageDeviceBlockEntity.TYPE)
 
         ServerPlayNetworking.registerGlobalReceiver(id("barrel_hat_restock")) { _: MinecraftServer,
                                                                                 player: ServerPlayerEntity,

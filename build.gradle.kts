@@ -7,7 +7,7 @@ plugins {
 
 object Versions {
     // Mod
-    const val STOCKPILE = "1.1.5"
+    const val STOCKPILE = "2.0.0-experimental"
 
     // Toolchain dependencies
     const val MINECRAFT = "1.17.1"

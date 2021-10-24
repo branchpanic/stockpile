@@ -5,14 +5,10 @@ import me.branchpanic.mods.stockpile.item.UpgradeRemoverItem
 import net.minecraft.block.*
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemPlacementContext
-import net.minecraft.item.ItemStack
 import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
-import net.minecraft.text.LiteralText
-import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.BlockMirror
 import net.minecraft.util.BlockRotation
@@ -22,9 +18,12 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
+import java.util.function.Supplier
 
-open class StorageDeviceBlock<T : StorageDeviceBlockEntity>(private val blockEntityType: BlockEntityType<T>):
+open class StorageDeviceBlock<T : StorageDeviceBlockEntity>(private val typeSupplier: Supplier<BlockEntityType<T>>):
     BlockWithEntity(Settings.copy(Blocks.CHEST)), AttackableBlock {
+
+    private val blockEntityType by lazy { typeSupplier.get() }
 
     override fun appendProperties(builder: StateManager.Builder<Block, BlockState>?) {
         super.appendProperties(builder)
@@ -87,6 +86,4 @@ open class StorageDeviceBlock<T : StorageDeviceBlockEntity>(private val blockEnt
     }
 
     override fun getRenderType(state: BlockState?): BlockRenderType = BlockRenderType.MODEL
-
-    override fun isTranslucent(state: BlockState?, view: BlockView?, pos: BlockPos?): Boolean = true
 }

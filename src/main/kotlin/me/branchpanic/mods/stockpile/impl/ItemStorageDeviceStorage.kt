@@ -52,6 +52,10 @@ class ItemStorageDeviceStorage :
         return extractable
     }
 
+    fun clear() {
+        reference = ItemVariant.blank()
+    }
+
     fun toNbt(): NbtCompound {
         return NbtCompound().apply {
             put("reference", reference.toNbt())

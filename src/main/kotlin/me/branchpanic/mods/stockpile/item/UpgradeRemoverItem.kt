@@ -3,7 +3,7 @@ package me.branchpanic.mods.stockpile.item
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeContainer
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
-import me.branchpanic.mods.stockpile.extension.giveTo
+import me.branchpanic.mods.stockpile.util.giveTo
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack

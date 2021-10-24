@@ -63,6 +63,10 @@ dependencies {
     modCompileOnly("mcp.mobius.waila:wthit-api:fabric-${Versions.WTHIT}")
 }
 
+loom {
+    accessWidenerPath.set(file("src/main/resources/stockpile.accesswidener"))
+}
+
 task("sourcesJar", Jar::class) {
     classifier = "sources"
     from(sourceSets["main"].allSource)

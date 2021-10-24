@@ -1,11 +1,15 @@
+@file:Suppress("INACCESSIBLE_TYPE")
+
 package me.branchpanic.mods.stockpile.client
 
 import io.netty.buffer.Unpooled
 import me.branchpanic.mods.stockpile.Stockpile
 import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
+import me.branchpanic.mods.stockpile.blockentity.ItemStorageDeviceBlockEntity
 import me.branchpanic.mods.stockpile.client.gui.UpgradeOverlayRenderer
 import me.branchpanic.mods.stockpile.client.gui.UpgradeRemoverOverlayRenderer
 import me.branchpanic.mods.stockpile.client.renderer.ItemBarrelRenderer
+import me.branchpanic.mods.stockpile.client.renderer.ItemStorageDeviceRenderer
 import me.branchpanic.mods.stockpile.item.BarrelHatItem
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.EnvType
@@ -16,12 +20,16 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.option.KeyBinding
+import net.minecraft.client.render.RenderLayer
+import net.minecraft.client.render.VertexFormat
+import net.minecraft.client.render.VertexFormats
 import net.minecraft.client.util.InputUtil
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.hit.HitResult
 import net.minecraft.world.RaycastContext
 import org.lwjgl.glfw.GLFW
+import org.lwjgl.opengl.GL11
 
 @Environment(EnvType.CLIENT)
 object StockpileClient : ClientModInitializer {
@@ -36,6 +44,9 @@ object StockpileClient : ClientModInitializer {
     override fun onInitializeClient() {
         KeyBindingHelper.registerKeyBinding(barrelHatBinding)
         BlockEntityRendererRegistry.register(ItemBarrelBlockEntity.TYPE) { ItemBarrelRenderer() }
+        BlockEntityRendererRegistry.register(ItemStorageDeviceBlockEntity.TYPE) { ctx ->
+            ItemStorageDeviceRenderer(ctx)
+        }
 
         ClientTickEvents.START_CLIENT_TICK.register { client ->
             if (!barrelHatBinding.wasPressed()) return@register

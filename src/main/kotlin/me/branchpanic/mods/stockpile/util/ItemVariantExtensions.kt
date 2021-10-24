@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION", "UnstableApiUsage")
 
-package me.branchpanic.mods.stockpile.extension
+package me.branchpanic.mods.stockpile.util
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant
 import net.minecraft.item.ItemStack

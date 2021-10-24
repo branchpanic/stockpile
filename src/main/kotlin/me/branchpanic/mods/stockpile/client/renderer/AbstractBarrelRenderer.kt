@@ -17,6 +17,7 @@ import net.minecraft.util.math.Direction
 import net.minecraft.util.math.Matrix4f
 import net.minecraft.util.math.Quaternion
 
+@Deprecated("Use StorageDeviceRenderer")
 @Environment(EnvType.CLIENT)
 abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : BlockEntityRenderer<T> {
     private val dispatcher: MinecraftClient
@@ -139,7 +140,7 @@ abstract class AbstractBarrelRenderer<T : AbstractBarrelBlockEntity<U>, U> : Blo
         x2: Float,
         y2: Float,
         z: Float,
-        color: ArgbColor,
+        color: IntColor,
         light: Int
     ) {
         this.vertex(mx, x2, y1, z).color(color.red, color.green, color.blue, color.alpha).light(light).next()

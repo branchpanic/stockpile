@@ -1,8 +1,8 @@
 package me.branchpanic.mods.stockpile.impl.storage
 
 import me.branchpanic.mods.stockpile.api.storage.Quantifier
-import me.branchpanic.mods.stockpile.extension.canStackWith
-import me.branchpanic.mods.stockpile.extension.withCount
+import me.branchpanic.mods.stockpile.util.canStackWith
+import me.branchpanic.mods.stockpile.util.withCount
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 

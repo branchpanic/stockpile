@@ -8,8 +8,8 @@ import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.barrel.ItemBarrelUpgrade
 import me.branchpanic.mods.stockpile.block.ItemBarrelBlock
 import me.branchpanic.mods.stockpile.upgrade.TrashUpgrade
-import me.branchpanic.mods.stockpile.extension.giveTo
-import me.branchpanic.mods.stockpile.extension.withCount
+import me.branchpanic.mods.stockpile.util.giveTo
+import me.branchpanic.mods.stockpile.util.withCount
 import me.branchpanic.mods.stockpile.impl.attribute.FixedMassItemInv
 import me.branchpanic.mods.stockpile.impl.attribute.UnrestrictedInventoryFixedWrapper
 import me.branchpanic.mods.stockpile.impl.storage.*

@@ -2,11 +2,12 @@
 
 package me.branchpanic.mods.stockpile.blockentity
 
+import me.branchpanic.mods.stockpile.StockpileContent
 import me.branchpanic.mods.stockpile.api.FuzzyTransactionAmount
 import me.branchpanic.mods.stockpile.api.StorageDeviceBlockEntity
-import me.branchpanic.mods.stockpile.block.TestBarrelBlock
-import me.branchpanic.mods.stockpile.extension.unpack
+import me.branchpanic.mods.stockpile.util.unpack
 import me.branchpanic.mods.stockpile.impl.ItemStorageDeviceStorage
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction
 import net.minecraft.block.BlockState
@@ -21,11 +22,12 @@ class ItemStorageDeviceBlockEntity(
     blockPos: BlockPos?,
     blockState: BlockState?,
 ) :
-    StorageDeviceBlockEntity(TYPE, blockPos, blockState) {
+    StorageDeviceBlockEntity(TYPE, blockPos, blockState),
+    BlockEntityClientSerializable {
     companion object {
         val TYPE: BlockEntityType<ItemStorageDeviceBlockEntity> =
             BlockEntityType.Builder
-                .create(::ItemStorageDeviceBlockEntity, TestBarrelBlock)
+                .create(::ItemStorageDeviceBlockEntity, StockpileContent.Blocks.TEST_BARREL)
                 .build(null)
     }
 
@@ -41,16 +43,21 @@ class ItemStorageDeviceBlockEntity(
 
     override var locked: Boolean
         get() = storage.locked
-        set(value) { storage.locked = value }
+        set(value) {
+            storage.locked = value
+        }
+
+    override val amount: Long
+        get() = storage.amount
+
+    override val capacity: Long
+        get() = storage.capacity
 
     override fun markDirty() {
         super.markDirty()
 
-        if (!storage.locked)
-
-        world?.apply {
-            updateListeners(pos, getBlockState(pos), getBlockState(pos), 3)
-        }
+        if (!storage.locked && !storage.isResourceBlank && storage.amount <= 0) storage.clear()
+        sync()
     }
 
     override fun giveToPlayer(player: PlayerEntity, amount: FuzzyTransactionAmount): Long {
@@ -114,27 +121,39 @@ class ItemStorageDeviceBlockEntity(
                         val remaining = itemStack.count - inserted.toInt()
                         player.inventory.main[i] = takenResource.toStack(remaining)
                     }
+
                 }
             }
 
-            tx.commit()
             player.inventory.markDirty()
+            tx.commit()
         }
 
+        markDirty()
         return takenAmount
     }
 
-    override fun writeNbt(nbtCompound: NbtCompound?): NbtCompound {
-        return super.writeNbt(nbtCompound).apply {
+    override fun writeNbt(tag: NbtCompound?): NbtCompound {
+        return super.writeNbt(tag).apply {
             put("storage", storage.toNbt())
         }
     }
 
-    override fun readNbt(nbtCompound: NbtCompound?) {
-        super.readNbt(nbtCompound)
+    override fun readNbt(tag: NbtCompound?) {
+        super.readNbt(tag)
 
-        if (nbtCompound == null) return
-        if ("storage" !in nbtCompound) return
-        storage.readNbt(nbtCompound.getCompound("storage"))
+        if (tag == null) return
+        if ("storage" !in tag) return
+        storage.readNbt(tag.getCompound("storage"))
+    }
+
+    override fun fromClientTag(tag: NbtCompound?) {
+        if (tag == null) return
+        if ("storage" !in tag) return
+        storage.readNbt(tag.getCompound("storage"))
+    }
+
+    override fun toClientTag(tag: NbtCompound?): NbtCompound {
+        return tag!!.apply { put("storage", storage.toNbt()) }
     }
 }

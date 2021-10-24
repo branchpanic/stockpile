@@ -6,10 +6,10 @@ import kotlin.math.min
 import kotlin.math.pow
 
 data class FillBarSettings(
-    val backgroundColor: ArgbColor,
-    val foregroundColor: ArgbColor,
-    val textColor: ArgbColor,
-    val textColorFull: ArgbColor,
+    val backgroundColor: IntColor,
+    val foregroundColor: IntColor,
+    val textColor: IntColor,
+    val textColorFull: IntColor,
     val width: Double
 )
 

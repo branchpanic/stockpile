@@ -9,7 +9,7 @@ import alexiil.mc.lib.attributes.item.InvMarkDirtyListener
 import alexiil.mc.lib.attributes.item.ItemTransferable
 import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import me.branchpanic.mods.stockpile.api.storage.MutableMassStorage
-import me.branchpanic.mods.stockpile.extension.withCount
+import me.branchpanic.mods.stockpile.util.withCount
 import me.branchpanic.mods.stockpile.impl.storage.firstStack
 import me.branchpanic.mods.stockpile.impl.storage.oneStackToQuantizer
 import me.branchpanic.mods.stockpile.impl.storage.toQuantifier

@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos
 import java.util.*
 
 // TODO: Config
-const val doubleTapTimeMs: Long = 100
+const val doubleTapTimeMs: Long = 50
 
 /**
  * StorageDeviceBlockEntity provides the interaction logic for implementing a "Barrel"-type block (generalized here
@@ -73,4 +73,7 @@ abstract class StorageDeviceBlockEntity(
     abstract fun giveToPlayer(player: PlayerEntity, amount: FuzzyTransactionAmount): Long
     abstract fun takeFromPlayer(player: PlayerEntity, amount: FuzzyTransactionAmount): Long
     abstract var locked: Boolean
+
+    abstract val amount: Long
+    abstract val capacity: Long
 }

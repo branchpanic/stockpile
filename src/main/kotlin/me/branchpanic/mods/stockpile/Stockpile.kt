@@ -2,7 +2,10 @@ package me.branchpanic.mods.stockpile
 
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeType
-import me.branchpanic.mods.stockpile.block.*
+import me.branchpanic.mods.stockpile.block.AttackableBlockCallback
+import me.branchpanic.mods.stockpile.block.BarrelBlock
+import me.branchpanic.mods.stockpile.block.ItemBarrelBlock
+import me.branchpanic.mods.stockpile.block.TrashCanBlock
 import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
 import me.branchpanic.mods.stockpile.blockentity.ItemStorageDeviceBlockEntity
 import me.branchpanic.mods.stockpile.blockentity.TrashCanBlockEntity
@@ -17,11 +20,9 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant
 import net.minecraft.block.Block
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityType
@@ -40,10 +41,11 @@ import net.minecraft.util.registry.Registry
 object Stockpile : ModInitializer {
     private val ITEM_GROUP: ItemGroup = FabricItemGroupBuilder.build(id("all")) { ItemStack(ItemBarrelBlock) }
 
+    // TODO: Move all of these maps to StockpileContent, static references more useful
     internal val BLOCKS: Map<Identifier, Block> = mapOf(
         id("item_barrel") to BarrelBlock.ITEM,
         id("trash_can") to TrashCanBlock,
-        id("test_barrel") to StorageDeviceBlock(ItemStorageDeviceBlockEntity.TYPE)
+        id("test_barrel") to StockpileContent.Blocks.TEST_BARREL
     )
 
     internal val ITEM_SETTINGS = Item.Settings().group(ITEM_GROUP)

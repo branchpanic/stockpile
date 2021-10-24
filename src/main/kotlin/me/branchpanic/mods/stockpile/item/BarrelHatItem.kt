@@ -5,8 +5,8 @@ import me.branchpanic.mods.stockpile.Stockpile.id
 import me.branchpanic.mods.stockpile.client.StockpileClient
 import me.branchpanic.mods.stockpile.api.upgrade.UpgradeRegistry
 import me.branchpanic.mods.stockpile.blockentity.ItemBarrelBlockEntity
-import me.branchpanic.mods.stockpile.extension.giveTo
-import me.branchpanic.mods.stockpile.extension.withCount
+import me.branchpanic.mods.stockpile.util.giveTo
+import me.branchpanic.mods.stockpile.util.withCount
 import me.branchpanic.mods.stockpile.impl.storage.toQuantifier
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.EquipmentSlot
@@ -24,7 +24,6 @@ import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
-import java.util.*
 import kotlin.math.min
 
 object BarrelHatMaterial : ArmorMaterial by ArmorMaterials.LEATHER {
